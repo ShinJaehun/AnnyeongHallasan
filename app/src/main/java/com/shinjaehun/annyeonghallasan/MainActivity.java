@@ -14,6 +14,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -21,8 +22,8 @@ public class MainActivity extends AppCompatActivity {
     String TAG = MainActivity.class.getSimpleName();
 
     String url = "http://www.jjpolice.go.kr/jjpolice/police25/traffic.htm?act=rss";
-    ArrayList<String> roads = new ArrayList<>();
-    ArrayList<String> status = new ArrayList<>();
+//    ArrayList<String> roads = new ArrayList<>();
+//    ArrayList<String> status = new ArrayList<>();
 
     ArrayList<RoadStatus> roadStatuses;
 
@@ -83,8 +84,17 @@ public class MainActivity extends AppCompatActivity {
 
 
             Document doc = null;
+            //실제 URL로 테스트하기
+//            try {
+//                doc = Jsoup.connect(url).get();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+
+            //XML 파일로 테스트하기
+            InputStream inputStream = getResources().openRawResource(R.raw.aaa);
             try {
-                doc = Jsoup.connect(url).get();
+                doc = Jsoup.parse(inputStream, "UTF-8", url);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -99,20 +109,24 @@ public class MainActivity extends AppCompatActivity {
                     Elements roadsData = doc.select("title");
                     Elements statusData = doc.select("description");
 
-                    roadStatuses.add(new RoadStatus(roadsData.get(i + 1).text().toString().trim(), statusData.get(i + 1).text().replaceAll("&nbsp;", "").toString().trim(), dateData.get(0).text().toString().trim()));
+                    roadStatuses.add(new RoadStatus(roadsData.get(i + 1).text().replace("<![CDATA[", "").replace("]]>", "").toString().trim(),
+                            statusData.get(i + 1).text().replaceAll("&nbsp;", "").replaceAll("&amp;nbsp;", "").toString().trim(),
+                            dateData.get(0).text().toString().trim()));
                     //도로명, description, 발표시간을 생성자로 하여 RoadStatus 생성
+                    //정말 귀찮은데 도로명에 <![CDATA[~~~]> 이거 붙는 거 없애고
+                    //description에 nbsp랑 amp 붙는거 너무 짜증나!
                 }
 
 //                Elements roadsData = doc.select("title");
 //                for (int i = 0; i < roadsData.size(); i++) {
-////                roads.add(roadsData.get(i).text().toString().trim());
-////                Log.v(TAG, "Road : " + i + " " + roadsData.get(i).text().toString().trim());
+//                roads.add(roadsData.get(i).text().toString().trim());
+//                Log.v(TAG, "Road : " + i + " " + roadsData.get(i).text().toString().trim());
 //                }
 //
 //                Elements statusData = doc.select("description");
 //                for (int i = 0; i < statusData.size(); i++) {
-////                status.add(statusData.get(i).text().replaceAll("&nbsp;","").toString().trim());
-////                Log.v(TAG, "Status : " + i + " " + statusData.get(i).text().replaceAll("&nbsp;","").toString().trim());
+//                status.add(statusData.get(i).text().replaceAll("&nbsp;","").toString().trim());
+//                Log.v(TAG, "Status : " + i + " " + statusData.get(i).text().replaceAll("&nbsp;","").toString().trim());
 //                }
 //
                 Log.v(TAG, "새로 생성함");
@@ -125,12 +139,6 @@ public class MainActivity extends AppCompatActivity {
 
             Log.v(TAG, "전과 동일함");
 
-
-
-
-//            for ( int i = 0; i < status.size(); i++) {
-//                Log.v(TAG, getByteString(status.get(i), 9, 6));
-//            }
 
 
             return null;
