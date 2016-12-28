@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
 
     ArrayList<RoadStatus> roadStatuses;
 
-    TextView roadsTV;
     TextView statusTV;
 
     @Override
@@ -35,9 +34,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-        roadsTV = (TextView)findViewById(R.id.roads);
         statusTV = (TextView)findViewById(R.id.status);
 
         Button fetchBT = (Button)findViewById(R.id.fetch);
@@ -104,15 +100,29 @@ public class MainActivity extends AppCompatActivity {
 //            if (!dateData.get(0).equals(roadStatuses.get(0).getDate())) {
                 roadStatuses = new ArrayList<>();
 
+                Elements roadsData = doc.select("title");
+                Elements statusData = doc.select("description");
+
                 for (int i = 0; i < 10; i++) {
                     //10개의 도로
-                    Elements roadsData = doc.select("title");
-                    Elements statusData = doc.select("description");
 
-                    roadStatuses.add(new RoadStatus(roadsData.get(i + 1).text().replace("<![CDATA[", "").replace("]]>", "").toString().trim(),
-                            statusData.get(i + 1).text().replaceAll("&nbsp;", "").replaceAll("&amp;nbsp;", "").toString().trim(),
-                            dateData.get(0).text().toString().trim()));
+                    String name = roadsData.get(i + 1).text().replace("<![CDATA[", "").replace("]]>", "").toString().trim();
+                    String description = statusData.get(i + 1).text().replaceAll("&nbsp;", "").replaceAll("&amp;nbsp;", "").toString().trim();
+                    String date = dateData.get(0).text().toString().trim();
+                    String[] v = description.split(":", -6);
+                    //
+
+                    Log.v(TAG, name + " 크기는 " + v.length);
+                    Log.v(TAG, name + "," + v[0].trim() );
+                    Log.v(TAG, name + "," + v[1].trim() );
+                    Log.v(TAG, name + "," + v[2].trim() );
+                    Log.v(TAG, name + "," + v[3].trim() );
+                    Log.v(TAG, name + "," + v[4].trim() );
+                    Log.v(TAG, name + "," + v[5].trim() );
+
+                    roadStatuses.add(new RoadStatus(name, description, date));
                     //도로명, description, 발표시간을 생성자로 하여 RoadStatus 생성
+
                     //정말 귀찮은데 도로명에 <![CDATA[~~~]> 이거 붙는 거 없애고
                     //description에 nbsp랑 amp 붙는거 너무 짜증나!
                 }
@@ -138,8 +148,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
             Log.v(TAG, "전과 동일함");
-
-
 
             return null;
         }

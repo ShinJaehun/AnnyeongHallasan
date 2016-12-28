@@ -9,8 +9,8 @@ public class RoadStatus {
     String name;
     String description;
     String date;
-    int deepSnow;
-    int freezingIce;
+    String snowfall;
+    String freezing;
     boolean bigChain;
     boolean smallChain;
 
@@ -32,20 +32,20 @@ public class RoadStatus {
         return date;
     }
 
-    public int getDeepSnow() {
-        return deepSnow;
+    public String getSnowfall() {
+        return snowfall;
     }
 
-    public void setDeepSnow(int deepSnow) {
-        this.deepSnow = deepSnow;
+    public void setSnowfall(String snowfall) {
+        this.snowfall = snowfall;
     }
 
-    public int getFreezingIce() {
-        return freezingIce;
+    public String getFreezing() {
+        return freezing;
     }
 
-    public void setFreezingIce(int freezingIce) {
-        this.freezingIce = freezingIce;
+    public void setFreezing(String freezing) {
+        this.freezing = freezing;
     }
 
     public boolean isBigChain() {
