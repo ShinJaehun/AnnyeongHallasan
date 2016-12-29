@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
@@ -77,8 +76,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-
-
             Document doc = null;
             //실제 URL로 테스트하기
 //            try {
@@ -95,37 +92,88 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            if (roadStatuses == null) {
-                Elements dateData = doc.select("date");
-//            if (!dateData.get(0).equals(roadStatuses.get(0).getDate())) {
-                roadStatuses = new ArrayList<>();
+            Elements dateData = doc.select("date");
+            Elements roadsData = doc.select("title");
+            Elements statusData = doc.select("description");
 
-                Elements roadsData = doc.select("title");
-                Elements statusData = doc.select("description");
+            roadStatuses = new ArrayList<>();
 
-                for (int i = 0; i < 10; i++) {
-                    //10개의 도로
+            for (int i = 1; i < 14; i++) {
+                //제주지방경찰청에서 제공하는 13개의 도로 DATA
 
-                    String name = roadsData.get(i + 1).text().replace("<![CDATA[", "").replace("]]>", "").toString().trim();
-                    String description = statusData.get(i + 1).text().replaceAll("&nbsp;", "").replaceAll("&amp;nbsp;", "").toString().trim();
-                    String date = dateData.get(0).text().toString().trim();
-                    String[] v = description.split(":", -6);
-                    //
+                String n = roadsData.get(i).text().replace("<![CDATA[", "").replace("]]>", "").toString().trim();
+                //정말 귀찮은데 도로명에 <![CDATA[~~~]> 이거 붙는 거 없애고
 
-                    Log.v(TAG, name + " 크기는 " + v.length);
-                    Log.v(TAG, name + "," + v[0].trim() );
-                    Log.v(TAG, name + "," + v[1].trim() );
-                    Log.v(TAG, name + "," + v[2].trim() );
-                    Log.v(TAG, name + "," + v[3].trim() );
-                    Log.v(TAG, name + "," + v[4].trim() );
-                    Log.v(TAG, name + "," + v[5].trim() );
+                String name;
+                if (n.matches(".*[0-9]\\)$")) {
+                    //"숫자)"로 끝나는 문자열이라면
+                    name = n.substring(0, n.indexOf("("));
+                    // 도로명 "1100도로(1139)"에서 도로 번호를 생략
 
-                    roadStatuses.add(new RoadStatus(name, description, date));
-                    //도로명, description, 발표시간을 생성자로 하여 RoadStatus 생성
-
-                    //정말 귀찮은데 도로명에 <![CDATA[~~~]> 이거 붙는 거 없애고
-                    //description에 nbsp랑 amp 붙는거 너무 짜증나!
+                } else {
+                    name = n;
+                    // 도로번호가 없는 도로명은 그대로 쓰기
                 }
+
+
+                String description = statusData.get(i).text().replaceAll("&nbsp;", "").replaceAll("&amp;nbsp;", "").toString().trim();
+                //description에 nbsp랑 amp 붙는거 너무 짜증나!
+
+                String date = dateData.get(0).text().toString().trim();
+                String[] v = description.split(":", -6);
+
+//                    Log.v(TAG, name + " 크기는 " + v.length);
+//                    Log.v(TAG, name + "," + v[0].trim() );
+//                    Log.v(TAG, name + "," + v[1].trim() );
+//                    Log.v(TAG, name + "," + v[2].trim() );
+//                    Log.v(TAG, name + "," + v[3].trim() );
+//                    Log.v(TAG, name + "," + v[4].trim() );
+//                    Log.v(TAG, name + "," + v[5].trim() );
+/*
+                    통제하는 경우 description 내용
+                    구간 : 제주대 입구 ~ 성판악 적설 : 1 결빙 : 대형 통재상항 :    소형 통재상항 : 체인
+
+                    통제하지 않는 경우 descrition 내용
+                    구간 : 정상 적설 : 결빙 : 대형 통재상항 :    소형 통재상항 :
+*/
+                boolean restriction = false;
+                String section = "정상";
+                if (!v[1].contains("정상")) {
+                    //통제하는 경우
+                    restriction = true;
+                    section = v[1].substring(0, v[1].indexOf("적설")).trim();
+                    //통제구간 : "제주대 입구 ~ 성판악"
+                }
+
+                Integer snowfall = 0;
+//                if (v[2].matches(".*[0-9]*.")) {
+                if (v[2].matches(".*\\d+.*")) {
+                snowfall = Integer.parseInt(v[2].substring(0, v[2].indexOf("결빙")).trim());
+                    //적설
+                }
+
+                Integer freezing = 0;
+                if (v[3].matches(".*\\d+.*")) {
+                    freezing = Integer.parseInt(v[3].substring(0, v[3].indexOf("대형")).trim());
+                    //결빙
+                }
+
+                boolean snowChainBig = false;
+                if(v[4].contains("체인")) {
+                    snowChainBig = true;
+                }
+
+                boolean snowChainSmall = false;
+                if (v[5].contains("체인")) {
+                    snowChainSmall = true;
+                }
+
+                roadStatuses.add(new RoadStatus(name, description, date, restriction, section, snowfall, freezing, snowChainBig, snowChainSmall));
+                //도로명, description, 발표시간을 생성자로 하여 RoadStatus 생성
+
+
+
+            }
 
 //                Elements roadsData = doc.select("title");
 //                for (int i = 0; i < roadsData.size(); i++) {
@@ -139,19 +187,20 @@ public class MainActivity extends AppCompatActivity {
 //                Log.v(TAG, "Status : " + i + " " + statusData.get(i).text().replaceAll("&nbsp;","").toString().trim());
 //                }
 //
-                Log.v(TAG, "새로 생성함");
 
-                for (RoadStatus rs : roadStatuses) {
-                    Log.v(TAG, rs.getName() + " : " + rs.getDescription() + " : " + rs.getDate());
-                }
 
+//        for (RoadStatus rs : roadStatuses) {
+//            Log.v(TAG, rs.getName() + " : " + rs.getDescription() );
+//        }
+
+            for (RoadStatus rs : roadStatuses) {
+                Log.v(TAG, rs.getName() + " " + rs.getDate() + " " + rs.isRestriction() + " " + rs.getSection() + " " + rs.getSnowfall() + " " + rs.getFreezing() + " " + rs.isSnowChainBig() + " " + rs.isSnowChainSmall());
             }
-
-            Log.v(TAG, "전과 동일함");
 
             return null;
         }
     }
+
 
 
 

@@ -9,15 +9,23 @@ public class RoadStatus {
     String name;
     String description;
     String date;
-    String snowfall;
-    String freezing;
-    boolean bigChain;
-    boolean smallChain;
+    boolean restriction;
+    String section;
+    Integer snowfall;
+    Integer freezing;
+    boolean snowChainBig;
+    boolean snowChainSmall;
 
-    public RoadStatus(String name, String description, String date) {
+    public RoadStatus(String name, String description, String date, boolean restriction, String section, Integer snowfall, Integer freezing, boolean snowChainBig, boolean snowChainSmall) {
         this.name = name;
         this.description = description;
         this.date = date;
+        this.restriction = restriction;
+        this.section = section;
+        this.snowfall = snowfall;
+        this.freezing = freezing;
+        this.snowChainBig = snowChainBig;
+        this.snowChainSmall = snowChainSmall;
     }
 
     public String getName() {
@@ -32,35 +40,28 @@ public class RoadStatus {
         return date;
     }
 
-    public String getSnowfall() {
+    public Integer getSnowfall() {
         return snowfall;
     }
 
-    public void setSnowfall(String snowfall) {
-        this.snowfall = snowfall;
-    }
-
-    public String getFreezing() {
+    public Integer getFreezing() {
         return freezing;
     }
 
-    public void setFreezing(String freezing) {
-        this.freezing = freezing;
+    public boolean isSnowChainBig() {
+        return snowChainBig;
     }
 
-    public boolean isBigChain() {
-        return bigChain;
+    public boolean isSnowChainSmall() {
+        return snowChainSmall;
     }
 
-    public void setBigChain(boolean bigChain) {
-        this.bigChain = bigChain;
+    public boolean isRestriction() {
+        return restriction;
     }
 
-    public boolean isSmallChain() {
-        return smallChain;
+    public String getSection() {
+        return section;
     }
 
-    public void setSmallChain(boolean smallChain) {
-        this.smallChain = smallChain;
-    }
 }
