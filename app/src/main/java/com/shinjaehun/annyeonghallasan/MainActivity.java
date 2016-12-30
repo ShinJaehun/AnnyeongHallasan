@@ -1,46 +1,33 @@
 package com.shinjaehun.annyeonghallasan;
 
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     String TAG = MainActivity.class.getSimpleName();
 
-    String url = "http://www.jjpolice.go.kr/jjpolice/police25/traffic.htm?act=rss";
 //    ArrayList<String> roads = new ArrayList<>();
 //    ArrayList<String> status = new ArrayList<>();
 
-    ArrayList<RoadStatus> roadStatuses;
-
-    TextView statusTV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        statusTV = (TextView)findViewById(R.id.status);
-
         Button fetchBT = (Button)findViewById(R.id.fetch);
 
         fetchBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new fetchData().execute();
+                new FetchData(MainActivity.this).execute();
+                //context에 this를 넣으면 View.OnClickListener가 넘어감
+                //getApplicationContext()를 넣으면 Activity Context가 아니라 Application Context가 넘어감
+
 //                StringBuilder sb1 = new StringBuilder();
 //
 //                for (int i = 0; i < roads.size(); i++) {
@@ -58,13 +45,7 @@ public class MainActivity extends AppCompatActivity {
 //
 //                statusTV.setText(sb2.toString());
 
-                if (roadStatuses != null) {
-                    StringBuilder sb = new StringBuilder();
-                    for (RoadStatus rs : roadStatuses) {
-                        sb.append(rs.getName() + " : " + rs.getDescription() + "\n");
-                    }
-                    statusTV.setText(sb.toString());
-                }
+
             }
         });
 
@@ -72,134 +53,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private class fetchData extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            Document doc = null;
-            //실제 URL로 테스트하기
-//            try {
-//                doc = Jsoup.connect(url).get();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-
-            //XML 파일로 테스트하기
-            InputStream inputStream = getResources().openRawResource(R.raw.aaa);
-            try {
-                doc = Jsoup.parse(inputStream, "UTF-8", url);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            Elements dateData = doc.select("date");
-            Elements roadsData = doc.select("title");
-            Elements statusData = doc.select("description");
-
-            roadStatuses = new ArrayList<>();
-
-            for (int i = 1; i < 14; i++) {
-                //제주지방경찰청에서 제공하는 13개의 도로 DATA
-
-                String n = roadsData.get(i).text().replace("<![CDATA[", "").replace("]]>", "").toString().trim();
-                //정말 귀찮은데 도로명에 <![CDATA[~~~]> 이거 붙는 거 없애고
-
-                String name;
-                if (n.matches(".*[0-9]\\)$")) {
-                    //"숫자)"로 끝나는 문자열이라면
-                    name = n.substring(0, n.indexOf("("));
-                    // 도로명 "1100도로(1139)"에서 도로 번호를 생략
-
-                } else {
-                    name = n;
-                    // 도로번호가 없는 도로명은 그대로 쓰기
-                }
-
-
-                String description = statusData.get(i).text().replaceAll("&nbsp;", "").replaceAll("&amp;nbsp;", "").toString().trim();
-                //description에 nbsp랑 amp 붙는거 너무 짜증나!
-
-                String date = dateData.get(0).text().toString().trim();
-                String[] v = description.split(":", -6);
-
-//                    Log.v(TAG, name + " 크기는 " + v.length);
-//                    Log.v(TAG, name + "," + v[0].trim() );
-//                    Log.v(TAG, name + "," + v[1].trim() );
-//                    Log.v(TAG, name + "," + v[2].trim() );
-//                    Log.v(TAG, name + "," + v[3].trim() );
-//                    Log.v(TAG, name + "," + v[4].trim() );
-//                    Log.v(TAG, name + "," + v[5].trim() );
-/*
-                    통제하는 경우 description 내용
-                    구간 : 제주대 입구 ~ 성판악 적설 : 1 결빙 : 대형 통재상항 :    소형 통재상항 : 체인
-
-                    통제하지 않는 경우 descrition 내용
-                    구간 : 정상 적설 : 결빙 : 대형 통재상항 :    소형 통재상항 :
-*/
-                boolean restriction = false;
-                String section = "정상";
-                if (!v[1].contains("정상")) {
-                    //통제하는 경우
-                    restriction = true;
-                    section = v[1].substring(0, v[1].indexOf("적설")).trim();
-                    //통제구간 : "제주대 입구 ~ 성판악"
-                }
-
-                Integer snowfall = 0;
-//                if (v[2].matches(".*[0-9]*.")) {
-                if (v[2].matches(".*\\d+.*")) {
-                snowfall = Integer.parseInt(v[2].substring(0, v[2].indexOf("결빙")).trim());
-                    //적설
-                }
-
-                Integer freezing = 0;
-                if (v[3].matches(".*\\d+.*")) {
-                    freezing = Integer.parseInt(v[3].substring(0, v[3].indexOf("대형")).trim());
-                    //결빙
-                }
-
-                boolean snowChainBig = false;
-                if(v[4].contains("체인")) {
-                    snowChainBig = true;
-                }
-
-                boolean snowChainSmall = false;
-                if (v[5].contains("체인")) {
-                    snowChainSmall = true;
-                }
-
-                roadStatuses.add(new RoadStatus(name, description, date, restriction, section, snowfall, freezing, snowChainBig, snowChainSmall));
-                //도로명, description, 발표시간을 생성자로 하여 RoadStatus 생성
-
-
-
-            }
-
-//                Elements roadsData = doc.select("title");
-//                for (int i = 0; i < roadsData.size(); i++) {
-//                roads.add(roadsData.get(i).text().toString().trim());
-//                Log.v(TAG, "Road : " + i + " " + roadsData.get(i).text().toString().trim());
-//                }
-//
-//                Elements statusData = doc.select("description");
-//                for (int i = 0; i < statusData.size(); i++) {
-//                status.add(statusData.get(i).text().replaceAll("&nbsp;","").toString().trim());
-//                Log.v(TAG, "Status : " + i + " " + statusData.get(i).text().replaceAll("&nbsp;","").toString().trim());
-//                }
-//
-
-
-//        for (RoadStatus rs : roadStatuses) {
-//            Log.v(TAG, rs.getName() + " : " + rs.getDescription() );
-//        }
-
-            for (RoadStatus rs : roadStatuses) {
-                Log.v(TAG, rs.getName() + " " + rs.getDate() + " " + rs.isRestriction() + " " + rs.getSection() + " " + rs.getSnowfall() + " " + rs.getFreezing() + " " + rs.isSnowChainBig() + " " + rs.isSnowChainSmall());
-            }
-
-            return null;
-        }
-    }
 
 
 
