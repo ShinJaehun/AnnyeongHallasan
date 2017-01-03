@@ -13,7 +13,6 @@ public class MainActivity extends AppCompatActivity {
 //    ArrayList<String> roads = new ArrayList<>();
 //    ArrayList<String> status = new ArrayList<>();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,11 +52,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onPause() {
+//        FetchData.stopHandler();
+        //계속 깜빡이는 것도 나쁘진 않아 보여;;;
 
+        super.onPause();
+    }
 
-
-
-//    private static String getByteString(String s, int startIdx, int bytes) {
+    //    private static String getByteString(String s, int startIdx, int bytes) {
 //        return new String(s.getBytes(), startIdx, bytes);
 //    }
 }

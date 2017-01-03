@@ -6,6 +6,8 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,6 +17,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -30,10 +33,12 @@ public class FetchData extends AsyncTask<Void, Void, Void> {
     ArrayList<RoadStatus> roadStatuses;
     String url = "http://www.jjpolice.go.kr/jjpolice/police25/traffic.htm?act=rss";
 
-    ImageView img;
-    boolean img_blink = true;
+    static ArrayList<ImageView> imgs;
+    static TextView normalTV;
 
-    Handler handler;
+    static boolean img_blink = true;
+
+    static Handler handler;
 
     public FetchData(Context context) {
         this.context = context;
@@ -43,19 +48,19 @@ public class FetchData extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
         Document doc = null;
         //실제 URL로 테스트하기
-//            try {
-//                doc = Jsoup.connect(url).get();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+            try {
+                doc = Jsoup.connect(url).get();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
         //XML 파일로 테스트하기
-        InputStream inputStream = context.getResources().openRawResource(R.raw.aaa);
-        try {
-            doc = Jsoup.parse(inputStream, "UTF-8", url);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        InputStream inputStream = context.getResources().openRawResource(R.raw.aaa);
+//        try {
+//            doc = Jsoup.parse(inputStream, "UTF-8", url);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         Elements dateData = doc.select("date");
         Elements roadsData = doc.select("title");
@@ -167,25 +172,80 @@ public class FetchData extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
+        imgs = new ArrayList<>();
 
         for (RoadStatus rs : roadStatuses) {
             if (rs.isRestriction()) {
                 switch (rs.name) {
                     case "1100도로" :
-                        img = (ImageView)((MainActivity)context).findViewById(R.id.road_1100);
-                        img.setVisibility(View.VISIBLE);
+//                        img = (ImageView)((MainActivity)context).findViewById(R.id.road_1100);
+//                        img.setVisibility(View.VISIBLE);
+//                        handler = new Handler();
+//                        handler.post(r);
+                        //여러 ImageView를 동시에 깜빡이게 하기 위해서는 같은 handler를 동시에
+                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_1100));
 
-                        handler = new Handler();
-                        handler.post(r);
-
+                        break;
+                    case "5.16도로" :
+                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_516));
+                        break;
+                    case "번영로" :
+                        break;
+                    case "평화로" :
+                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_pyeonghwa));
+                        break;
+                    case "한창로" :
+                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_hanchang));
+                        break;
+                    case "남조로" :
+                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_namjo));
+                        break;
+                    case "비자림로" :
+                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_bija));
+                        break;
+                    case "서성로" :
+                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_seoseong));
+                        break;
+                    case "제1산록도로" :
+                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_sallok1));
+                        break;
+                    case "제2산록도로" :
+                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_sallok2));
+                        break;
+                    case "명림로" :
+                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_myeongnim));
+                        break;
+                    case "첨단로" :
+                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_cheomdan));
+                        break;
+                    case "기타도로" :
+                        if (rs.section.contains("애조로")) {
+                            imgs.add((ImageView) ((MainActivity) context).findViewById(R.id.road_seoseong));
+                        }
+                        if (rs.section.contains("일주도로")) {
+                            imgs.add((ImageView) ((MainActivity) context).findViewById(R.id.road_ilju));
+                        }
                         break;
                     default:
                         break;
-
-
                 }
             }
         }
+
+        if (imgs.size() == 0) {
+            normalTV = (TextView)((MainActivity)context).findViewById(R.id.normal);
+            normalTV.setVisibility(View.VISIBLE);
+//            Log.v(TAG, "imgs 비었다");
+        } else {
+            for (ImageView i : imgs) {
+                i.setVisibility(View.VISIBLE);
+            }
+//            Log.v(TAG, "imgs 안 비었다");
+        }
+
+//            Animation startAnimation = AnimationUtils.loadAnimation(context, R.anim.blink_animation);
+        handler = new Handler();
+        handler.post(r);
 
 //        super.onPostExecute(aVoid);
         if (roadStatuses != null) {
@@ -199,18 +259,37 @@ public class FetchData extends AsyncTask<Void, Void, Void> {
         }
     }
 
-    private Runnable r = new Runnable() {
+    private static Runnable r = new Runnable() {
 
         @Override
         public void run() {
             if (img_blink) {
-                img.setAlpha(0);
+                if (imgs.size() == 0) {
+                    normalTV.setAlpha(0);
+                } else {
+                    for (ImageView i : imgs) {
+                        i.setAlpha(0);
+                    }
+                    //원래는 "img.setAlpha(0)" 이런 식으로 되어 있었는데 imgs의 모든 ImageView에 값을 할당하도록 변경함
+                }
                 img_blink = false;
             } else {
-                img.setAlpha(1000);
+                if (imgs.size() == 0) {
+                    normalTV.setAlpha(1.0f);
+                } else {
+                    for (ImageView i : imgs) {
+                        i.setAlpha(1000);
+                    }
+                }
                 img_blink = true;
             }
             handler.postDelayed(r, 700);
         }
     };
+
+    static public void stopHandler() {
+        //MainActivity에서 호출 가능하도록 static으로
+        handler.removeCallbacks(r);
+    }
+
 }
