@@ -39,28 +39,33 @@ public class FetchData extends AsyncTask<Void, Void, Void> {
     static boolean img_blink = true;
 
     static Handler handler;
+    static boolean isDebugging;
 
-    public FetchData(Context context) {
+    public FetchData(Context context, boolean isDebugging) {
         this.context = context;
+        this.isDebugging = isDebugging;
     }
 
     @Override
     protected Void doInBackground(Void... voids) {
         Document doc = null;
-        //실제 URL로 테스트하기
+
+        if (isDebugging) {
+            //XML 파일로 테스트하기
+        InputStream inputStream = context.getResources().openRawResource(R.raw.aaa);
+        try {
+            doc = Jsoup.parse(inputStream, "UTF-8", url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        } else {
+            //실제 URL로 테스트하기
             try {
                 doc = Jsoup.connect(url).get();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-        //XML 파일로 테스트하기
-//        InputStream inputStream = context.getResources().openRawResource(R.raw.aaa);
-//        try {
-//            doc = Jsoup.parse(inputStream, "UTF-8", url);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        }
 
         Elements dateData = doc.select("date");
         Elements roadsData = doc.select("title");
@@ -287,9 +292,22 @@ public class FetchData extends AsyncTask<Void, Void, Void> {
         }
     };
 
-    static public void stopHandler() {
+    static public void cleanMap() {
         //MainActivity에서 호출 가능하도록 static으로
-        handler.removeCallbacks(r);
+        if (handler != null) {
+            handler.removeCallbacks(r);
+        }
+
+        if (imgs != null) {
+            if (imgs.size() == 0) {
+                normalTV.setVisibility(View.GONE);
+            } else {
+                for (ImageView i : imgs) {
+                    i.setVisibility(View.GONE);
+                }
+            }
+        }
+        //임시로 이렇게 해 두자
     }
 
 }
