@@ -1,13 +1,10 @@
 package com.shinjaehun.annyeonghallasan;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,7 +14,6 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -25,8 +21,8 @@ import java.util.ArrayList;
  */
 
 
-public class FetchData extends AsyncTask<Void, Void, Void> {
-    private static final String TAG = FetchData.class.getSimpleName();
+public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
+    private static final String TAG = FetchRoadStatusTask.class.getSimpleName();
 
     private final Context context;
 
@@ -41,7 +37,7 @@ public class FetchData extends AsyncTask<Void, Void, Void> {
     static Handler handler;
     static boolean isDebugging;
 
-    public FetchData(Context context, boolean isDebugging) {
+    public FetchRoadStatusTask(Context context, boolean isDebugging) {
         this.context = context;
         this.isDebugging = isDebugging;
     }

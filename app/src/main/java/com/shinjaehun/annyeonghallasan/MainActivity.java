@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 //            @Override
 //            public void onClick(View view) {
 //
-//                new FetchData(MainActivity.this, isDebugging).execute();
+//                new FetchRoadStatusTask(MainActivity.this, isDebugging).execute();
 //                //context에 this를 넣으면 View.OnClickListener가 넘어감
 //                //getApplicationContext()를 넣으면 Activity Context가 아니라 Application Context가 넘어감
 //
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        FetchData.cleanMap();
+        FetchRoadStatusTask.cleanMap();
         //계속 깜빡이는 것도 나쁘진 않아 보여;;;
 
         super.onPause();
@@ -77,17 +77,21 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item)     {
         switch (item.getItemId()) {
             case R.id.action_debug:
-                FetchData.cleanMap();
+                FetchRoadStatusTask.cleanMap();
 
                 isDebugging = true;
-                new FetchData(MainActivity.this, isDebugging).execute();
+                new FetchRoadStatusTask(MainActivity.this, isDebugging).execute();
+                new FetchWeatherTask(MainActivity.this).execute();
+
                 return true;
 
             case R.id.action_fetch:
-                FetchData.cleanMap();
+                FetchRoadStatusTask.cleanMap();
 
                 isDebugging = false;
-                new FetchData(MainActivity.this, isDebugging).execute();
+                new FetchRoadStatusTask(MainActivity.this, isDebugging).execute();
+                new FetchWeatherTask(MainActivity.this).execute();
+
                 return true;
 
         }
