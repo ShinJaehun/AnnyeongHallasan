@@ -26,10 +26,10 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
 
     private final Context context;
 
-    ArrayList<RoadStatus> roadStatuses;
+    ArrayList<RoadCondition> roadReports;
     String url = "http://www.jjpolice.go.kr/jjpolice/police25/traffic.htm?act=rss";
 
-    static ArrayList<ImageView> imgs;
+    static ArrayList<ImageView> roadImgs;
     static TextView normalTV;
 
     static boolean img_blink = true;
@@ -48,12 +48,12 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
 
         if (isDebugging) {
             //XML 파일로 테스트하기
-        InputStream inputStream = context.getResources().openRawResource(R.raw.aaa);
-        try {
-            doc = Jsoup.parse(inputStream, "UTF-8", url);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            InputStream inputStream = context.getResources().openRawResource(R.raw.sample_data);
+            try {
+                doc = Jsoup.parse(inputStream, "UTF-8", url);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else {
             //실제 URL로 테스트하기
             try {
@@ -64,15 +64,15 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
         }
 
         Elements dateData = doc.select("date");
-        Elements roadsData = doc.select("title");
-        Elements statusData = doc.select("description");
+        Elements roadTitleData = doc.select("title");
+        Elements roadDescriptionData = doc.select("description");
 
-        roadStatuses = new ArrayList<>();
+        roadReports = new ArrayList<>();
+        //제주지방경찰청에서 제공하는 13개의 도로 DATA
 
         for (int i = 1; i < 14; i++) {
-            //제주지방경찰청에서 제공하는 13개의 도로 DATA
 
-            String n = roadsData.get(i).text().replace("<![CDATA[", "").replace("]]>", "").toString().trim();
+            String n = roadTitleData.get(i).text().replace("<![CDATA[", "").replace("]]>", "").toString().trim();
             //정말 귀찮은데 도로명에 <![CDATA[~~~]> 이거 붙는 거 없애고
 
             String name;
@@ -86,8 +86,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
                 // 도로번호가 없는 도로명은 그대로 쓰기
             }
 
-
-            String description = statusData.get(i).text().replaceAll("&nbsp;", "").replaceAll("&amp;nbsp;", "").toString().trim();
+            String description = roadDescriptionData.get(i).text().replaceAll("&nbsp;", "").replaceAll("&amp;nbsp;", "").toString().trim();
             //description에 nbsp랑 amp 붙는거 너무 짜증나!
 
             String date = dateData.get(0).text().toString().trim();
@@ -117,7 +116,6 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
             }
 
             Integer snowfall = 0;
-//                if (v[2].matches(".*[0-9]*.")) {
             if (v[2].matches(".*\\d+.*")) {
                 snowfall = Integer.parseInt(v[2].substring(0, v[2].indexOf("결빙")).trim());
                 //적설
@@ -139,32 +137,29 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
                 snowChainSmall = true;
             }
 
-            roadStatuses.add(new RoadStatus(name, description, date, restriction, section, snowfall, freezing, snowChainBig, snowChainSmall));
-            //도로명, description, 발표시간을 생성자로 하여 RoadStatus 생성
-
-
-
+            roadReports.add(new RoadCondition(name, description, date, restriction, section, snowfall, freezing, snowChainBig, snowChainSmall));
+            //도로명, description, 발표시간을 생성자로 하여 RoadCondition 생성
         }
 
-//                Elements roadsData = doc.select("title");
-//                for (int i = 0; i < roadsData.size(); i++) {
-//                roads.add(roadsData.get(i).text().toString().trim());
-//                Log.v(TAG, "Road : " + i + " " + roadsData.get(i).text().toString().trim());
+//                Elements roadTitleData = doc.select("title");
+//                for (int i = 0; i < roadTitleData.size(); i++) {
+//                roads.add(roadTitleData.get(i).text().toString().trim());
+//                Log.v(TAG, "Road : " + i + " " + roadTitleData.get(i).text().toString().trim());
 //                }
 //
-//                Elements statusData = doc.select("description");
-//                for (int i = 0; i < statusData.size(); i++) {
-//                status.add(statusData.get(i).text().replaceAll("&nbsp;","").toString().trim());
-//                Log.v(TAG, "Status : " + i + " " + statusData.get(i).text().replaceAll("&nbsp;","").toString().trim());
+//                Elements roadDescriptionData = doc.select("description");
+//                for (int i = 0; i < roadDescriptionData.size(); i++) {
+//                status.add(roadDescriptionData.get(i).text().replaceAll("&nbsp;","").toString().trim());
+//                Log.v(TAG, "Status : " + i + " " + roadDescriptionData.get(i).text().replaceAll("&nbsp;","").toString().trim());
 //                }
 //
 
 
-//        for (RoadStatus rs : roadStatuses) {
+//        for (RoadCondition rs : roadReports) {
 //            Log.v(TAG, rs.getName() + " : " + rs.getDescription() );
 //        }
 
-        for (RoadStatus rs : roadStatuses) {
+        for (RoadCondition rs : roadReports) {
             Log.v(TAG, rs.getName() + " " + rs.getDate() + " " + rs.isRestriction() + " " + rs.getSection() + " " + rs.getSnowfall() + " " + rs.getFreezing() + " " + rs.isSnowChainBig() + " " + rs.isSnowChainSmall());
         }
 
@@ -173,9 +168,9 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        imgs = new ArrayList<>();
+        roadImgs = new ArrayList<>();
 
-        for (RoadStatus rs : roadStatuses) {
+        for (RoadCondition rs : roadReports) {
             if (rs.isRestriction()) {
                 switch (rs.name) {
                     case "1100도로" :
@@ -184,47 +179,47 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
 //                        handler = new Handler();
 //                        handler.post(r);
                         //여러 ImageView를 동시에 깜빡이게 하기 위해서는 같은 handler를 동시에
-                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_1100));
+                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_1100));
 
                         break;
                     case "5.16도로" :
-                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_516));
+                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_516));
                         break;
                     case "번영로" :
                         break;
                     case "평화로" :
-                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_pyeonghwa));
+                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_pyeonghwa));
                         break;
                     case "한창로" :
-                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_hanchang));
+                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_hanchang));
                         break;
                     case "남조로" :
-                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_namjo));
+                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_namjo));
                         break;
                     case "비자림로" :
-                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_bija));
+                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_bija));
                         break;
                     case "서성로" :
-                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_seoseong));
+                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_seoseong));
                         break;
                     case "제1산록도로" :
-                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_sallok1));
+                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_sallok1));
                         break;
                     case "제2산록도로" :
-                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_sallok2));
+                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_sallok2));
                         break;
                     case "명림로" :
-                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_myeongnim));
+                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_myeongnim));
                         break;
                     case "첨단로" :
-                        imgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_cheomdan));
+                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_cheomdan));
                         break;
                     case "기타도로" :
                         if (rs.section.contains("애조로")) {
-                            imgs.add((ImageView) ((MainActivity) context).findViewById(R.id.road_seoseong));
+                            roadImgs.add((ImageView) ((MainActivity) context).findViewById(R.id.road_seoseong));
                         }
                         if (rs.section.contains("일주도로")) {
-                            imgs.add((ImageView) ((MainActivity) context).findViewById(R.id.road_ilju));
+                            roadImgs.add((ImageView) ((MainActivity) context).findViewById(R.id.road_ilju));
                         }
                         break;
                     default:
@@ -233,15 +228,15 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
             }
         }
 
-        if (imgs.size() == 0) {
+        if (roadImgs.size() == 0) {
             normalTV = (TextView)((MainActivity)context).findViewById(R.id.normal);
             normalTV.setVisibility(View.VISIBLE);
-//            Log.v(TAG, "imgs 비었다");
+//            Log.v(TAG, "roadImgs 비었다");
         } else {
-            for (ImageView i : imgs) {
+            for (ImageView i : roadImgs) {
                 i.setVisibility(View.VISIBLE);
             }
-//            Log.v(TAG, "imgs 안 비었다");
+//            Log.v(TAG, "roadImgs 안 비었다");
         }
 
 //            Animation startAnimation = AnimationUtils.loadAnimation(context, R.anim.blink_animation);
@@ -249,9 +244,9 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
         handler.post(r);
 
 //        super.onPostExecute(aVoid);
-        if (roadStatuses != null) {
+        if (roadReports != null) {
             StringBuilder sb = new StringBuilder();
-            for (RoadStatus rs : roadStatuses) {
+            for (RoadCondition rs : roadReports) {
                 sb.append(rs.getName() + " : " + rs.getDescription() + "\n");
             }
 
@@ -265,20 +260,20 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
         @Override
         public void run() {
             if (img_blink) {
-                if (imgs.size() == 0) {
+                if (roadImgs.size() == 0) {
                     normalTV.setAlpha(0);
                 } else {
-                    for (ImageView i : imgs) {
+                    for (ImageView i : roadImgs) {
                         i.setAlpha(0);
                     }
                     //원래는 "img.setAlpha(0)" 이런 식으로 되어 있었는데 imgs의 모든 ImageView에 값을 할당하도록 변경함
                 }
                 img_blink = false;
             } else {
-                if (imgs.size() == 0) {
+                if (roadImgs.size() == 0) {
                     normalTV.setAlpha(1.0f);
                 } else {
-                    for (ImageView i : imgs) {
+                    for (ImageView i : roadImgs) {
                         i.setAlpha(1000);
                     }
                 }
@@ -294,11 +289,11 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
             handler.removeCallbacks(r);
         }
 
-        if (imgs != null) {
-            if (imgs.size() == 0) {
+        if (roadImgs != null) {
+            if (roadImgs.size() == 0) {
                 normalTV.setVisibility(View.GONE);
             } else {
-                for (ImageView i : imgs) {
+                for (ImageView i : roadImgs) {
                     i.setVisibility(View.GONE);
                 }
             }

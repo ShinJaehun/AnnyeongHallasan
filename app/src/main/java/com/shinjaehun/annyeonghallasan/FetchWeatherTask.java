@@ -417,7 +417,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
 
         String baseDate = new SimpleDateFormat("yyyyMMdd").format(calendar.getTime());
         String baseTime = new SimpleDateFormat("HH").format(calendar.getTime()) + "00";
-        Log.v(LOG_TAG, "The data's Time: " + baseDate + baseTime);
+        Log.v(LOG_TAG, "The weather data's time: " + baseDate + baseTime);
 
 //        // If there's no zip code, there's nothing to look up.  Verify size of params.
 //        if (params.length == 0) {
@@ -460,8 +460,8 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
             final String NUM_OF_ROWS_PARAM = "numOfRows";
             final String NUM_OF_ROWS_VALUE = "12";
 
-            final String TYPE_PARAM = "_type";
-            final String TYPE_VALUE = "json";
+//            final String TYPE_PARAM = "_type";
+//            final String TYPE_VALUE = "json";
 
             Uri builtUri = Uri.parse(WEATHER_BASE_URL).buildUpon()
                     .appendQueryParameter(SERVICE_KEY_PARAM, SERVICE_KEY_VALUE)
@@ -470,7 +470,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
                     .appendQueryParameter(NX_PARAM, NX_VALUE)
                     .appendQueryParameter(NY_PARAM, NY_VALUE)
                     .appendQueryParameter(NUM_OF_ROWS_PARAM, NUM_OF_ROWS_VALUE)
-                    .appendQueryParameter(TYPE_PARAM, TYPE_VALUE)
+//                    .appendQueryParameter(TYPE_PARAM, TYPE_VALUE)
                     .build();
 
             URL url = new URL(URLDecoder.decode(builtUri.toString(), "UTF-8"));

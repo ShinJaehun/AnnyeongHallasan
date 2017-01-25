@@ -4,7 +4,7 @@ package com.shinjaehun.annyeonghallasan;
  * Created by shinjaehun on 2016-12-25.
  */
 
-public class RoadStatus {
+public class RoadCondition {
 
     String name;
     String description;
@@ -16,7 +16,7 @@ public class RoadStatus {
     boolean snowChainBig;
     boolean snowChainSmall;
 
-    public RoadStatus(String name, String description, String date, boolean restriction, String section, Integer snowfall, Integer freezing, boolean snowChainBig, boolean snowChainSmall) {
+    public RoadCondition(String name, String description, String date, boolean restriction, String section, Integer snowfall, Integer freezing, boolean snowChainBig, boolean snowChainSmall) {
         this.name = name;
         this.description = description;
         this.date = date;
