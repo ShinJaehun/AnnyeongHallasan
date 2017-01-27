@@ -168,6 +168,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
+        //각 RoadCondition에 따라서 이미지 표시하기
         roadImgs = new ArrayList<>();
 
         for (RoadCondition rs : roadReports) {
@@ -244,15 +245,16 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
         handler.post(r);
 
 //        super.onPostExecute(aVoid);
-        if (roadReports != null) {
-            StringBuilder sb = new StringBuilder();
-            for (RoadCondition rs : roadReports) {
-                sb.append(rs.getName() + " : " + rs.getDescription() + "\n");
-            }
-
-            TextView statusTV = (TextView)((MainActivity)context).findViewById(R.id.status);
-            statusTV.setText(sb.toString());
-        }
+//        디버깅 때문에 txtbox에 표시하기
+//        if (roadReports != null) {
+//            StringBuilder sb = new StringBuilder();
+//            for (RoadCondition rs : roadReports) {
+//                sb.append(rs.getName() + " : " + rs.getDescription() + "\n");
+//            }
+//
+//            TextView statusTV = (TextView)((MainActivity)context).findViewById(R.id.status);
+//            statusTV.setText(sb.toString());
+//        }
     }
 
     private static Runnable r = new Runnable() {
