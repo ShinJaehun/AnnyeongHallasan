@@ -305,17 +305,15 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
                         break;
                 }
                 StringBuilder sb = new StringBuilder();
-                sb.append(report.getName() + "\n");
+                sb.append(report.getName() + " ");
 
                 WeatherCondition condition = report.getWeatherCondition();
-                float t1h = condition.getT1h();
-                sb.append("현재 기온 : " + t1h + " ℃\n");
 
                 int pty = condition.getPty();
                 if (pty > 0) {
                     switch (pty) {
                         case 1:
-                            sb.append("날씨 : 비" + "\n");
+                            sb.append("날씨 : 비"  + "\n");
                             break;
                         case 2:
                             sb.append("날씨 : 비/눈" + "\n");
@@ -333,16 +331,21 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
                             sb.append("날씨 : 맑음" + "\n");
                             break;
                         case 2:
-                            sb.append("날씨 : 구름 조금" + "\n");
+                            sb.append("날씨 : 구름 조금"  + "\n");
                             break;
                         case 3:
-                            sb.append("날씨 : 구름 많음" + "\n");
+                            sb.append("날씨 : 구름 많음"  + "\n");
                             break;
                         case 4:
                             sb.append("날씨 : 흐림" + "\n");
                             break;
                     }
                 }
+
+                sb.append("기온 : " + condition.getT1h() + " ℃\n");
+                sb.append("풍속 : " + condition.getWsd() + " m/s\n");
+                sb.append("습도 : " + condition.getReh() + " %\n");
+
 
                 weatherTv.setText(sb.toString());
 
