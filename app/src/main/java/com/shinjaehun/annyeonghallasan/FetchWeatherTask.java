@@ -14,17 +14,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
  * Created by shinjaehun on 2017-01-06.
  */
 
-public class FetchWeatherTask extends AsyncTask<Object, Object, WeatherCondition> {
+public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<WeatherReport>> {
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
@@ -50,11 +52,10 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, WeatherCondition
     //    한라산
 //    lat : 33.364235
 //    lon : 126.545517
-    final String NX_VALUE = String.valueOf(53);
-    final String NY_VALUE = String.valueOf(35);
+
 
     @Override
-    protected WeatherCondition doInBackground(Object... params) {
+    protected ArrayList<WeatherReport> doInBackground(Object... params) {
 
         Calendar calendar = Calendar.getInstance();
 
@@ -82,6 +83,18 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, WeatherCondition
         String baseTime = new SimpleDateFormat("HH").format(calendar.getTime()) + "00";
         Log.v(LOG_TAG, "The weather data's time: " + baseDate + " " + baseTime);
 
+        ArrayList<WeatherReport> weatherReports = new ArrayList<>();
+        weatherReports.add(new WeatherReport("한라산", fetchWeatherJson(baseDate, baseTime, 53, 35))); // 33.364235 126.545517
+        weatherReports.add(new WeatherReport("어리목", fetchWeatherJson(baseDate, baseTime, 52, 36))); // 33.391859 126.4933766
+        weatherReports.add(new WeatherReport("영실", fetchWeatherJson(baseDate, baseTime, 52, 34))); // 33.339573 126.478188
+        weatherReports.add(new WeatherReport("성판악", fetchWeatherJson(baseDate, baseTime, 54, 35))); // 33.3844174 126.6166709
+        weatherReports.add(new WeatherReport("관음사", fetchWeatherJson(baseDate, baseTime, 53, 36))); // 33.423744 126.555786
+        weatherReports.add(new WeatherReport("돈내코", fetchWeatherJson(baseDate, baseTime, 53, 34))); // 33.3101519,126.5681177
+        return weatherReports;
+    }
+
+    private WeatherCondition fetchWeatherJson(String baseDate, String baseTime, int x, int y) {
+
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
@@ -102,10 +115,10 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, WeatherCondition
             final String BASE_TIME_VALUE = baseTime;
 
             final String NX_PARAM = "nx";
-//            final String NX_VALUE = String.valueOf(53);
+            final String NX_VALUE = String.valueOf(x);
 
             final String NY_PARAM = "ny";
-//            final String NY_VALUE = String.valueOf(35);
+            final String NY_VALUE = String.valueOf(y);
 
             final String NUM_OF_ROWS_PARAM = "numOfRows";
             final String NUM_OF_ROWS_VALUE = "12";
@@ -190,11 +203,11 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, WeatherCondition
         WeatherCondition weather = null;
 
         try {
-            JSONObject weatherObj = new JSONObject(weatherJsonStr);
-            JSONObject responseObj = weatherObj.getJSONObject("response");
-            JSONObject bodyObj = responseObj.getJSONObject("body");
-            JSONObject itemsObj = bodyObj.getJSONObject("items");
-            JSONArray item = itemsObj.getJSONArray("item");
+            JSONObject weatherJsonStrObj = new JSONObject(weatherJsonStr);
+            JSONObject responseObject = weatherJsonStrObj.getJSONObject("response");
+            JSONObject bodyObject = responseObject.getJSONObject("body");
+            JSONObject itemsObject = bodyObject.getJSONObject("items");
+            JSONArray item = itemsObject.getJSONArray("item");
 
             weather = new WeatherCondition();
             for (int i = 0; i < item.length(); i++) {
@@ -266,49 +279,122 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, WeatherCondition
     }
 
     @Override
-    protected void onPostExecute(WeatherCondition weatherCondition) {
-        if (weatherCondition != null) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("한라산의 날씨\n");
+    protected void onPostExecute(ArrayList<WeatherReport> weatherReports) {
+        TextView weatherTv = null;
+        if (weatherReports.size() != 0) {
 
-            float t1h = weatherCondition.getT1h();
-            sb.append("현재 기온은 : " + t1h + " ℃\n");
-
-            int sky = weatherCondition.getSky();
-            int pty = weatherCondition.getPty();
-            if (pty > 0) {
-                switch (pty) {
-                    case 1:
-                        sb.append("날씨 : 비" + "\n");
+            for (WeatherReport report : weatherReports) {
+                switch (report.getName()) {
+                    case "한라산" :
+                        weatherTv = (TextView)((MainActivity)mContext).findViewById(R.id.weather_hallasan);
                         break;
-                    case 2:
-                        sb.append("날씨 : 비/눈" + "\n");
+                    case "어리목" :
+                        weatherTv = (TextView)((MainActivity)mContext).findViewById(R.id.weather_eorimok);
                         break;
-                    case 3:
-                        sb.append("날씨 : 눈" + "\n");
+                    case "영실" :
+                        weatherTv = (TextView)((MainActivity)mContext).findViewById(R.id.weather_yeongsil);
+                        break;
+                    case "성판악" :
+                        weatherTv = (TextView)((MainActivity)mContext).findViewById(R.id.weather_seongpanak);
+                        break;
+                    case "관음사" :
+                        weatherTv = (TextView)((MainActivity)mContext).findViewById(R.id.weather_kwanumsa);
+                        break;
+                    case "돈내코" :
+                        weatherTv = (TextView)((MainActivity)mContext).findViewById(R.id.weather_donnaeko);
                         break;
                 }
-            }
+                StringBuilder sb = new StringBuilder();
+                sb.append(report.getName() + "\n");
 
-            if (sky > 0) {
-                switch (sky) {
-                    case 1:
-                        sb.append("날씨 : 맑음" + "\n");
-                        break;
-                    case 2:
-                        sb.append("날씨 : 구름 조금" + "\n");
-                        break;
-                    case 3:
-                        sb.append("날씨 : 구름 많음" + "\n");
-                        break;
-                    case 4:
-                        sb.append("날씨 : 맑음" + "\n");
-                        break;
+                WeatherCondition condition = report.getWeatherCondition();
+                float t1h = condition.getT1h();
+                sb.append("현재 기온 : " + t1h + " ℃\n");
+
+                int pty = condition.getPty();
+                if (pty > 0) {
+                    switch (pty) {
+                        case 1:
+                            sb.append("날씨 : 비" + "\n");
+                            break;
+                        case 2:
+                            sb.append("날씨 : 비/눈" + "\n");
+                            break;
+                        case 3:
+                            sb.append("날씨 : 눈" + "\n");
+                            break;
+                    }
                 }
+
+                int sky = condition.getSky();
+                if (sky > 0) {
+                    switch (sky) {
+                        case 1:
+                            sb.append("날씨 : 맑음" + "\n");
+                            break;
+                        case 2:
+                            sb.append("날씨 : 구름 조금" + "\n");
+                            break;
+                        case 3:
+                            sb.append("날씨 : 구름 많음" + "\n");
+                            break;
+                        case 4:
+                            sb.append("날씨 : 흐림" + "\n");
+                            break;
+                    }
+                }
+
+                weatherTv.setText(sb.toString());
+
             }
 
-            TextView statusTV = (TextView) ((MainActivity) mContext).findViewById(R.id.status);
-            statusTV.setText(sb.toString());
+
         }
+
+
+//        TextView status1TV = (TextView) ((MainActivity) mContext).findViewById(R.id.status1);
+//        status1TV.setText(sb.toString());
+
     }
+
 }
+
+//        if (weatherCondition != null) {
+//            StringBuilder sb = new StringBuilder();
+//            sb.append("한라산의 날씨\n");
+//
+//            float t1h = weatherCondition.getT1h();
+//            sb.append("현재 기온은 : " + t1h + " ℃\n");
+//
+//            int pty = weatherCondition.getPty();
+//            if (pty > 0) {
+//                switch (pty) {
+//                    case 1:
+//                        sb.append("날씨 : 비" + "\n");
+//                        break;
+//                    case 2:
+//                        sb.append("날씨 : 비/눈" + "\n");
+//                        break;
+//                    case 3:
+//                        sb.append("날씨 : 눈" + "\n");
+//                        break;
+//                }
+//            }
+//
+//            int sky = weatherCondition.getSky();
+//            if (sky > 0) {
+//                switch (sky) {
+//                    case 1:
+//                        sb.append("날씨 : 맑음" + "\n");
+//                        break;
+//                    case 2:
+//                        sb.append("날씨 : 구름 조금" + "\n");
+//                        break;
+//                    case 3:
+//                        sb.append("날씨 : 구름 많음" + "\n");
+//                        break;
+//                    case 4:
+//                        sb.append("날씨 : 흐림" + "\n");
+//                        break;
+//                }
+//            }

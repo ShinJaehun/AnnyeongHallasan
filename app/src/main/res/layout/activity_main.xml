@@ -26,7 +26,7 @@
                 android:id="@+id/map_jejudo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/jejudo"/>
+                android:src="@drawable/jejudo" />
 
             <ImageView
                 android:id="@+id/road_1100"
@@ -138,19 +138,68 @@
 
         </FrameLayout>
 
-    <TextView
-        android:id="@+id/status"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="통제상황"
-        android:layout_weight="0.57" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/fetch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="받아오기"/>
+            <TextView
+                android:id="@+id/weather_hallasan"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="한라산" />
 
+            <TextView
+                android:id="@+id/weather_eorimok"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="어리목"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/weather_yeongsil"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="영실" />
+
+            <TextView
+                android:id="@+id/weather_seongpanak"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="성판악"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/weather_kwanumsa"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="관음사" />
+
+            <TextView
+                android:id="@+id/weather_donnaeko"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="돈내코"
+                android:layout_weight="1" />
+
+        </LinearLayout>
     </LinearLayout>
 
 

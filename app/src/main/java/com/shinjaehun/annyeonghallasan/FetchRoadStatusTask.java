@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
     private static final String TAG = FetchRoadStatusTask.class.getSimpleName();
 
-    private final Context context;
+    private final Context mContext;
 
     ArrayList<RoadCondition> roadReports;
     String url = "http://www.jjpolice.go.kr/jjpolice/police25/traffic.htm?act=rss";
@@ -38,7 +38,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
     static boolean isDebugging;
 
     public FetchRoadStatusTask(Context context, boolean isDebugging) {
-        this.context = context;
+        this.mContext = context;
         this.isDebugging = isDebugging;
     }
 
@@ -48,7 +48,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
 
         if (isDebugging) {
             //XML 파일로 테스트하기
-            InputStream inputStream = context.getResources().openRawResource(R.raw.sample_data);
+            InputStream inputStream = mContext.getResources().openRawResource(R.raw.sample_data);
             try {
                 doc = Jsoup.parse(inputStream, "UTF-8", url);
             } catch (IOException e) {
@@ -175,52 +175,52 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
             if (rs.isRestriction()) {
                 switch (rs.name) {
                     case "1100도로" :
-//                        img = (ImageView)((MainActivity)context).findViewById(R.id.road_1100);
+//                        img = (ImageView)((MainActivity)mContext).findViewById(R.id.road_1100);
 //                        img.setVisibility(View.VISIBLE);
 //                        handler = new Handler();
 //                        handler.post(r);
                         //여러 ImageView를 동시에 깜빡이게 하기 위해서는 같은 handler를 동시에
-                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_1100));
+                        roadImgs.add((ImageView)((MainActivity) mContext).findViewById(R.id.road_1100));
 
                         break;
                     case "5.16도로" :
-                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_516));
+                        roadImgs.add((ImageView)((MainActivity) mContext).findViewById(R.id.road_516));
                         break;
                     case "번영로" :
                         break;
                     case "평화로" :
-                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_pyeonghwa));
+                        roadImgs.add((ImageView)((MainActivity) mContext).findViewById(R.id.road_pyeonghwa));
                         break;
                     case "한창로" :
-                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_hanchang));
+                        roadImgs.add((ImageView)((MainActivity) mContext).findViewById(R.id.road_hanchang));
                         break;
                     case "남조로" :
-                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_namjo));
+                        roadImgs.add((ImageView)((MainActivity) mContext).findViewById(R.id.road_namjo));
                         break;
                     case "비자림로" :
-                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_bija));
+                        roadImgs.add((ImageView)((MainActivity) mContext).findViewById(R.id.road_bija));
                         break;
                     case "서성로" :
-                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_seoseong));
+                        roadImgs.add((ImageView)((MainActivity) mContext).findViewById(R.id.road_seoseong));
                         break;
                     case "제1산록도로" :
-                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_sallok1));
+                        roadImgs.add((ImageView)((MainActivity) mContext).findViewById(R.id.road_sallok1));
                         break;
                     case "제2산록도로" :
-                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_sallok2));
+                        roadImgs.add((ImageView)((MainActivity) mContext).findViewById(R.id.road_sallok2));
                         break;
                     case "명림로" :
-                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_myeongnim));
+                        roadImgs.add((ImageView)((MainActivity) mContext).findViewById(R.id.road_myeongnim));
                         break;
                     case "첨단로" :
-                        roadImgs.add((ImageView)((MainActivity)context).findViewById(R.id.road_cheomdan));
+                        roadImgs.add((ImageView)((MainActivity) mContext).findViewById(R.id.road_cheomdan));
                         break;
                     case "기타도로" :
                         if (rs.section.contains("애조로")) {
-                            roadImgs.add((ImageView) ((MainActivity) context).findViewById(R.id.road_seoseong));
+                            roadImgs.add((ImageView) ((MainActivity) mContext).findViewById(R.id.road_seoseong));
                         }
                         if (rs.section.contains("일주도로")) {
-                            roadImgs.add((ImageView) ((MainActivity) context).findViewById(R.id.road_ilju));
+                            roadImgs.add((ImageView) ((MainActivity) mContext).findViewById(R.id.road_ilju));
                         }
                         break;
                     default:
@@ -230,7 +230,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
         }
 
         if (roadImgs.size() == 0) {
-            normalTV = (TextView)((MainActivity)context).findViewById(R.id.normal);
+            normalTV = (TextView)((MainActivity) mContext).findViewById(R.id.normal);
             normalTV.setVisibility(View.VISIBLE);
 //            Log.v(TAG, "roadImgs 비었다");
         } else {
@@ -240,7 +240,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
 //            Log.v(TAG, "roadImgs 안 비었다");
         }
 
-//            Animation startAnimation = AnimationUtils.loadAnimation(context, R.anim.blink_animation);
+//            Animation startAnimation = AnimationUtils.loadAnimation(mContext, R.anim.blink_animation);
         handler = new Handler();
         handler.post(r);
 
@@ -252,7 +252,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
 //                sb.append(rs.getName() + " : " + rs.getDescription() + "\n");
 //            }
 //
-//            TextView statusTV = (TextView)((MainActivity)context).findViewById(R.id.status);
+//            TextView statusTV = (TextView)((MainActivity)mContext).findViewById(R.id.status);
 //            statusTV.setText(sb.toString());
 //        }
     }
