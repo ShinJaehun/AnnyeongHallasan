@@ -289,7 +289,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
             //activity restart code
 //            ((Activity)mContext).finish();
 //            mContext.startActivity(intent);
-            
+
         }
     };
 
