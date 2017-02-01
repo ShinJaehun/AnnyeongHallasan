@@ -1,10 +1,13 @@
 package com.shinjaehun.annyeonghallasan;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,6 +28,8 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
     private static final String TAG = FetchRoadStatusTask.class.getSimpleName();
 
     private final Context mContext;
+
+    DialogInfo dialogInfo;
 
     ArrayList<RoadCondition> roadReports;
     String url = "http://www.jjpolice.go.kr/jjpolice/police25/traffic.htm?act=rss";
@@ -171,9 +176,9 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
         //각 RoadCondition에 따라서 이미지 표시하기
         roadImgs = new ArrayList<>();
 
-        for (RoadCondition rs : roadReports) {
-            if (rs.isRestriction()) {
-                switch (rs.name) {
+        for (RoadCondition rc : roadReports) {
+            if (rc.isRestriction()) {
+                switch (rc.name) {
                     case "1100도로" :
 //                        img = (ImageView)((MainActivity)mContext).findViewById(R.id.road_1100);
 //                        img.setVisibility(View.VISIBLE);
@@ -216,10 +221,10 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
                         roadImgs.add((ImageView)((MainActivity) mContext).findViewById(R.id.road_cheomdan));
                         break;
                     case "기타도로" :
-                        if (rs.section.contains("애조로")) {
+                        if (rc.section.contains("애조로")) {
                             roadImgs.add((ImageView) ((MainActivity) mContext).findViewById(R.id.road_seoseong));
                         }
-                        if (rs.section.contains("일주도로")) {
+                        if (rc.section.contains("일주도로")) {
                             roadImgs.add((ImageView) ((MainActivity) mContext).findViewById(R.id.road_ilju));
                         }
                         break;
@@ -255,7 +260,39 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
 //            TextView statusTV = (TextView)((MainActivity)mContext).findViewById(R.id.status);
 //            statusTV.setText(sb.toString());
 //        }
+
+        FrameLayout roadStatusL = (FrameLayout)((MainActivity)mContext).findViewById(R.id.layout_road_status);
+        roadStatusL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogInfo = new DialogInfo(mContext, clickListener, roadReports);
+                dialogInfo.setCanceledOnTouchOutside(false);
+                //dialogResult 외부 화면은 터치해도 반응하지 않음
+                dialogInfo.show();
+            }
+        });
+
+
     }
+
+
+    private View.OnClickListener clickListener = new View.OnClickListener() {
+        //dialog의 clickListener를 여기서 처리한다.
+        @Override
+        public void onClick(View v) {
+
+            //dialog 확인 버튼을 클릭하면 액티비티 재시작!
+            Intent intent = ((Activity)mContext).getIntent();
+            dialogInfo.dismiss();
+            //dialog를 dismiss()하지 않으면 android view windowleaked 오류가 발생한다.
+
+            //activity restart code
+//            ((Activity)mContext).finish();
+//            mContext.startActivity(intent);
+            
+        }
+    };
+
 
     private static Runnable r = new Runnable() {
 
