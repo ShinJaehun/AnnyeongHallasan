@@ -48,7 +48,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
 
         if (isDebugging) {
             //XML 파일로 테스트하기
-            InputStream inputStream = mContext.getResources().openRawResource(R.raw.sample_data);
+            InputStream inputStream = mContext.getResources().openRawResource(R.raw.sample_data2);
             try {
                 doc = Jsoup.parse(inputStream, "UTF-8", url);
             } catch (IOException e) {
@@ -115,15 +115,15 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
                 //통제구간 : "제주대 입구 ~ 성판악"
             }
 
-            Integer snowfall = 0;
+            Float snowfall = 0f;
             if (v[2].matches(".*\\d+.*")) {
-                snowfall = Integer.parseInt(v[2].substring(0, v[2].indexOf("결빙")).trim());
+                snowfall = Float.parseFloat(v[2].substring(0, v[2].indexOf("결빙")).trim());
                 //적설
             }
 
-            Integer freezing = 0;
+            Float freezing = 0f;
             if (v[3].matches(".*\\d+.*")) {
-                freezing = Integer.parseInt(v[3].substring(0, v[3].indexOf("대형")).trim());
+                freezing = Float.parseFloat(v[3].substring(0, v[3].indexOf("대형")).trim());
                 //결빙
             }
 

@@ -11,12 +11,12 @@ public class RoadCondition {
     String date;
     boolean restriction;
     String section;
-    Integer snowfall;
-    Integer freezing;
+    Float snowfall;
+    Float freezing;
     boolean snowChainBig;
     boolean snowChainSmall;
 
-    public RoadCondition(String name, String description, String date, boolean restriction, String section, Integer snowfall, Integer freezing, boolean snowChainBig, boolean snowChainSmall) {
+    public RoadCondition(String name, String description, String date, boolean restriction, String section, Float snowfall, Float freezing, boolean snowChainBig, boolean snowChainSmall) {
         this.name = name;
         this.description = description;
         this.date = date;
@@ -40,11 +40,11 @@ public class RoadCondition {
         return date;
     }
 
-    public Integer getSnowfall() {
+    public Float getSnowfall() {
         return snowfall;
     }
 
-    public Integer getFreezing() {
+    public Float getFreezing() {
         return freezing;
     }
 
