@@ -31,7 +31,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
 
     DialogInfo dialogInfo;
 
-    ArrayList<RoadCondition> roadReports;
+    RoadReport roadReport;
     String url = "http://www.jjpolice.go.kr/jjpolice/police25/traffic.htm?act=rss";
 
     static ArrayList<ImageView> roadImgs;
@@ -53,7 +53,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
 
         if (isDebugging) {
             //XML 파일로 테스트하기
-            InputStream inputStream = mContext.getResources().openRawResource(R.raw.sample_data2);
+            InputStream inputStream = mContext.getResources().openRawResource(R.raw.sample_data1);
             try {
                 doc = Jsoup.parse(inputStream, "UTF-8", url);
             } catch (IOException e) {
@@ -72,7 +72,11 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
         Elements roadTitleData = doc.select("title");
         Elements roadDescriptionData = doc.select("description");
 
-        roadReports = new ArrayList<>();
+        String date = dateData.get(0).text().toString().trim();
+
+        roadReport = new RoadReport(date);
+
+        ArrayList<RoadCondition> roadConditions  = new ArrayList<>();
         //제주지방경찰청에서 제공하는 13개의 도로 DATA
 
         for (int i = 1; i < 14; i++) {
@@ -94,16 +98,15 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
             String description = roadDescriptionData.get(i).text().replaceAll("&nbsp;", "").replaceAll("&amp;nbsp;", "").toString().trim();
             //description에 nbsp랑 amp 붙는거 너무 짜증나!
 
-            String date = dateData.get(0).text().toString().trim();
             String[] v = description.split(":", -6);
 
-//                    Log.v(TAG, name + " 크기는 " + v.length);
-//                    Log.v(TAG, name + "," + v[0].trim() );
-//                    Log.v(TAG, name + "," + v[1].trim() );
-//                    Log.v(TAG, name + "," + v[2].trim() );
-//                    Log.v(TAG, name + "," + v[3].trim() );
-//                    Log.v(TAG, name + "," + v[4].trim() );
-//                    Log.v(TAG, name + "," + v[5].trim() );
+//                    Log.v(TAG, location + " 크기는 " + v.length);
+//                    Log.v(TAG, location + "," + v[0].trim() );
+//                    Log.v(TAG, location + "," + v[1].trim() );
+//                    Log.v(TAG, location + "," + v[2].trim() );
+//                    Log.v(TAG, location + "," + v[3].trim() );
+//                    Log.v(TAG, location + "," + v[4].trim() );
+//                    Log.v(TAG, location + "," + v[5].trim() );
 /*
                     통제하는 경우 description 내용
                     구간 : 제주대 입구 ~ 성판악 적설 : 1 결빙 : 대형 통재상항 :    소형 통재상항 : 체인
@@ -142,9 +145,11 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
                 snowChainSmall = true;
             }
 
-            roadReports.add(new RoadCondition(name, description, date, restriction, section, snowfall, freezing, snowChainBig, snowChainSmall));
+            roadConditions.add(new RoadCondition(name, description, date, restriction, section, snowfall, freezing, snowChainBig, snowChainSmall));
             //도로명, description, 발표시간을 생성자로 하여 RoadCondition 생성
         }
+
+        roadReport.setRoadConditions(roadConditions);
 
 //                Elements roadTitleData = doc.select("title");
 //                for (int i = 0; i < roadTitleData.size(); i++) {
@@ -160,11 +165,11 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
 //
 
 
-//        for (RoadCondition rs : roadReports) {
-//            Log.v(TAG, rs.getName() + " : " + rs.getDescription() );
+//        for (RoadCondition rs : roadConditions) {
+//            Log.v(TAG, rs.getLocation() + " : " + rs.getDescription() );
 //        }
 
-        for (RoadCondition rs : roadReports) {
+        for (RoadCondition rs : roadReport.getRoadConditions()) {
             Log.v(TAG, rs.getName() + " " + rs.getDate() + " " + rs.isRestriction() + " " + rs.getSection() + " " + rs.getSnowfall() + " " + rs.getFreezing() + " " + rs.isSnowChainBig() + " " + rs.isSnowChainSmall());
         }
 
@@ -176,7 +181,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
         //각 RoadCondition에 따라서 이미지 표시하기
         roadImgs = new ArrayList<>();
 
-        for (RoadCondition rc : roadReports) {
+        for (RoadCondition rc : roadReport.getRoadConditions()) {
             if (rc.isRestriction()) {
                 switch (rc.name) {
                     case "1100도로" :
@@ -251,10 +256,10 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
 
 //        super.onPostExecute(aVoid);
 //        디버깅 때문에 txtbox에 표시하기
-//        if (roadReports != null) {
+//        if (roadConditions != null) {
 //            StringBuilder sb = new StringBuilder();
-//            for (RoadCondition rs : roadReports) {
-//                sb.append(rs.getName() + " : " + rs.getDescription() + "\n");
+//            for (RoadCondition rs : roadConditions) {
+//                sb.append(rs.getLocation() + " : " + rs.getDescription() + "\n");
 //            }
 //
 //            TextView statusTV = (TextView)((MainActivity)mContext).findViewById(R.id.status);
@@ -265,7 +270,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
         roadStatusL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialogInfo = new DialogInfo(mContext, clickListener, roadReports);
+                dialogInfo = new DialogInfo(mContext, clickListener, roadReport);
                 dialogInfo.setCanceledOnTouchOutside(false);
                 //dialogResult 외부 화면은 터치해도 반응하지 않음
                 dialogInfo.show();

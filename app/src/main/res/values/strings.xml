@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">AnnyeongHallasan</string>
+    <string name ="app_name">안녕 한라산</string>
+    <string name ="dialog_info_title">교통통제상황</string>
+    <string name ="dialog_info_update_date">업데이트 시각</string>
+    <string name ="dialog_info_update_date_example">2017년 1월 24일 15시 30분</string>
+
+    <string name ="dialog_info_normal_traffic">정상운행</string>
+    <string name ="dialog_info_confirm">확인</string>
 </resources>

@@ -13,7 +13,10 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by shinjaehun on 2017-02-02.
@@ -22,23 +25,20 @@ import java.util.ArrayList;
 public class DialogInfo extends Dialog {
     private static final String TAG = DialogInfo.class.getSimpleName();
 
-    private TextView updateYearTV;
-    private TextView updateMonthTV;
-    private TextView updateDayTV;
-    private TextView updateHourTV;
-    private TextView updateMinuteTV;
-    private TextView statusNormalTV;
+    private TextView updateDateTV;
+
+    private TextView normalTrafficTV;
     private Button confirmBTN;
 
     private View.OnClickListener listener;
-    private ArrayList<RoadCondition> roadReports;
+    private RoadReport roadReport;
 
-    public DialogInfo(Context context, View.OnClickListener listener, ArrayList<RoadCondition> roadReports) {
+    public DialogInfo(Context context, View.OnClickListener listener, RoadReport roadReport) {
         super(context);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         this.listener = listener;
-        this.roadReports = roadReports;
+        this.roadReport = roadReport;
 
     }
 
@@ -55,18 +55,26 @@ public class DialogInfo extends Dialog {
 
         setContentView(R.layout.dialog_info);
 
-        updateYearTV = (TextView)findViewById(R.id.text_update_year);
-        updateMonthTV = (TextView)findViewById(R.id.text_update_month);
-        updateDayTV = (TextView)findViewById(R.id.text_update_day);
-        updateHourTV = (TextView)findViewById(R.id.text_update_hour);
-        updateMinuteTV = (TextView)findViewById(R.id.text_update_minute);
-        statusNormalTV = (TextView)findViewById(R.id.text_status_normal);
+        updateDateTV = (TextView)findViewById(R.id.text_update_date);
+        normalTrafficTV = (TextView)findViewById(R.id.text_normal_traffic);
 
-        StringBuffer sb = new StringBuffer();
-        for (RoadCondition rc : roadReports) {
-            sb.append(rc.getName() + " " + rc.getDate() + " " + rc.isRestriction() + " " + rc.getSection() + " " + rc.getSnowfall() + " " + rc.getFreezing() + " " + rc.isSnowChainBig() + " " + rc.isSnowChainSmall() + "\n");
+        String rawDate = roadReport.getUpdateDate();
+
+        try {
+            Date date = new SimpleDateFormat("yyyyMMddHHmm").parse(rawDate);
+            updateDateTV.setText(new SimpleDateFormat("yyyy년 MM월 dd일 aa hh시 mm분").format(date));
+
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
-        statusNormalTV.setText(sb.toString());
+
+//        StringBuffer sb = new StringBuffer();
+//        for (RoadCondition rc : roadReport.getRoadConditions()) {
+//            sb.append(rc.getName() + " " + rc.getDate() + " " + rc.isRestriction() + " " + rc.getSection() + " " + rc.getSnowfall() + " " + rc.getFreezing() + " " + rc.isSnowChainBig() + " " + rc.isSnowChainSmall() + "\n");
+//        }
+
+
+
 
         //해당 유형별 해결한 문제 수 표시
 //        int currentOperationNumber = 0;
@@ -113,7 +121,7 @@ public class DialogInfo extends Dialog {
 //        });
 
 //        for (Achievement a : userAchievements) {
-//            Log.v(LOG_TAG, "Today Achievement : " + a.getName() + " " + a.getType() + " " + a.getAka() + " " + a.getNumber() + " " + a.getDay());
+//            Log.v(LOG_TAG, "Today Achievement : " + a.getLocation() + " " + a.getType() + " " + a.getAka() + " " + a.getNumber() + " " + a.getDay());
 //        }
 
         confirmBTN.setOnClickListener(listener);

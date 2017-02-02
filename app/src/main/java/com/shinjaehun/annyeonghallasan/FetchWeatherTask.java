@@ -14,7 +14,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -284,7 +283,7 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
         if (weatherReports.size() != 0) {
 
             for (WeatherReport report : weatherReports) {
-                switch (report.getName()) {
+                switch (report.getLocation()) {
                     case "한라산" :
                         weatherTv = (TextView)((MainActivity)mContext).findViewById(R.id.weather_hallasan);
                         break;
@@ -305,7 +304,7 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
                         break;
                 }
                 StringBuilder sb = new StringBuilder();
-                sb.append(report.getName() + " ");
+                sb.append(report.getLocation() + " ");
 
                 WeatherCondition condition = report.getWeatherCondition();
 

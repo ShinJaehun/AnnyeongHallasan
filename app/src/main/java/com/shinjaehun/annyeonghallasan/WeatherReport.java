@@ -5,16 +5,16 @@ package com.shinjaehun.annyeonghallasan;
  */
 
 public class WeatherReport {
-    String name;
+    String location;
     WeatherCondition weatherCondition;
 
-    public WeatherReport(String name, WeatherCondition weatherCondition) {
-        this.name = name;
+    public WeatherReport(String location, WeatherCondition weatherCondition) {
+        this.location = location;
         this.weatherCondition = weatherCondition;
     }
 
-    public String getName() {
-        return name;
+    public String getLocation() {
+        return location;
     }
 
     public WeatherCondition getWeatherCondition() {
