@@ -53,7 +53,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
 
         if (isDebugging) {
             //XML 파일로 테스트하기
-            InputStream inputStream = mContext.getResources().openRawResource(R.raw.sample_data1);
+            InputStream inputStream = mContext.getResources().openRawResource(R.raw.sample_20170210);
             try {
                 doc = Jsoup.parse(inputStream, "UTF-8", url);
             } catch (IOException e) {

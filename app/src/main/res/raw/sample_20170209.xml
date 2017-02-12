@@ -1,0 +1,506 @@
+﻿<rss version="2.0">
+<channel>
+<title>교통통제상황 2017. 02. 09 07:27 현재</title>
+<link>
+http://www.jjpolice.go.kr/jjpolice/notice/traffic.htm
+</link>
+<date>201702090727</date>
+<description>교통통제상황</description>
+<seq>422</seq>
+<language>ko-kr</language>
+<item>
+<title>
+<![CDATA[ 1100도로(1139) ]]>
+</title>
+<road>
+<![CDATA[ TCR001 ]]>
+</road>
+<section>
+<![CDATA[ 1100도로 어승생~영실입구 ]]>
+</section>
+<deepSnow>
+<![CDATA[ 3 ]]>
+</deepSnow>
+<freezing>
+<![CDATA[ 0.5 ]]>
+</freezing>
+<contolL>
+<![CDATA[ TCS002 ]]>
+</contolL>
+<contolS>
+<![CDATA[ TCS002 ]]>
+</contolS>
+<etcL>
+<![CDATA[ ]]>
+</etcL>
+<etcS>
+<![CDATA[ ]]>
+</etcS>
+<description>
+<![CDATA[
+구간 : 1100도로 어승생~영실입구
+ 적설 : 3
+ 결빙 : 0.5
+ 대형 통재상항 : 체인 
+ 소형 통재상항 : 체인
+]]>
+</description>
+</item>
+<item>
+<title>
+<![CDATA[ 5.16도로(1131) ]]>
+</title>
+<road>
+<![CDATA[ TCR002 ]]>
+</road>
+<section>
+<![CDATA[ 516도로 제대입구~수막교 ]]>
+</section>
+<deepSnow>
+<![CDATA[ 2 ]]>
+</deepSnow>
+<freezing>
+<![CDATA[ 1 ]]>
+</freezing>
+<contolL>
+<![CDATA[ TCS001 ]]>
+</contolL>
+<contolS>
+<![CDATA[ TCS002 ]]>
+</contolS>
+<etcL>
+<![CDATA[ ]]>
+</etcL>
+<etcS>
+<![CDATA[ ]]>
+</etcS>
+<description>
+<![CDATA[
+구간 : 516도로 제대입구~수막교
+ 적설 : 2
+ 결빙 : 1
+ 대형 통재상항 : &nbsp; &nbsp; &nbsp; 
+ 소형 통재상항 : 체인
+]]>
+</description>
+</item>
+<item>
+<title>
+<![CDATA[ 번영로(97) ]]>
+</title>
+<road>
+<![CDATA[ TCR003 ]]>
+</road>
+<section>
+<![CDATA[ 정상 ]]>
+</section>
+<deepSnow>
+<![CDATA[ ]]>
+</deepSnow>
+<freezing>
+<![CDATA[ ]]>
+</freezing>
+<contolL>
+<![CDATA[ TCS001 ]]>
+</contolL>
+<contolS>
+<![CDATA[ TCS001 ]]>
+</contolS>
+<etcL>
+<![CDATA[ ]]>
+</etcL>
+<etcS>
+<![CDATA[ ]]>
+</etcS>
+<description>
+<![CDATA[
+구간 : 정상 
+ 적설 : 
+ 결빙 : 
+ 대형 통재상항 : &nbsp; &nbsp; &nbsp; 
+ 소형 통재상항 : &nbsp; &nbsp; &nbsp;
+]]>
+</description>
+</item>
+<item>
+<title>
+<![CDATA[ 평화로(1135) ]]>
+</title>
+<road>
+<![CDATA[ TCR004 ]]>
+</road>
+<section>
+<![CDATA[ 정상 ]]>
+</section>
+<deepSnow>
+<![CDATA[ ]]>
+</deepSnow>
+<freezing>
+<![CDATA[ ]]>
+</freezing>
+<contolL>
+<![CDATA[ TCS001 ]]>
+</contolL>
+<contolS>
+<![CDATA[ TCS001 ]]>
+</contolS>
+<etcL>
+<![CDATA[ ]]>
+</etcL>
+<etcS>
+<![CDATA[ ]]>
+</etcS>
+<description>
+<![CDATA[
+구간 : 정상
+ 적설 : 
+ 결빙 : 
+ 대형 통재상항 : &nbsp; &nbsp; &nbsp; 
+ 소형 통재상항 : &nbsp; &nbsp; &nbsp;
+]]>
+</description>
+</item>
+<item>
+<title>
+<![CDATA[ 한창로(1116) ]]>
+</title>
+<road>
+<![CDATA[ TCR005 ]]>
+</road>
+<section>
+<![CDATA[ 동광검문소~ 블랙스톤골프장 ]]>
+</section>
+<deepSnow>
+<![CDATA[ 0.5 ]]>
+</deepSnow>
+<freezing>
+<![CDATA[ 0.5 ]]>
+</freezing>
+<contolL>
+<![CDATA[ TCS001 ]]>
+</contolL>
+<contolS>
+<![CDATA[ TCS002 ]]>
+</contolS>
+<etcL>
+<![CDATA[ ]]>
+</etcL>
+<etcS>
+<![CDATA[ ]]>
+</etcS>
+<description>
+<![CDATA[
+구간 : 동광검문소~ 블랙스톤골프장
+ 적설 : 0.5
+ 결빙 : 0.5
+ 대형 통재상항 : &nbsp; &nbsp; &nbsp; 
+ 소형 통재상항 : 체인
+]]>
+</description>
+</item>
+<item>
+<title>
+<![CDATA[ 남조로(1118) ]]>
+</title>
+<road>
+<![CDATA[ TCR006 ]]>
+</road>
+<section>
+<![CDATA[ 남조로 돌문화공원~수망4가 ]]>
+</section>
+<deepSnow>
+<![CDATA[ 2 ]]>
+</deepSnow>
+<freezing>
+<![CDATA[ 1 ]]>
+</freezing>
+<contolL>
+<![CDATA[ TCS001 ]]>
+</contolL>
+<contolS>
+<![CDATA[ TCS002 ]]>
+</contolS>
+<etcL>
+<![CDATA[ ]]>
+</etcL>
+<etcS>
+<![CDATA[ ]]>
+</etcS>
+<description>
+<![CDATA[
+구간 : 남조로 돌문화공원~수망4가
+ 적설 : 2
+ 결빙 : 1
+ 대형 통재상항 : &nbsp; &nbsp; &nbsp; 
+ 소형 통재상항 : 체인
+]]>
+</description>
+</item>
+<item>
+<title>
+<![CDATA[ 비자림로(1112) ]]>
+</title>
+<road>
+<![CDATA[ TCR007 ]]>
+</road>
+<section>
+<![CDATA[ 비자림로 교래4가~5.16교래3가 ]]>
+</section>
+<deepSnow>
+<![CDATA[ 2 ]]>
+</deepSnow>
+<freezing>
+<![CDATA[ 1 ]]>
+</freezing>
+<contolL>
+<![CDATA[ TCS001 ]]>
+</contolL>
+<contolS>
+<![CDATA[ TCS002 ]]>
+</contolS>
+<etcL>
+<![CDATA[ ]]>
+</etcL>
+<etcS>
+<![CDATA[ ]]>
+</etcS>
+<description>
+<![CDATA[
+구간 : 비자림로 교래4가~5.16교래3가
+ 적설 : 2
+ 결빙 : 1
+ 대형 통재상항 : &nbsp; &nbsp; &nbsp; 
+ 소형 통재상항 : 체인
+]]>
+</description>
+</item>
+<item>
+<title>
+<![CDATA[ 서성로(1119) ]]>
+</title>
+<road>
+<![CDATA[ TCR008 ]]>
+</road>
+<section>
+<![CDATA[ 정상 ]]>
+</section>
+<deepSnow>
+<![CDATA[ ]]>
+</deepSnow>
+<freezing>
+<![CDATA[ ]]>
+</freezing>
+<contolL>
+<![CDATA[ TCS001 ]]>
+</contolL>
+<contolS>
+<![CDATA[ TCS001 ]]>
+</contolS>
+<etcL>
+<![CDATA[ ]]>
+</etcL>
+<etcS>
+<![CDATA[ ]]>
+</etcS>
+<description>
+<![CDATA[
+구간 : 정상 
+ 적설 : 
+ 결빙 : 
+ 대형 통재상항 : &nbsp; &nbsp; &nbsp; 
+ 소형 통재상항 : &nbsp; &nbsp; &nbsp;
+]]>
+</description>
+</item>
+<item>
+<title>
+<![CDATA[ 제1산록도로(1117) ]]>
+</title>
+<road>
+<![CDATA[ TCR009 ]]>
+</road>
+<section>
+<![CDATA[ 제1산록도로 5.16입구 제주시경계 ]]>
+</section>
+<deepSnow>
+<![CDATA[ 2 ]]>
+</deepSnow>
+<freezing>
+<![CDATA[ 1 ]]>
+</freezing>
+<contolL>
+<![CDATA[ TCS001 ]]>
+</contolL>
+<contolS>
+<![CDATA[ TCS002 ]]>
+</contolS>
+<etcL>
+<![CDATA[ ]]>
+</etcL>
+<etcS>
+<![CDATA[ ]]>
+</etcS>
+<description>
+<![CDATA[
+구간 : 제1산록도로 5.16입구 제주시경계
+ 적설 : 2
+ 결빙 : 1
+ 대형 통재상항 : &nbsp; &nbsp; &nbsp; 
+ 소형 통재상항 : 체인
+]]>
+</description>
+</item>
+<item>
+<title>
+<![CDATA[ 제2산록도로(1115) ]]>
+</title>
+<road>
+<![CDATA[ TCR010 ]]>
+</road>
+<section>
+<![CDATA[ 제2산록도로 레이크힐스~광평교차로 ]]>
+</section>
+<deepSnow>
+<![CDATA[ 0.5 ]]>
+</deepSnow>
+<freezing>
+<![CDATA[ 0.5 ]]>
+</freezing>
+<contolL>
+<![CDATA[ TCS001 ]]>
+</contolL>
+<contolS>
+<![CDATA[ TCS002 ]]>
+</contolS>
+<etcL>
+<![CDATA[ ]]>
+</etcL>
+<etcS>
+<![CDATA[ ]]>
+</etcS>
+<description>
+<![CDATA[
+구간 : 제2산록도로 레이크힐스~광평교차로
+ 적설 : 0.5
+ 결빙 : 0.5
+ 대형 통재상항 : &nbsp; &nbsp; &nbsp; 
+ 소형 통재상항 : 체인
+]]>
+</description>
+</item>
+<item>
+<title>
+<![CDATA[ 명림로 ]]>
+</title>
+<road>
+<![CDATA[ TCR011 ]]>
+</road>
+<section>
+<![CDATA[ 정상 ]]>
+</section>
+<deepSnow>
+<![CDATA[ ]]>
+</deepSnow>
+<freezing>
+<![CDATA[ ]]>
+</freezing>
+<contolL>
+<![CDATA[ TCS001 ]]>
+</contolL>
+<contolS>
+<![CDATA[ TCS001 ]]>
+</contolS>
+<etcL>
+<![CDATA[ ]]>
+</etcL>
+<etcS>
+<![CDATA[ ]]>
+</etcS>
+<description>
+<![CDATA[
+구간 : 정상
+ 적설 : 
+ 결빙 : 
+ 대형 통재상항 : &nbsp; &nbsp; &nbsp; 
+ 소형 통재상항 : &nbsp; &nbsp; &nbsp;
+]]>
+</description>
+</item>
+<item>
+<title>
+<![CDATA[ 첨단로 ]]>
+</title>
+<road>
+<![CDATA[ TCR012 ]]>
+</road>
+<section>
+<![CDATA[ 정상 ]]>
+</section>
+<deepSnow>
+<![CDATA[ ]]>
+</deepSnow>
+<freezing>
+<![CDATA[ ]]>
+</freezing>
+<contolL>
+<![CDATA[ TCS001 ]]>
+</contolL>
+<contolS>
+<![CDATA[ TCS001 ]]>
+</contolS>
+<etcL>
+<![CDATA[ ]]>
+</etcL>
+<etcS>
+<![CDATA[ ]]>
+</etcS>
+<description>
+<![CDATA[
+구간 : 정상 
+ 적설 : 
+ 결빙 : 
+ 대형 통재상항 : &nbsp; &nbsp; &nbsp; 
+ 소형 통재상항 : &nbsp; &nbsp; &nbsp;
+]]>
+</description>
+</item>
+<item>
+<title>
+<![CDATA[ 기타도로(애조로,일주도로) ]]>
+</title>
+<road>
+<![CDATA[ TCR013 ]]>
+</road>
+<section>
+<![CDATA[ 정상 ]]>
+</section>
+<deepSnow>
+<![CDATA[ ]]>
+</deepSnow>
+<freezing>
+<![CDATA[ ]]>
+</freezing>
+<contolL>
+<![CDATA[ TCS001 ]]>
+</contolL>
+<contolS>
+<![CDATA[ TCS001 ]]>
+</contolS>
+<etcL>
+<![CDATA[ ]]>
+</etcL>
+<etcS>
+<![CDATA[ ]]>
+</etcS>
+<description>
+<![CDATA[
+구간 : 정상 
+ 적설 : 
+ 결빙 : 
+ 대형 통재상항 : &nbsp; &nbsp; &nbsp; 
+ 소형 통재상항 : &nbsp; &nbsp; &nbsp;
+]]>
+</description>
+</item>
+</channel>
+</rss>
