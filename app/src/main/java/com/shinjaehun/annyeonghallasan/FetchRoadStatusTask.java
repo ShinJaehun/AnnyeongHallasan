@@ -5,14 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.shinjaehun.annyeonghallasan.data.RoadCondition;
-import com.shinjaehun.annyeonghallasan.data.RoadReport;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -27,14 +25,13 @@ import java.util.ArrayList;
  */
 
 
-public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
+public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<RoadCondition>> {
     private static final String TAG = FetchRoadStatusTask.class.getSimpleName();
 
     private final Context mContext;
 
     DialogInfo dialogInfo;
 
-    RoadReport roadReport;
     String url = "http://www.jjpolice.go.kr/jjpolice/police25/traffic.htm?act=rss";
 
     static ArrayList<ImageView> roadImgs;
@@ -51,7 +48,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(Void... voids) {
+    protected ArrayList<RoadCondition> doInBackground(Void... voids) {
         Document doc = null;
 
         if (isDebugging) {
@@ -76,8 +73,6 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
         Elements roadDescriptionData = doc.select("description");
 
         String date = dateData.get(0).text().toString().trim();
-
-        roadReport = new RoadReport(date);
 
         ArrayList<RoadCondition> roadConditions  = new ArrayList<>();
         //제주지방경찰청에서 제공하는 13개의 도로 DATA
@@ -152,7 +147,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
             //도로명, description, 발표시간을 생성자로 하여 RoadCondition 생성
         }
 
-        roadReport.setRoadConditions(roadConditions);
+//        roadReport.setRoadConditions(roadConditions);
 
 //                Elements roadTitleData = doc.select("title");
 //                for (int i = 0; i < roadTitleData.size(); i++) {
@@ -172,19 +167,19 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
 //            Log.v(TAG, rs.getLocation() + " : " + rs.getDescription() );
 //        }
 
-        for (RoadCondition rs : roadReport.getRoadConditions()) {
-            Log.v(TAG, rs.getName() + " " + rs.getDate() + " " + rs.isRestriction() + " " + rs.getSection() + " " + rs.getSnowfall() + " " + rs.getFreezing() + " " + rs.isSnowChainBig() + " " + rs.isSnowChainSmall());
-        }
+//        for (RoadCondition rs : roadReport.getRoadConditions()) {
+//            Log.v(TAG, rs.getName() + " " + rs.getDate() + " " + rs.isRestriction() + " " + rs.getSection() + " " + rs.getSnowfall() + " " + rs.getFreezing() + " " + rs.isSnowChainBig() + " " + rs.isSnowChainSmall());
+//        }
 
-        return null;
+        return roadConditions;
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
+    protected void onPostExecute(final ArrayList<RoadCondition> roadConditions) {
         //각 RoadCondition에 따라서 이미지 표시하기
         roadImgs = new ArrayList<>();
 
-        for (RoadCondition rc : roadReport.getRoadConditions()) {
+        for (RoadCondition rc : roadConditions) {
             if (rc.isRestriction()) {
                 switch (rc.getName()) {
                     case "1100도로" :
@@ -273,7 +268,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
         roadStatusL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialogInfo = new DialogInfo(mContext, clickListener, roadReport);
+                dialogInfo = new DialogInfo(mContext, clickListener, roadConditions);
                 dialogInfo.setCanceledOnTouchOutside(false);
                 //dialogResult 외부 화면은 터치해도 반응하지 않음
                 dialogInfo.show();

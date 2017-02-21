@@ -9,11 +9,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.shinjaehun.annyeonghallasan.data.RoadReport;
+import com.shinjaehun.annyeonghallasan.data.RoadCondition;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 
 /**
  * Created by shinjaehun on 2017-02-02.
@@ -28,14 +26,14 @@ public class DialogInfo extends Dialog {
     private Button confirmBTN;
 
     private View.OnClickListener listener;
-    private RoadReport roadReport;
+    private ArrayList<RoadCondition> roadConditions;
 
-    public DialogInfo(Context context, View.OnClickListener listener, RoadReport roadReport) {
+    public DialogInfo(Context context, View.OnClickListener listener, ArrayList<RoadCondition> roadConditions) {
         super(context);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         this.listener = listener;
-        this.roadReport = roadReport;
+        this.roadConditions = roadConditions;
 
     }
 
@@ -55,15 +53,18 @@ public class DialogInfo extends Dialog {
         updateDateTV = (TextView)findViewById(R.id.text_update_date);
         normalTrafficTV = (TextView)findViewById(R.id.text_normal_traffic);
 
-        String rawDate = roadReport.getUpdateDate();
+        //이젠 안돼
+//        String rawDate = roadReport.getUpdateDate();
+//
+//        try {
+//            Date date = new SimpleDateFormat("yyyyMMddHHmm").parse(rawDate);
+//            updateDateTV.setText(new SimpleDateFormat("yyyy년 MM월 dd일 aa hh시 mm분").format(date));
+//
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
 
-        try {
-            Date date = new SimpleDateFormat("yyyyMMddHHmm").parse(rawDate);
-            updateDateTV.setText(new SimpleDateFormat("yyyy년 MM월 dd일 aa hh시 mm분").format(date));
 
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
 
 //        StringBuffer sb = new StringBuffer();
 //        for (RoadCondition rc : roadReport.getRoadConditions()) {
