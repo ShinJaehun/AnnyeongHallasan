@@ -4,10 +4,12 @@ package com.shinjaehun.annyeonghallasan.data;
  * Created by shinjaehun on 2017-01-28.
  */
 
-public class WeatherCondition {
+public class Weather {
     private String location;
+
     private String baseDate;
     private String baseTime;
+
     private int nx;
     private int ny;
 
@@ -22,7 +24,7 @@ public class WeatherCondition {
     private float vec;
     private float wsd;
 
-    public WeatherCondition() {
+    public Weather() {
     }
 
     public String getLocation() {

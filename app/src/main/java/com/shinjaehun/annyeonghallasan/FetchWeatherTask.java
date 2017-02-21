@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.shinjaehun.annyeonghallasan.data.WeatherCondition;
+import com.shinjaehun.annyeonghallasan.data.Weather;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,7 +27,7 @@ import java.util.Calendar;
  * Created by shinjaehun on 2017-01-06.
  */
 
-public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<WeatherCondition>> {
+public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weather>> {
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
@@ -56,7 +56,7 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
 
 
     @Override
-    protected ArrayList<WeatherCondition> doInBackground(Object... params) {
+    protected ArrayList<Weather> doInBackground(Object... params) {
 
         Calendar calendar = Calendar.getInstance();
 
@@ -93,18 +93,18 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
 //        weatherReports.add(new WeatherReport("돈내코", fetchWeatherJson(baseDate, baseTime, 53, 34))); // 33.3101519,126.5681177
 //        return weatherReports;
 
-        ArrayList<WeatherCondition> weatherConditions = new ArrayList<>();
-        weatherConditions.add(fetchWeatherJson("한라산", baseDate, baseTime, 53, 35)); // 33.364235 126.545517
-        weatherConditions.add(fetchWeatherJson("어리목", baseDate, baseTime, 52, 36)); // 33.391859 126.4933766
-        weatherConditions.add(fetchWeatherJson("영실", baseDate, baseTime, 52, 34)); // 33.339573 126.478188
-        weatherConditions.add(fetchWeatherJson("성판악", baseDate, baseTime, 54, 35)); // 33.3844174 126.6166709
-        weatherConditions.add(fetchWeatherJson("관음사", baseDate, baseTime, 53, 36)); // 33.423744 126.555786
-        weatherConditions.add(fetchWeatherJson("돈내코", baseDate, baseTime, 53, 34)); // 33.3101519,126.5681177
-        return weatherConditions;
+        ArrayList<Weather> weathers = new ArrayList<>();
+        weathers.add(fetchWeatherJson("한라산", baseDate, baseTime, 53, 35)); // 33.364235 126.545517
+        weathers.add(fetchWeatherJson("어리목", baseDate, baseTime, 52, 36)); // 33.391859 126.4933766
+        weathers.add(fetchWeatherJson("영실", baseDate, baseTime, 52, 34)); // 33.339573 126.478188
+        weathers.add(fetchWeatherJson("성판악", baseDate, baseTime, 54, 35)); // 33.3844174 126.6166709
+        weathers.add(fetchWeatherJson("관음사", baseDate, baseTime, 53, 36)); // 33.423744 126.555786
+        weathers.add(fetchWeatherJson("돈내코", baseDate, baseTime, 53, 34)); // 33.3101519,126.5681177
+        return weathers;
 
     }
 
-    private WeatherCondition fetchWeatherJson(String location, String baseDate, String baseTime, int x, int y) {
+    private Weather fetchWeatherJson(String location, String baseDate, String baseTime, int x, int y) {
 
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -208,10 +208,10 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
         return null;
     }
 
-    private WeatherCondition getWeatherDataFromJson(String location, String weatherJsonStr)
+    private Weather getWeatherDataFromJson(String location, String weatherJsonStr)
             throws JSONException {
 
-        WeatherCondition weather = null;
+        Weather weather = null;
 
         try {
             JSONObject weatherJsonStrObj = new JSONObject(weatherJsonStr);
@@ -220,7 +220,7 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
             JSONObject itemsObject = bodyObject.getJSONObject("items");
             JSONArray item = itemsObject.getJSONArray("item");
 
-            weather = new WeatherCondition();
+            weather = new Weather();
             for (int i = 0; i < item.length(); i++) {
                 JSONObject weatherObject = (JSONObject) item.get(i);
 
@@ -286,11 +286,11 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
     }
 
     @Override
-    protected void onPostExecute(ArrayList<WeatherCondition> weatherReports) {
+    protected void onPostExecute(ArrayList<Weather> weatherReports) {
         TextView weatherTv = null;
         if (weatherReports.size() != 0) {
 
-            for (WeatherCondition weather : weatherReports) {
+            for (Weather weather : weatherReports) {
                 switch (weather.getLocation()) {
                     case "한라산" :
                         weatherTv = (TextView)((MainActivity)mContext).findViewById(R.id.weather_hallasan);

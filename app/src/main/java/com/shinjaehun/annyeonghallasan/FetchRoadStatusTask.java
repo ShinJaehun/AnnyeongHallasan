@@ -10,7 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.shinjaehun.annyeonghallasan.data.RoadCondition;
+import com.shinjaehun.annyeonghallasan.data.Road;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -25,7 +25,7 @@ import java.util.ArrayList;
  */
 
 
-public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<RoadCondition>> {
+public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<Road>> {
     private static final String TAG = FetchRoadStatusTask.class.getSimpleName();
 
     private final Context mContext;
@@ -48,7 +48,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<RoadCon
     }
 
     @Override
-    protected ArrayList<RoadCondition> doInBackground(Void... voids) {
+    protected ArrayList<Road> doInBackground(Void... voids) {
         Document doc = null;
 
         if (isDebugging) {
@@ -74,7 +74,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<RoadCon
 
         String date = dateData.get(0).text().toString().trim();
 
-        ArrayList<RoadCondition> roadConditions  = new ArrayList<>();
+        ArrayList<Road> roads = new ArrayList<>();
         //제주지방경찰청에서 제공하는 13개의 도로 DATA
 
         for (int i = 1; i < 14; i++) {
@@ -143,11 +143,11 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<RoadCon
                 snowChainSmall = true;
             }
 
-            roadConditions.add(new RoadCondition(name, description, date, restriction, section, snowfall, freezing, snowChainBig, snowChainSmall));
-            //도로명, description, 발표시간을 생성자로 하여 RoadCondition 생성
+            roads.add(new Road(name, description, date, restriction, section, snowfall, freezing, snowChainBig, snowChainSmall));
+            //도로명, description, 발표시간을 생성자로 하여 Road 생성
         }
 
-//        roadReport.setRoadConditions(roadConditions);
+//        roadReport.setRoadConditions(roads);
 
 //                Elements roadTitleData = doc.select("title");
 //                for (int i = 0; i < roadTitleData.size(); i++) {
@@ -163,25 +163,25 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<RoadCon
 //
 
 
-//        for (RoadCondition rs : roadConditions) {
+//        for (Road rs : roads) {
 //            Log.v(TAG, rs.getLocation() + " : " + rs.getDescription() );
 //        }
 
-//        for (RoadCondition rs : roadReport.getRoadConditions()) {
+//        for (Road rs : roadReport.getRoadConditions()) {
 //            Log.v(TAG, rs.getName() + " " + rs.getDate() + " " + rs.isRestriction() + " " + rs.getSection() + " " + rs.getSnowfall() + " " + rs.getFreezing() + " " + rs.isSnowChainBig() + " " + rs.isSnowChainSmall());
 //        }
 
-        return roadConditions;
+        return roads;
     }
 
     @Override
-    protected void onPostExecute(final ArrayList<RoadCondition> roadConditions) {
+    protected void onPostExecute(final ArrayList<Road> roads) {
         //각 RoadCondition에 따라서 이미지 표시하기
         roadImgs = new ArrayList<>();
 
-        for (RoadCondition rc : roadConditions) {
-            if (rc.isRestriction()) {
-                switch (rc.getName()) {
+        for (Road r : roads) {
+            if (r.isRestriction()) {
+                switch (r.getName()) {
                     case "1100도로" :
 //                        img = (ImageView)((MainActivity)mContext).findViewById(R.id.road_1100);
 //                        img.setVisibility(View.VISIBLE);
@@ -224,10 +224,10 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<RoadCon
                         roadImgs.add((ImageView)((MainActivity) mContext).findViewById(R.id.road_cheomdan));
                         break;
                     case "기타도로" :
-                        if (rc.getSection().contains("애조로")) {
+                        if (r.getSection().contains("애조로")) {
                             roadImgs.add((ImageView) ((MainActivity) mContext).findViewById(R.id.road_seoseong));
                         }
-                        if (rc.getSection().contains("일주도로")) {
+                        if (r.getSection().contains("일주도로")) {
                             roadImgs.add((ImageView) ((MainActivity) mContext).findViewById(R.id.road_ilju));
                         }
                         break;
@@ -254,9 +254,9 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<RoadCon
 
 //        super.onPostExecute(aVoid);
 //        디버깅 때문에 txtbox에 표시하기
-//        if (roadConditions != null) {
+//        if (roads != null) {
 //            StringBuilder sb = new StringBuilder();
-//            for (RoadCondition rs : roadConditions) {
+//            for (Road rs : roads) {
 //                sb.append(rs.getLocation() + " : " + rs.getDescription() + "\n");
 //            }
 //
@@ -268,7 +268,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<RoadCon
         roadStatusL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialogInfo = new DialogInfo(mContext, clickListener, roadConditions);
+                dialogInfo = new DialogInfo(mContext, clickListener, roads);
                 dialogInfo.setCanceledOnTouchOutside(false);
                 //dialogResult 외부 화면은 터치해도 반응하지 않음
                 dialogInfo.show();

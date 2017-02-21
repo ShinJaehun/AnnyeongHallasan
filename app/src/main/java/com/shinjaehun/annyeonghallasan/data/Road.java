@@ -4,19 +4,19 @@ package com.shinjaehun.annyeonghallasan.data;
  * Created by shinjaehun on 2016-12-25.
  */
 
-public class RoadCondition {
+public class Road {
 
     private String name;
     private String description;
     private String date;
     private boolean restriction;
     private String section;
-    private Float snowfall;
-    private Float freezing;
+    private float snowfall;
+    private float freezing;
     private boolean snowChainBig;
     private boolean snowChainSmall;
 
-    public RoadCondition(String name, String description, String date, boolean restriction, String section, Float snowfall, Float freezing, boolean snowChainBig, boolean snowChainSmall) {
+    public Road(String name, String description, String date, boolean restriction, String section, float snowfall, float freezing, boolean snowChainBig, boolean snowChainSmall) {
         this.name = name;
         this.description = description;
         this.date = date;
@@ -40,11 +40,11 @@ public class RoadCondition {
         return date;
     }
 
-    public Float getSnowfall() {
+    public float getSnowfall() {
         return snowfall;
     }
 
-    public Float getFreezing() {
+    public float getFreezing() {
         return freezing;
     }
 

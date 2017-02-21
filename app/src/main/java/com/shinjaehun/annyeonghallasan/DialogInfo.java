@@ -9,7 +9,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.shinjaehun.annyeonghallasan.data.RoadCondition;
+import com.shinjaehun.annyeonghallasan.data.Road;
 
 import java.util.ArrayList;
 
@@ -26,14 +26,14 @@ public class DialogInfo extends Dialog {
     private Button confirmBTN;
 
     private View.OnClickListener listener;
-    private ArrayList<RoadCondition> roadConditions;
+    private ArrayList<Road> roads;
 
-    public DialogInfo(Context context, View.OnClickListener listener, ArrayList<RoadCondition> roadConditions) {
+    public DialogInfo(Context context, View.OnClickListener listener, ArrayList<Road> roads) {
         super(context);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         this.listener = listener;
-        this.roadConditions = roadConditions;
+        this.roads = roads;
 
     }
 
@@ -67,7 +67,7 @@ public class DialogInfo extends Dialog {
 
 
 //        StringBuffer sb = new StringBuffer();
-//        for (RoadCondition rc : roadReport.getRoadConditions()) {
+//        for (Road rc : roadReport.getRoadConditions()) {
 //            sb.append(rc.getName() + " " + rc.getDate() + " " + rc.isRestriction() + " " + rc.getSection() + " " + rc.getSnowfall() + " " + rc.getFreezing() + " " + rc.isSnowChainBig() + " " + rc.isSnowChainSmall() + "\n");
 //        }
 
