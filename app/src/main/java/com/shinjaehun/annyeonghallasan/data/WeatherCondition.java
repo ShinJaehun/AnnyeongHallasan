@@ -5,6 +5,7 @@ package com.shinjaehun.annyeonghallasan.data;
  */
 
 public class WeatherCondition {
+    private String location;
     private String baseDate;
     private String baseTime;
     private int nx;
@@ -22,6 +23,14 @@ public class WeatherCondition {
     private float wsd;
 
     public WeatherCondition() {
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getBaseDate() {
