@@ -1,4 +1,4 @@
-package com.shinjaehun.annyeonghallasan;
+package com.shinjaehun.annyeonghallasan.data;
 
 import java.util.ArrayList;
 

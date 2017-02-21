@@ -1,4 +1,4 @@
-package com.shinjaehun.annyeonghallasan;
+package com.shinjaehun.annyeonghallasan.data;
 
 /**
  * Created by shinjaehun on 2017-01-31.

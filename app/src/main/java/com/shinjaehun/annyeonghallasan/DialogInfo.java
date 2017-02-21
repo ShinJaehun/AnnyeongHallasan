@@ -3,19 +3,16 @@ package com.shinjaehun.annyeonghallasan;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
+import com.shinjaehun.annyeonghallasan.data.RoadReport;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 /**

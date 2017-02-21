@@ -11,6 +11,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.shinjaehun.annyeonghallasan.data.RoadCondition;
+import com.shinjaehun.annyeonghallasan.data.RoadReport;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -183,7 +186,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
 
         for (RoadCondition rc : roadReport.getRoadConditions()) {
             if (rc.isRestriction()) {
-                switch (rc.name) {
+                switch (rc.getName()) {
                     case "1100도로" :
 //                        img = (ImageView)((MainActivity)mContext).findViewById(R.id.road_1100);
 //                        img.setVisibility(View.VISIBLE);
@@ -226,10 +229,10 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, Void> {
                         roadImgs.add((ImageView)((MainActivity) mContext).findViewById(R.id.road_cheomdan));
                         break;
                     case "기타도로" :
-                        if (rc.section.contains("애조로")) {
+                        if (rc.getSection().contains("애조로")) {
                             roadImgs.add((ImageView) ((MainActivity) mContext).findViewById(R.id.road_seoseong));
                         }
-                        if (rc.section.contains("일주도로")) {
+                        if (rc.getSection().contains("일주도로")) {
                             roadImgs.add((ImageView) ((MainActivity) mContext).findViewById(R.id.road_ilju));
                         }
                         break;

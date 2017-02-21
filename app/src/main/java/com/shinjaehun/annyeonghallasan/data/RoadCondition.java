@@ -1,4 +1,4 @@
-package com.shinjaehun.annyeonghallasan;
+package com.shinjaehun.annyeonghallasan.data;
 
 /**
  * Created by shinjaehun on 2016-12-25.
@@ -6,15 +6,15 @@ package com.shinjaehun.annyeonghallasan;
 
 public class RoadCondition {
 
-    String name;
-    String description;
-    String date;
-    boolean restriction;
-    String section;
-    Float snowfall;
-    Float freezing;
-    boolean snowChainBig;
-    boolean snowChainSmall;
+    private String name;
+    private String description;
+    private String date;
+    private boolean restriction;
+    private String section;
+    private Float snowfall;
+    private Float freezing;
+    private boolean snowChainBig;
+    private boolean snowChainSmall;
 
     public RoadCondition(String name, String description, String date, boolean restriction, String section, Float snowfall, Float freezing, boolean snowChainBig, boolean snowChainSmall) {
         this.name = name;

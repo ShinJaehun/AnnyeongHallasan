@@ -6,6 +6,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.shinjaehun.annyeonghallasan.data.WeatherCondition;
+import com.shinjaehun.annyeonghallasan.data.WeatherReport;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
