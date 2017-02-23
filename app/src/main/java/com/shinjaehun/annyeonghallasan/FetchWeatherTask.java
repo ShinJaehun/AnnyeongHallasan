@@ -23,8 +23,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import com.shinjaehun.annyeonghallasan.data.HallasanContract.WeatherEntry;
-
 /**
  * Created by shinjaehun on 2017-01-06.
  */
@@ -41,7 +39,10 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
 
     private boolean DEBUG = true;
 
-
+    enum Category {
+        T1H, RN1, SKY, UUU, VVV,
+        REH, PTY, LGT, VEC, WSD
+    }
 
 //    제주시 아라동
 //    lat : 33.428505
@@ -234,10 +235,10 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
                     weather.setNy((int) weatherObject.get("ny"));
                 }
 
-                WeatherEntry.Category c = null;
+                Category c = null;
 
                 try {
-                    c = WeatherEntry.Category.valueOf(category);
+                    c = Category.valueOf(category);
                 } catch (IllegalArgumentException e) {
                     Log.e(LOG_TAG, "Category Exception " + e);
                 }

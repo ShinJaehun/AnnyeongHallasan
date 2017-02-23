@@ -8,17 +8,17 @@ public class Road {
 
     private String name;
     private String date;
-    private int restriction;
+    private boolean restrict;
     private String section;
     private float snowfall;
     private float freezing;
 
-    private int chain;
+    public String chain;
 
-    public Road(String name, String date, int restriction, String section, float snowfall, float freezing, int chain) {
+    public Road(String name, String date, boolean restrict, String section, float snowfall, float freezing, String chain) {
         this.name = name;
         this.date = date;
-        this.restriction = restriction;
+        this.restrict = restrict;
         this.section = section;
         this.snowfall = snowfall;
         this.freezing = freezing;
@@ -42,15 +42,15 @@ public class Road {
         return freezing;
     }
 
-    public int isRestriction() {
-        return restriction;
+    public boolean isRestrict() {
+        return restrict;
     }
 
     public String getSection() {
         return section;
     }
 
-    public int getChain() {
+    public String getChain() {
         return chain;
     }
 }

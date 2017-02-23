@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import com.shinjaehun.annyeonghallasan.data.HallasanContract.RoadEntry;
-
 /**
  * Created by shinjaehun on 2016-12-30.
  */
@@ -115,11 +113,11 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<Road>> 
                     통제하지 않는 경우 descrition 내용
                     구간 : 정상 적설 : 결빙 : 대형 통재상항 :    소형 통재상항 :
 */
-            int restriction = RoadEntry.RESTRICTION_DISABLED;
+            boolean restrict = false;
             String section = "정상";
             if (!v[1].contains("정상")) {
                 //통제하는 경우
-                restriction = RoadEntry.RESTRICTION_ENABLED;
+                restrict = true;
                 section = v[1].substring(0, v[1].indexOf("적설")).trim();
                 //통제구간 : "제주대 입구 ~ 성판악"
             }
@@ -136,14 +134,14 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<Road>> 
                 //결빙
             }
 
-            int chain = RoadEntry.CHAIN_NONE;
+            String chain = "none";
 
             if(v[4].contains("체인")) {
-                chain = RoadEntry.CHAIN_SMALL;
+                chain = "small";
             }
 
             if(v[5].contains("체인")) {
-                chain = RoadEntry.CHAIN_BIG;
+                chain = "big";
             }
 
 //            boolean snowChainBig = false;
@@ -156,7 +154,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<Road>> 
 //                snowChainSmall = true;
 //            }
 
-            roads.add(new Road(name, date, restriction, section, snowfall, freezing, chain));
+            roads.add(new Road(name, date, restrict, section, snowfall, freezing, chain));
             //도로명, description, 발표시간을 생성자로 하여 Road 생성
 
             //DB에 저장하는 자료는 정상운행이 되지 않는 자료만?
@@ -184,7 +182,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<Road>> 
 //        }
 
         for (Road rs : roads) {
-            Log.v(TAG, rs.getName() + " " + rs.getDate() + " " + rs.isRestriction() + " " + rs.getSection() + " " + rs.getSnowfall() + " " + rs.getFreezing() + " " + rs.getChain());
+            Log.v(TAG, rs.getName() + " " + rs.getDate() + " " + rs.isRestrict() + " " + rs.getSection() + " " + rs.getSnowfall() + " " + rs.getFreezing() + " " + rs.getChain());
         }
 
         return roads;
@@ -196,7 +194,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<Road>> 
         roadImgs = new ArrayList<>();
 
         for (Road r : roads) {
-            if (r.isRestriction() == RoadEntry.RESTRICTION_ENABLED) {
+            if (r.isRestrict()) {
                 switch (r.getName()) {
                     case "1100도로" :
 //                        img = (ImageView)((MainActivity)mContext).findViewById(R.id.road_1100);
