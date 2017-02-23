@@ -9,7 +9,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.shinjaehun.annyeonghallasan.data.Road;
+import com.shinjaehun.annyeonghallasan.model.Road;
 
 import java.util.ArrayList;
 

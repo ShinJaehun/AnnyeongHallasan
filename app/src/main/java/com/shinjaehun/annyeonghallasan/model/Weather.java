@@ -1,4 +1,4 @@
-package com.shinjaehun.annyeonghallasan.data;
+package com.shinjaehun.annyeonghallasan.model;
 
 /**
  * Created by shinjaehun on 2017-01-28.

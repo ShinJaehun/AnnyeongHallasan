@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.shinjaehun.annyeonghallasan.data.Weather;
+import com.shinjaehun.annyeonghallasan.model.Weather;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,6 +22,8 @@ import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+
+import com.shinjaehun.annyeonghallasan.data.HallasanContract.WeatherEntry;
 
 /**
  * Created by shinjaehun on 2017-01-06.
@@ -39,10 +41,7 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
 
     private boolean DEBUG = true;
 
-    private enum Category {
-        T1H, RN1, SKY, UUU, VVV,
-        REH, PTY, LGT, VEC, WSD
-    }
+
 
 //    제주시 아라동
 //    lat : 33.428505
@@ -235,10 +234,10 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
                     weather.setNy((int) weatherObject.get("ny"));
                 }
 
-                Category c = null;
+                WeatherEntry.Category c = null;
 
                 try {
-                    c = Category.valueOf(category);
+                    c = WeatherEntry.Category.valueOf(category);
                 } catch (IllegalArgumentException e) {
                     Log.e(LOG_TAG, "Category Exception " + e);
                 }
@@ -286,11 +285,15 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
     }
 
     @Override
-    protected void onPostExecute(ArrayList<Weather> weatherReports) {
+    protected void onPostExecute(ArrayList<Weather> weathers) {
         TextView weatherTv = null;
-        if (weatherReports.size() != 0) {
+        if (weathers.size() != 0) {
 
-            for (Weather weather : weatherReports) {
+            for (Weather w : weathers) {
+                Log.v(LOG_TAG, w.getLocation() + " " + w.getBaseDate() + " " + w.getBaseTime() + " " + w.getNx() + " " + w.getNy() + " " + w.getT1h() + " " + w.getRn1() + " " + w.getSky() + " " + w.getUuu() + " " + w.getVvv() + " " + w.getReh() + " " + w.getPty() + " " + w.getLgt() + " " + w.getVec() + " " + w.getWsd());
+            }
+
+            for (Weather weather : weathers) {
                 switch (weather.getLocation()) {
                     case "한라산" :
                         weatherTv = (TextView)((MainActivity)mContext).findViewById(R.id.weather_hallasan);

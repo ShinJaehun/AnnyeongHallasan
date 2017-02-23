@@ -5,12 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.shinjaehun.annyeonghallasan.data.Road;
+import com.shinjaehun.annyeonghallasan.model.Road;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,6 +20,8 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+
+import com.shinjaehun.annyeonghallasan.data.HallasanContract.RoadEntry;
 
 /**
  * Created by shinjaehun on 2016-12-30.
@@ -112,11 +115,11 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<Road>> 
                     통제하지 않는 경우 descrition 내용
                     구간 : 정상 적설 : 결빙 : 대형 통재상항 :    소형 통재상항 :
 */
-            boolean restriction = false;
+            int restriction = RoadEntry.RESTRICTION_DISABLED;
             String section = "정상";
             if (!v[1].contains("정상")) {
                 //통제하는 경우
-                restriction = true;
+                restriction = RoadEntry.RESTRICTION_ENABLED;
                 section = v[1].substring(0, v[1].indexOf("적설")).trim();
                 //통제구간 : "제주대 입구 ~ 성판악"
             }
@@ -133,18 +136,31 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<Road>> 
                 //결빙
             }
 
-            boolean snowChainBig = false;
+            int chain = RoadEntry.CHAIN_NONE;
+
             if(v[4].contains("체인")) {
-                snowChainBig = true;
+                chain = RoadEntry.CHAIN_SMALL;
             }
 
-            boolean snowChainSmall = false;
-            if (v[5].contains("체인")) {
-                snowChainSmall = true;
+            if(v[5].contains("체인")) {
+                chain = RoadEntry.CHAIN_BIG;
             }
 
-            roads.add(new Road(name, description, date, restriction, section, snowfall, freezing, snowChainBig, snowChainSmall));
+//            boolean snowChainBig = false;
+//            if(v[4].contains("체인")) {
+//                snowChainBig = true;
+//            }
+//
+//            boolean snowChainSmall = false;
+//            if (v[5].contains("체인")) {
+//                snowChainSmall = true;
+//            }
+
+            roads.add(new Road(name, date, restriction, section, snowfall, freezing, chain));
             //도로명, description, 발표시간을 생성자로 하여 Road 생성
+
+            //DB에 저장하는 자료는 정상운행이 되지 않는 자료만?
+
         }
 
 //        roadReport.setRoadConditions(roads);
@@ -167,9 +183,9 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<Road>> 
 //            Log.v(TAG, rs.getLocation() + " : " + rs.getDescription() );
 //        }
 
-//        for (Road rs : roadReport.getRoadConditions()) {
-//            Log.v(TAG, rs.getName() + " " + rs.getDate() + " " + rs.isRestriction() + " " + rs.getSection() + " " + rs.getSnowfall() + " " + rs.getFreezing() + " " + rs.isSnowChainBig() + " " + rs.isSnowChainSmall());
-//        }
+        for (Road rs : roads) {
+            Log.v(TAG, rs.getName() + " " + rs.getDate() + " " + rs.isRestriction() + " " + rs.getSection() + " " + rs.getSnowfall() + " " + rs.getFreezing() + " " + rs.getChain());
+        }
 
         return roads;
     }
@@ -180,7 +196,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<Road>> 
         roadImgs = new ArrayList<>();
 
         for (Road r : roads) {
-            if (r.isRestriction()) {
+            if (r.isRestriction() == RoadEntry.RESTRICTION_ENABLED) {
                 switch (r.getName()) {
                     case "1100도로" :
 //                        img = (ImageView)((MainActivity)mContext).findViewById(R.id.road_1100);

@@ -1,4 +1,4 @@
-package com.shinjaehun.annyeonghallasan.data;
+package com.shinjaehun.annyeonghallasan.model;
 
 /**
  * Created by shinjaehun on 2016-12-25.
@@ -7,33 +7,27 @@ package com.shinjaehun.annyeonghallasan.data;
 public class Road {
 
     private String name;
-    private String description;
     private String date;
-    private boolean restriction;
+    private int restriction;
     private String section;
     private float snowfall;
     private float freezing;
-    private boolean snowChainBig;
-    private boolean snowChainSmall;
 
-    public Road(String name, String description, String date, boolean restriction, String section, float snowfall, float freezing, boolean snowChainBig, boolean snowChainSmall) {
+    private int chain;
+
+    public Road(String name, String date, int restriction, String section, float snowfall, float freezing, int chain) {
         this.name = name;
-        this.description = description;
         this.date = date;
         this.restriction = restriction;
         this.section = section;
         this.snowfall = snowfall;
         this.freezing = freezing;
-        this.snowChainBig = snowChainBig;
-        this.snowChainSmall = snowChainSmall;
+        this.chain = chain;
+
     }
 
     public String getName() {
         return name;
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     public String getDate() {
@@ -48,15 +42,7 @@ public class Road {
         return freezing;
     }
 
-    public boolean isSnowChainBig() {
-        return snowChainBig;
-    }
-
-    public boolean isSnowChainSmall() {
-        return snowChainSmall;
-    }
-
-    public boolean isRestriction() {
+    public int isRestriction() {
         return restriction;
     }
 
@@ -64,4 +50,7 @@ public class Road {
         return section;
     }
 
+    public int getChain() {
+        return chain;
+    }
 }
