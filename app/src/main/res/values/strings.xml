@@ -6,4 +6,8 @@
 
     <string name ="dialog_info_normal_traffic">정상운행</string>
     <string name ="dialog_info_confirm">확인</string>
+
+    <string name = "info_hallasan">한라산</string>
+    <string name = "info_eorimok">어리목</string>
+
 </resources>

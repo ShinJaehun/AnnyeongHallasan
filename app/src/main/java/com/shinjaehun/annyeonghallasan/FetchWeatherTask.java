@@ -275,7 +275,6 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
                         weather.setWsd(value);
                         break;
                 }
-
             }
 
         } catch (JSONException e) {
