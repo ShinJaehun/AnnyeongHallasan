@@ -9,5 +9,10 @@
 
     <string name = "info_hallasan">한라산</string>
     <string name = "info_eorimok">어리목</string>
+    <string name = "info_yeongsil">영실</string>
+    <string name = "info_seongpanak">성판악</string>
+    <string name = "info_kwanumsa">관음사</string>
+    <string name = "info_donnaeko">돈내코</string>
+
 
 </resources>

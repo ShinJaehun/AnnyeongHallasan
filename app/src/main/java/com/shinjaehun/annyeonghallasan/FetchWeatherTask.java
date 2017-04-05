@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.shinjaehun.annyeonghallasan.model.Weather;
@@ -286,7 +287,11 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
 
     @Override
     protected void onPostExecute(ArrayList<Weather> weathers) {
+        ImageView weatherIv = null;
         TextView weatherTv = null;
+        TextView temperatureTv = null;
+
+
         if (weathers.size() != 0) {
 
             for (Weather w : weathers) {
@@ -296,66 +301,96 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
             for (Weather weather : weathers) {
                 switch (weather.getLocation()) {
                     case "한라산" :
+                        weatherIv = (ImageView)((MainActivity)mContext).findViewById(R.id.weather_img_hallasan);
                         weatherTv = (TextView)((MainActivity)mContext).findViewById(R.id.weather_hallasan);
+                        temperatureTv = (TextView)((MainActivity)mContext).findViewById(R.id.temperature_hallasan);
                         break;
                     case "어리목" :
+                        weatherIv = (ImageView)((MainActivity)mContext).findViewById(R.id.weather_img_eorimok);
                         weatherTv = (TextView)((MainActivity)mContext).findViewById(R.id.weather_eorimok);
+                        temperatureTv = (TextView)((MainActivity)mContext).findViewById(R.id.temperature_eorimok);
                         break;
                     case "영실" :
+                        weatherIv = (ImageView)((MainActivity)mContext).findViewById(R.id.weather_img_yeongsil);
                         weatherTv = (TextView)((MainActivity)mContext).findViewById(R.id.weather_yeongsil);
+                        temperatureTv = (TextView)((MainActivity)mContext).findViewById(R.id.temperature_yeongsil);
                         break;
                     case "성판악" :
+                        weatherIv = (ImageView)((MainActivity)mContext).findViewById(R.id.weather_img_seongpanak);
                         weatherTv = (TextView)((MainActivity)mContext).findViewById(R.id.weather_seongpanak);
+                        temperatureTv = (TextView)((MainActivity)mContext).findViewById(R.id.temperature_seongpanak);
                         break;
                     case "관음사" :
+                        weatherIv = (ImageView)((MainActivity)mContext).findViewById(R.id.weather_img_kwanumsa);
                         weatherTv = (TextView)((MainActivity)mContext).findViewById(R.id.weather_kwanumsa);
+                        temperatureTv = (TextView)((MainActivity)mContext).findViewById(R.id.temperature_kwanumsa);
                         break;
                     case "돈내코" :
+                        weatherIv = (ImageView)((MainActivity)mContext).findViewById(R.id.weather_img_donnaeko);
                         weatherTv = (TextView)((MainActivity)mContext).findViewById(R.id.weather_donnaeko);
+                        temperatureTv = (TextView)((MainActivity)mContext).findViewById(R.id.temperature_donnaeko);
                         break;
                 }
-                StringBuilder sb = new StringBuilder();
-                sb.append(weather.getLocation() + " ");
-
-                int pty = weather.getPty();
-                if (pty > 0) {
-                    switch (pty) {
-                        case 1:
-                            sb.append("날씨 : 비"  + "\n");
-                            break;
-                        case 2:
-                            sb.append("날씨 : 비/눈" + "\n");
-                            break;
-                        case 3:
-                            sb.append("날씨 : 눈" + "\n");
-                            break;
-                    }
-                }
+//                StringBuilder sb = new StringBuilder();
+//                sb.append(weather.getLocation() + " ");
 
                 int sky = weather.getSky();
                 if (sky > 0) {
                     switch (sky) {
                         case 1:
-                            sb.append("날씨 : 맑음" + "\n");
+                            weatherIv.setImageResource(R.drawable.weather_sunny);
+                            weatherTv.setText("맑음");
+//                            sb.append("날씨 : 맑음" + "\n");
                             break;
                         case 2:
-                            sb.append("날씨 : 구름 조금"  + "\n");
+                            weatherIv.setImageResource(R.drawable.weather_cloud_sun);
+//                            sb.append("날씨 : 구름 조금"  + "\n");
+                            weatherTv.setText("구름 조금");
                             break;
                         case 3:
-                            sb.append("날씨 : 구름 많음"  + "\n");
+                            weatherIv.setImageResource(R.drawable.weather_cloud);
+                            weatherTv.setText("구름 많음");
+//                            sb.append("날씨 : 구름 많음"  + "\n");
                             break;
                         case 4:
-                            sb.append("날씨 : 흐림" + "\n");
+                            weatherIv.setImageResource(R.drawable.weather_clouds);
+                            weatherTv.setText("흐림");
+//                            sb.append("날씨 : 흐림" + "\n");
                             break;
                     }
                 }
 
-                sb.append("기온 : " + weather.getT1h() + " ℃\n");
-                sb.append("풍속 : " + weather.getWsd() + " m/s\n");
-                sb.append("습도 : " + weather.getReh() + " %\n");
+                int pty = weather.getPty();
+                if (pty > 0) {
+                    switch (pty) {
+                        case 1:
+                            weatherIv.setImageResource(R.drawable.weather_cloud_rain);
+                            weatherTv.setText("비");
+//                            sb.append("날씨 : 비"  + "\n");
+                            break;
+                        case 2:
+                            weatherIv.setImageResource(R.drawable.weather_cloud_snow_rain);
+                            weatherTv.setText("비/눈");
+//                            sb.append("날씨 : 비/눈" + "\n");
+                            break;
+                        case 3:
+                            weatherIv.setImageResource(R.drawable.weather_cloud_snow2);
+                            weatherTv.setText("눈");
+//                            sb.append("날씨 : 눈" + "\n");
+                            break;
+                    }
+                }
 
+                temperatureTv.setText(String.valueOf(weather.getT1h()));
+//                windTv.setText(String.valueOf(weather.getWsd()));
+//                humidityTv.setText(String.valueOf(weather.getReh()));
 
-                weatherTv.setText(sb.toString());
+//                sb.append("기온 : " + weather.getT1h() + " ℃\n");
+//                sb.append("풍속 : " + weather.getWsd() + " m/s\n");
+//                sb.append("습도 : " + weather.getReh() + " %\n");
+//
+//
+//                weatherTv.setText(sb.toString());
 
             }
 
