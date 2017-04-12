@@ -52,8 +52,13 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
+    }
 
-
+    @Override
+    protected void onStart() {
+        super.onStart();
+        new FetchRoadStatusTask(MainActivity.this, isDebugging).execute();
+        new FetchWeatherTask(MainActivity.this).execute();
     }
 
     @Override
