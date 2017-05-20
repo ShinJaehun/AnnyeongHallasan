@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.shinjaehun.annyeonghallasan.model.Weather;
+import com.shinjaehun.annyeonghallasan.data.HallasanContract.WeatherEntry;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,6 +24,7 @@ import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by shinjaehun on 2017-01-06.
@@ -33,17 +35,22 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
     private final Context mContext;
+    private final Calendar mCalendar;
+    private String mTimeStamp;
 
-    public FetchWeatherTask(Context context) {
+    public FetchWeatherTask(Context context, Calendar calendar) {
         mContext = context;
+        mCalendar = calendar;
+        mTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(calendar.getTime());
+        Log.v(LOG_TAG, "현재시간" + " " + mTimeStamp);
     }
 
     private boolean DEBUG = true;
 
-    enum Category {
-        T1H, RN1, SKY, UUU, VVV,
-        REH, PTY, LGT, VEC, WSD
-    }
+//    enum Category {
+//        T1H, RN1, SKY, UUU, VVV,
+//        REH, PTY, LGT, VEC, WSD
+//    }
 
 //    제주시 아라동
 //    lat : 33.428505
@@ -59,31 +66,28 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
     @Override
     protected ArrayList<Weather> doInBackground(Object... params) {
 
-        Calendar calendar = Calendar.getInstance();
-
-        String min = new SimpleDateFormat("mm").format(calendar.getTime());
+        String min = new SimpleDateFormat("mm").format(mCalendar.getTime());
 //        String min = "10";
         if (Integer.parseInt(min) < 30) {
             //30분 이전이면 basetime은 한 시간 전
 
-            Log.v(LOG_TAG, "변경 전 시간 : " + new SimpleDateFormat("HH").format(calendar.getTime()) + "00");
+//            Log.v(LOG_TAG, "변경 전 시간 : " + new SimpleDateFormat("HH").format(mCalendar.getTime()) + "00");
 
+            mCalendar.set(Calendar.HOUR_OF_DAY, mCalendar.get(Calendar.HOUR_OF_DAY) - 1);
 
-            calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) - 1);
-
-            if (Integer.parseInt(new SimpleDateFormat("HH").format(calendar.getTime())) < 0) {
+            if (Integer.parseInt(new SimpleDateFormat("HH").format(mCalendar.getTime())) < 0) {
 //            if (Integer.parseInt("00") <= 0) {
                 //자정 이전은 전날 값으로 계산
-                calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) - 1);
-                calendar.set(Calendar.HOUR_OF_DAY, 23);
-                calendar.set(Calendar.MINUTE, 0);
-                calendar.set(Calendar.SECOND, 0);
+                mCalendar.set(Calendar.DATE, mCalendar.get(Calendar.DATE) - 1);
+                mCalendar.set(Calendar.HOUR_OF_DAY, 23);
+                mCalendar.set(Calendar.MINUTE, 0);
+                mCalendar.set(Calendar.SECOND, 0);
             }
         }
 
-        String baseDate = new SimpleDateFormat("yyyyMMdd").format(calendar.getTime());
-        String baseTime = new SimpleDateFormat("HH").format(calendar.getTime()) + "00";
-        Log.v(LOG_TAG, "The weather data's time: " + baseDate + " " + baseTime);
+        String baseDate = new SimpleDateFormat("yyyyMMdd").format(mCalendar.getTime());
+        String baseTime = new SimpleDateFormat("HH").format(mCalendar.getTime()) + "00";
+        Log.v(LOG_TAG, "The base weather data's time: " + baseDate + " " + baseTime);
 
 //        ArrayList<WeatherReport> weatherReports = new ArrayList<>();
 //        weatherReports.add(new WeatherReport("한라산", fetchWeatherJson(baseDate, baseTime, 53, 35))); // 33.364235 126.545517
@@ -236,10 +240,10 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
                     weather.setNy((int) weatherObject.get("ny"));
                 }
 
-                Category c = null;
+                WeatherEntry.Category c = null;
 
                 try {
-                    c = Category.valueOf(category);
+                    c = WeatherEntry.Category.valueOf(category);
                 } catch (IllegalArgumentException e) {
                     Log.e(LOG_TAG, "Category Exception " + e);
                 }

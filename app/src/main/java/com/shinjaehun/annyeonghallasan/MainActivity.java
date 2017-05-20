@@ -8,9 +8,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity {
 
-    String TAG = MainActivity.class.getSimpleName();
+    String LOG_TAG = MainActivity.class.getSimpleName();
     boolean isDebugging = false;
 
 //    ArrayList<String> roads = new ArrayList<>();
@@ -37,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 ////                    sb1.append(i + " " + roads.get(i) + "\n");
 ////                }
 ////
-////                Log.v(TAG, "Roads SB : " + sb1.toString());
+////                Log.v(LOG_TAG, "Roads SB : " + sb1.toString());
 ////
 ////                roadsTV.setText(sb1.toString());
 ////
@@ -57,8 +60,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        new FetchRoadStatusTask(MainActivity.this, isDebugging).execute();
-        new FetchWeatherTask(MainActivity.this).execute();
+        Calendar calendar = Calendar.getInstance();
+
+        new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
+        new FetchWeatherTask(MainActivity.this, calendar).execute();
     }
 
     @Override
@@ -82,13 +87,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item)     {
+        Calendar calendar = Calendar.getInstance();
         switch (item.getItemId()) {
             case R.id.action_debug:
                 FetchRoadStatusTask.cleanMap();
 
                 isDebugging = true;
-                new FetchRoadStatusTask(MainActivity.this, isDebugging).execute();
-                new FetchWeatherTask(MainActivity.this).execute();
+                new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
+                new FetchWeatherTask(MainActivity.this, calendar).execute();
 
                 return true;
 
@@ -96,8 +102,8 @@ public class MainActivity extends AppCompatActivity {
                 FetchRoadStatusTask.cleanMap();
 
                 isDebugging = false;
-                new FetchRoadStatusTask(MainActivity.this, isDebugging).execute();
-                new FetchWeatherTask(MainActivity.this).execute();
+                new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
+                new FetchWeatherTask(MainActivity.this, calendar).execute();
 
                 return true;
 

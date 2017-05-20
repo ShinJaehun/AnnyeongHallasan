@@ -7,17 +7,16 @@ package com.shinjaehun.annyeonghallasan.model;
 public class Road {
 
     private String name;
-    private String date;
-    private boolean restrict;
+    private String baseDate;
+    private int restrict;
     private String section;
     private float snowfall;
     private float freezing;
+    private int chain;
 
-    public String chain;
-
-    public Road(String name, String date, boolean restrict, String section, float snowfall, float freezing, String chain) {
+    public Road(String name, String baseDate, int restrict, String section, float snowfall, float freezing, int chain) {
         this.name = name;
-        this.date = date;
+        this.baseDate = baseDate;
         this.restrict = restrict;
         this.section = section;
         this.snowfall = snowfall;
@@ -30,8 +29,8 @@ public class Road {
         return name;
     }
 
-    public String getDate() {
-        return date;
+    public String getBaseDate() {
+        return baseDate;
     }
 
     public float getSnowfall() {
@@ -42,7 +41,7 @@ public class Road {
         return freezing;
     }
 
-    public boolean isRestrict() {
+    public int isRestrict() {
         return restrict;
     }
 
@@ -50,7 +49,7 @@ public class Road {
         return section;
     }
 
-    public String getChain() {
+    public int getChain() {
         return chain;
     }
 }

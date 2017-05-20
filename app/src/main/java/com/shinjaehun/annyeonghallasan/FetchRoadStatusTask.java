@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.shinjaehun.annyeonghallasan.data.HallasanContract.RoadEntry;
 import com.shinjaehun.annyeonghallasan.model.Road;
 
 import org.jsoup.Jsoup;
@@ -19,7 +20,9 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by shinjaehun on 2016-12-30.
@@ -27,9 +30,11 @@ import java.util.ArrayList;
 
 
 public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<Road>> {
-    private static final String TAG = FetchRoadStatusTask.class.getSimpleName();
+    private static final String LOG_TAG = FetchRoadStatusTask.class.getSimpleName();
 
     private final Context mContext;
+    private final Calendar mCalendar;
+    private String mTimeStamp;
 
     DialogInfo dialogInfo;
 
@@ -43,9 +48,13 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<Road>> 
     static Handler handler;
     static boolean isDebugging;
 
-    public FetchRoadStatusTask(Context context, boolean isDebugging) {
-        this.mContext = context;
-        this.isDebugging = isDebugging;
+    public FetchRoadStatusTask(Context context, Calendar calendar, boolean isDebugging) {
+        mContext = context;
+        mCalendar = calendar;
+        mTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(calendar.getTime());
+        Log.v(LOG_TAG, "현재시간" + " " + mTimeStamp);
+
+        isDebugging = isDebugging;
     }
 
     @Override
@@ -54,7 +63,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<Road>> 
 
         if (isDebugging) {
             //XML 파일로 테스트하기
-            InputStream inputStream = mContext.getResources().openRawResource(R.raw.sample_20170210);
+            InputStream inputStream = mContext.getResources().openRawResource(R.raw.sample_data1);
             try {
                 doc = Jsoup.parse(inputStream, "UTF-8", url);
             } catch (IOException e) {
@@ -99,13 +108,13 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<Road>> 
 
             String[] v = description.split(":", -6);
 
-//                    Log.v(TAG, location + " 크기는 " + v.length);
-//                    Log.v(TAG, location + "," + v[0].trim() );
-//                    Log.v(TAG, location + "," + v[1].trim() );
-//                    Log.v(TAG, location + "," + v[2].trim() );
-//                    Log.v(TAG, location + "," + v[3].trim() );
-//                    Log.v(TAG, location + "," + v[4].trim() );
-//                    Log.v(TAG, location + "," + v[5].trim() );
+//                    Log.v(LOG_TAG, location + " 크기는 " + v.length);
+//                    Log.v(LOG_TAG, location + "," + v[0].trim() );
+//                    Log.v(LOG_TAG, location + "," + v[1].trim() );
+//                    Log.v(LOG_TAG, location + "," + v[2].trim() );
+//                    Log.v(LOG_TAG, location + "," + v[3].trim() );
+//                    Log.v(LOG_TAG, location + "," + v[4].trim() );
+//                    Log.v(LOG_TAG, location + "," + v[5].trim() );
 /*
                     통제하는 경우 description 내용
                     구간 : 제주대 입구 ~ 성판악 적설 : 1 결빙 : 대형 통재상항 :    소형 통재상항 : 체인
@@ -113,11 +122,11 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<Road>> 
                     통제하지 않는 경우 descrition 내용
                     구간 : 정상 적설 : 결빙 : 대형 통재상항 :    소형 통재상항 :
 */
-            boolean restrict = false;
+            int restrict = RoadEntry.RESTRICTION_DISABLED;
             String section = "정상";
             if (!v[1].contains("정상")) {
                 //통제하는 경우
-                restrict = true;
+                restrict = RoadEntry.RESTRICTION_ENABLED;
                 section = v[1].substring(0, v[1].indexOf("적설")).trim();
                 //통제구간 : "제주대 입구 ~ 성판악"
             }
@@ -134,14 +143,14 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<Road>> 
                 //결빙
             }
 
-            String chain = "none";
+            int chain = RoadEntry.CHAIN_NONE;
 
             if(v[4].contains("체인")) {
-                chain = "small";
+                chain = RoadEntry.CHAIN_SMALL;
             }
 
             if(v[5].contains("체인")) {
-                chain = "big";
+                chain = RoadEntry.CHAIN_BIG;
             }
 
 //            boolean snowChainBig = false;
@@ -166,23 +175,23 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<Road>> 
 //                Elements roadTitleData = doc.select("title");
 //                for (int i = 0; i < roadTitleData.size(); i++) {
 //                roads.add(roadTitleData.get(i).text().toString().trim());
-//                Log.v(TAG, "Road : " + i + " " + roadTitleData.get(i).text().toString().trim());
+//                Log.v(LOG_TAG, "Road : " + i + " " + roadTitleData.get(i).text().toString().trim());
 //                }
 //
 //                Elements roadDescriptionData = doc.select("description");
 //                for (int i = 0; i < roadDescriptionData.size(); i++) {
 //                status.add(roadDescriptionData.get(i).text().replaceAll("&nbsp;","").toString().trim());
-//                Log.v(TAG, "Status : " + i + " " + roadDescriptionData.get(i).text().replaceAll("&nbsp;","").toString().trim());
+//                Log.v(LOG_TAG, "Status : " + i + " " + roadDescriptionData.get(i).text().replaceAll("&nbsp;","").toString().trim());
 //                }
 //
 
 
 //        for (Road rs : roads) {
-//            Log.v(TAG, rs.getLocation() + " : " + rs.getDescription() );
+//            Log.v(LOG_TAG, rs.getLocation() + " : " + rs.getDescription() );
 //        }
 
         for (Road rs : roads) {
-            Log.v(TAG, rs.getName() + " " + rs.getDate() + " " + rs.isRestrict() + " " + rs.getSection() + " " + rs.getSnowfall() + " " + rs.getFreezing() + " " + rs.getChain());
+            Log.v(LOG_TAG, rs.getName() + " " + rs.getBaseDate() + " " + rs.isRestrict() + " " + rs.getSection() + " " + rs.getSnowfall() + " " + rs.getFreezing() + " " + rs.getChain());
         }
 
         return roads;
@@ -194,7 +203,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<Road>> 
         roadImgs = new ArrayList<>();
 
         for (Road r : roads) {
-            if (r.isRestrict()) {
+            if (r.isRestrict() == RoadEntry.RESTRICTION_ENABLED) {
                 switch (r.getName()) {
                     case "1100도로" :
 //                        img = (ImageView)((MainActivity)mContext).findViewById(R.id.road_1100);
@@ -254,12 +263,12 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<Road>> 
         if (roadImgs.size() == 0) {
             normalTV = (TextView)((MainActivity) mContext).findViewById(R.id.normal);
             normalTV.setVisibility(View.VISIBLE);
-//            Log.v(TAG, "roadImgs 비었다");
+//            Log.v(LOG_TAG, "roadImgs 비었다");
         } else {
             for (ImageView i : roadImgs) {
                 i.setVisibility(View.VISIBLE);
             }
-//            Log.v(TAG, "roadImgs 안 비었다");
+//            Log.v(LOG_TAG, "roadImgs 안 비었다");
         }
 
 //            Animation startAnimation = AnimationUtils.loadAnimation(mContext, R.anim.blink_animation);
