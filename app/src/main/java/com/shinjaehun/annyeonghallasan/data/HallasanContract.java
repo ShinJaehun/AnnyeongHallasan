@@ -1,5 +1,7 @@
 package com.shinjaehun.annyeonghallasan.data;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -19,6 +21,15 @@ public class HallasanContract {
     private HallasanContract() { }
 
     public static final class RoadEntry implements BaseColumns {
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_ROAD).build();
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_ROAD;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_ROAD;
+
+
         public final static String TABLE_NAME = "roads";
         public final static String _ID = BaseColumns._ID;
 
@@ -41,9 +52,36 @@ public class HallasanContract {
         public final static int CHAIN_SMALL = 1;
         public final static int CHAIN_BIG = 2;
 
+        public static Uri buildRoadUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static Uri buildRoadUriWithDate(long timeStamp) {
+            return CONTENT_URI.buildUpon().
+                    appendPath("search").
+                    appendQueryParameter(COLUMN_TIMESTAMP, Long.toString(timeStamp)).build();
+        }
+
+        public static long getTimeStampFromUri(Uri uri) {
+            String timeStamp = uri.getQueryParameter(COLUMN_TIMESTAMP);
+            if (timeStamp != null && timeStamp.length() > 0) {
+                return Long.parseLong(timeStamp);
+            } else {
+                return 0;
+            }
+        }
+
     }
 
     public static final class WeatherEntry implements BaseColumns {
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_WEATHER).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_WEATHER;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_WEATHER;
 
         public enum Category {
             T1H, RN1, SKY, UUU, VVV,
@@ -71,5 +109,23 @@ public class HallasanContract {
         public final static String COLUMN_VEC = "vec";
         public final static String COLUMN_WSD = "wsd";
 
+        public static Uri buildWeatherUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static Uri buildWeatherUriWithDate(long timeStamp) {
+            return CONTENT_URI.buildUpon().
+                    appendPath("search").
+                    appendQueryParameter(COLUMN_TIMESTAMP, Long.toString(timeStamp)).build();
+        }
+
+        public static long getTimeStampFromUri(Uri uri) {
+            String timeStamp = uri.getQueryParameter(COLUMN_TIMESTAMP);
+            if (timeStamp != null && timeStamp.length() > 0) {
+                return Long.parseLong(timeStamp);
+            } else {
+                return 0;
+            }
+        }
     }
 }

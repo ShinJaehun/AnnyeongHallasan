@@ -6,6 +6,7 @@ package com.shinjaehun.annyeonghallasan.model;
 
 public class Weather {
     private String location;
+    private String timeStamp;
 
     private String baseDate;
     private String baseTime;
@@ -25,6 +26,14 @@ public class Weather {
     private float wsd;
 
     public Weather() {
+    }
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     public String getLocation() {
