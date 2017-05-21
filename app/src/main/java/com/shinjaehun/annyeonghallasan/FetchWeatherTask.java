@@ -460,8 +460,8 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
     void query() {
         long weaterId;
 
-        long t = 201705202251L;
-//        String timeStamp = "201705202251";
+//        long t = 201705202251L;
+        String timeStamp = "201705202251";
 //        Cursor cursor = mContext.getContentResolver().query(
 //                WeatherEntry.CONTENT_URI,
 //                null,
@@ -478,7 +478,7 @@ public class FetchWeatherTask extends AsyncTask<Object, Object, ArrayList<Weathe
 //                null
 //        );
 
-        Uri weatherWithDateUri = WeatherEntry.buildWeatherUriWithDate(t);
+        Uri weatherWithDateUri = WeatherEntry.buildWeatherUriWithDate(timeStamp);
         Cursor cursor = mContext.getContentResolver().query(
                 weatherWithDateUri,
                 null,

@@ -56,18 +56,18 @@ public class HallasanContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        public static Uri buildRoadUriWithDate(long timeStamp) {
+        public static Uri buildRoadUriWithDate(String timeStamp) {
             return CONTENT_URI.buildUpon().
                     appendPath("search").
-                    appendQueryParameter(COLUMN_TIMESTAMP, Long.toString(timeStamp)).build();
+                    appendQueryParameter(COLUMN_TIMESTAMP, timeStamp).build();
         }
 
-        public static long getTimeStampFromUri(Uri uri) {
+        public static String getTimeStampFromUri(Uri uri) {
             String timeStamp = uri.getQueryParameter(COLUMN_TIMESTAMP);
             if (timeStamp != null && timeStamp.length() > 0) {
-                return Long.parseLong(timeStamp);
+                return timeStamp;
             } else {
-                return 0;
+                return null;
             }
         }
 
@@ -113,18 +113,18 @@ public class HallasanContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        public static Uri buildWeatherUriWithDate(long timeStamp) {
+        public static Uri buildWeatherUriWithDate(String timeStamp) {
             return CONTENT_URI.buildUpon().
                     appendPath("search").
-                    appendQueryParameter(COLUMN_TIMESTAMP, Long.toString(timeStamp)).build();
+                    appendQueryParameter(COLUMN_TIMESTAMP, timeStamp).build();
         }
 
-        public static long getTimeStampFromUri(Uri uri) {
+        public static String getTimeStampFromUri(Uri uri) {
             String timeStamp = uri.getQueryParameter(COLUMN_TIMESTAMP);
             if (timeStamp != null && timeStamp.length() > 0) {
-                return Long.parseLong(timeStamp);
+                return timeStamp;
             } else {
-                return 0;
+                return null;
             }
         }
     }

@@ -70,23 +70,23 @@ public class HallasanProvider extends ContentProvider {
                         sortOrder);
                 break;
             case WEATHER_WITH_DATE:
-                long weatherTimeStamp = HallasanContract.WeatherEntry.getTimeStampFromUri(uri);
+                String weatherTimeStamp = HallasanContract.WeatherEntry.getTimeStampFromUri(uri);
                 returnCursor = db.query(
                         HallasanContract.WeatherEntry.TABLE_NAME,
                         projection,
                         HallasanContract.WeatherEntry.COLUMN_TIMESTAMP + " = ? ",
-                        new String[] { Long.toString(weatherTimeStamp) },
+                        new String[] { weatherTimeStamp },
                         null,
                         null,
                         sortOrder);
                 break;
             case ROAD_WITH_DATE:
-                long roadTimeStamp = HallasanContract.RoadEntry.getTimeStampFromUri(uri);
+                String roadTimeStamp = HallasanContract.RoadEntry.getTimeStampFromUri(uri);
                 returnCursor = db.query(
                         HallasanContract.RoadEntry.TABLE_NAME,
                         projection,
                         HallasanContract.RoadEntry.COLUMN_TIMESTAMP + " = ? ",
-                        new String[] { Long.toString(roadTimeStamp) },
+                        new String[] { roadTimeStamp },
                         null,
                         null,
                         sortOrder);
