@@ -17,7 +17,7 @@ import android.support.annotation.Nullable;
  */
 
 public class HallasanProvider extends ContentProvider {
-    
+
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private HallasanDBhelper mDBHelper;
 

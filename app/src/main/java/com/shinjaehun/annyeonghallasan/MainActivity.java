@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
 //        Button fetchBT = (Button)findViewById(R.id.fetch);
 
 //        fetchBT.setOnClickListener(new View.OnClickListener() {
@@ -60,15 +61,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Calendar calendar = Calendar.getInstance();
-
-        new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
-        new FetchWeatherTask(MainActivity.this, calendar).execute();
+//        Calendar calendar = Calendar.getInstance();
+//
+//        new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
+//        new FetchWeatherTask(MainActivity.this, calendar).execute();
     }
 
     @Override
     protected void onPause() {
-        FetchRoadStatusTask.cleanMap();
+//        FetchRoadStatusTask.cleanMap();
         //계속 깜빡이는 것도 나쁘진 않아 보여;;;
 
         super.onPause();
@@ -78,36 +79,36 @@ public class MainActivity extends AppCompatActivity {
 //        return new String(s.getBytes(), startIdx, bytes);
 //    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-//        return super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)     {
-        Calendar calendar = Calendar.getInstance();
-        switch (item.getItemId()) {
-            case R.id.action_debug:
-                FetchRoadStatusTask.cleanMap();
-
-                isDebugging = true;
-                new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
-                new FetchWeatherTask(MainActivity.this, calendar).execute();
-
-                return true;
-
-            case R.id.action_fetch:
-                FetchRoadStatusTask.cleanMap();
-
-                isDebugging = false;
-                new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
-                new FetchWeatherTask(MainActivity.this, calendar).execute();
-
-                return true;
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+////        return super.onCreateOptionsMenu(menu);
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item)     {
+//        Calendar calendar = Calendar.getInstance();
+//        switch (item.getItemId()) {
+//            case R.id.action_debug:
+//                FetchRoadStatusTask.cleanMap();
+//
+//                isDebugging = true;
+//                new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
+//                new FetchWeatherTask(MainActivity.this, calendar).execute();
+//
+//                return true;
+//
+//            case R.id.action_fetch:
+//                FetchRoadStatusTask.cleanMap();
+//
+//                isDebugging = false;
+//                new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
+//                new FetchWeatherTask(MainActivity.this, calendar).execute();
+//
+//                return true;
+//
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 }
