@@ -45,45 +45,6 @@ public class FetchWeatherTask extends AsyncTask<Object, Void, Void> {
     private final Calendar mCalendar;
     private String mTimeStamp;
 
-    private static final String[] WEATHER_COLUMNS = {
-            //getColumnIndex 대신 cursor의 값을 쉽게 사용하기 위한 Projection
-            WeatherEntry.TABLE_NAME + "." + WeatherEntry._ID,
-            WeatherEntry.COLUMN_LOCATION,
-            WeatherEntry.COLUMN_TIMESTAMP,
-            WeatherEntry.COLUMN_BASE_DATE,
-            WeatherEntry.COLUMN_BASE_TIME,
-            WeatherEntry.COLUMN_NX,
-            WeatherEntry.COLUMN_NY,
-            WeatherEntry.COLUMN_T1H,
-            WeatherEntry.COLUMN_RN1,
-            WeatherEntry.COLUMN_SKY,
-            WeatherEntry.COLUMN_UUU,
-            WeatherEntry.COLUMN_VVV,
-            WeatherEntry.COLUMN_REH,
-            WeatherEntry.COLUMN_PTY,
-            WeatherEntry.COLUMN_LGT,
-            WeatherEntry.COLUMN_VEC,
-            WeatherEntry.COLUMN_WSD
-    };
-
-    //Projection에서 몇몇 값만 받아오기로 했다면 아래 COL도 변경되어야 함
-    static final int COL_WEATHER_ID = 0;
-    static final int COL_WEATHER_LOCATION = 1;
-    static final int COL_WEATHER_TIMESTAMP = 2;
-    static final int COL_WEATHER_BASE_DATE = 3;
-    static final int COL_WEATHER_BASE_TIME = 4;
-    static final int COL_WEATHER_NX = 5;
-    static final int COL_WEATHER_NY = 6;
-    static final int COL_WEATHER_T1H = 7;
-    static final int COL_WEATHER_RN1 = 8;
-    static final int COL_WEATHER_SKY = 9;
-    static final int COL_WEATHER_UUU = 10;
-    static final int COL_WEATHER_VVV = 11;
-    static final int COL_WEATHER_REH = 12;
-    static final int COL_WEATHER_PTY = 13;
-    static final int COL_WEATHER_LGT = 14;
-    static final int COL_WEATHER_VEC = 15;
-    static final int COL_WEATHER_WSD = 16;
 
     public FetchWeatherTask(Context context, Calendar calendar) {
         mContext = context;

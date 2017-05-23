@@ -3,6 +3,16 @@
     android:layout_width="match_parent" android:layout_height="wrap_content"
     android:orientation="vertical">
 
+    <GridView
+        android:id="@+id/gridview_weather"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="2"
+        android:verticalSpacing="10dp"
+        android:horizontalSpacing="10dp"
+        />
+
+<!--
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -503,4 +513,5 @@
         </LinearLayout>
 
     </LinearLayout>
+    -->
 </LinearLayout>
