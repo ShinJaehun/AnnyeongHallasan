@@ -24,8 +24,7 @@ import java.util.Calendar;
 
 public class WeatherFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-
-    private static final String[] WEATHER_COLUMNS = {
+    public static final String[] WEATHER_COLUMNS = {
             //getColumnIndex 대신 cursor의 값을 쉽게 사용하기 위한 Projection
             HallasanContract.WeatherEntry.TABLE_NAME + "." + HallasanContract.WeatherEntry._ID,
             HallasanContract.WeatherEntry.COLUMN_LOCATION,
@@ -69,11 +68,11 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
     private static final int WEATHER_LOADER = 0;
 
     public WeatherFragment() {
-        mCalendar = Calendar.getInstance();
+//        mCalendar = Calendar.getInstance();
 
     }
 
-    private static Calendar mCalendar;
+//    private static Calendar mCalendar;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -137,7 +136,7 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
 
         String sortOrder = HallasanContract.WeatherEntry.COLUMN_TIMESTAMP + " ASC";
 
-        String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime());
+        String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(MainActivity.mCalendar.getTime());
 
         Uri weatherWithDateUri = HallasanContract.WeatherEntry.buildWeatherUriWithDate(timeStamp);
 

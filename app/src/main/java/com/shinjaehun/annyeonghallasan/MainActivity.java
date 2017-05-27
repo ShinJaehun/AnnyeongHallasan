@@ -2,6 +2,8 @@ package com.shinjaehun.annyeonghallasan;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.shinjaehun.annyeonghallasan.sync.HallasanSyncAdapter;
 
@@ -19,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mCalendar = Calendar.getInstance();
+
         setContentView(R.layout.activity_main);
 
         HallasanSyncAdapter.initalizeSyncAdapter(this);
@@ -59,8 +63,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        HallasanSyncAdapter.syncImmediately(getApplicationContext(), Calendar.getInstance());
-//        Calendar calendar = Calendar.getInstance();
+        HallasanSyncAdapter.syncImmediately(getApplicationContext(), Calendar.getInstance(), isDebugging);
 //
 //        new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
 //        new FetchWeatherTask(MainActivity.this, calendar).execute();
@@ -84,7 +87,29 @@ public class MainActivity extends AppCompatActivity {
 //        getMenuInflater().inflate(R.menu.menu_main, menu);
 //        return true;
 //    }
-//
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_debug:
+                isDebugging = true;
+                HallasanSyncAdapter.syncImmediately(getApplicationContext(), Calendar.getInstance(), isDebugging);
+                return true;
+            case R.id.action_fetch:
+                isDebugging = false;
+                HallasanSyncAdapter.syncImmediately(getApplicationContext(), Calendar.getInstance(), isDebugging);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    //
 //    @Override
 //    public boolean onOptionsItemSelected(MenuItem item)     {
 //        Calendar calendar = Calendar.getInstance();
