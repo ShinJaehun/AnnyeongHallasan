@@ -23,12 +23,12 @@
             </intent-filter>
         </activity>
         <provider
-            android:authorities="com.shinjaehun.annyeonghallasan"
+            android:authorities="@string/content_authority"
             android:name=".data.HallasanProvider"
             android:exported="false"
             android:syncable="true"/>
 
-        <service android:name=".sync.WeatherAuthenticatorService">
+        <service android:name=".sync.HallasanAuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -36,7 +36,7 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
-        <service android:name=".sync.WeatherSyncService"
+        <service android:name=".sync.HallasanSyncService"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter"/>

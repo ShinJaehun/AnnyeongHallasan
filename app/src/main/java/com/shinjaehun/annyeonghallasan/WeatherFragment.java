@@ -1,9 +1,5 @@
 package com.shinjaehun.annyeonghallasan;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
@@ -13,16 +9,11 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
 import com.shinjaehun.annyeonghallasan.data.HallasanContract;
-import com.shinjaehun.annyeonghallasan.service.WeatherService;
-import com.shinjaehun.annyeonghallasan.sync.WeatherSyncAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -82,39 +73,12 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
 
     }
 
-    Calendar mCalendar;
+    private static Calendar mCalendar;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        return super.onCreateOptionsMenu(menu);
-        inflater.inflate(R.menu.menu_main, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)     {
-        switch (item.getItemId()) {
-//            case R.id.action_debug:
-//                FetchRoadStatusTask.cleanMap();
-//
-//                isDebugging = true;
-//                new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
-//                new FetchWeatherTask(MainActivity.this, calendar).execute();
-//
-//                return true;
-
-            case R.id.action_fetch:
-                updateWeather();
-                return true;
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
 
     @Nullable
     @Override
@@ -152,14 +116,14 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
 //        AlarmManager am = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
 //        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, pi);
 
-        WeatherSyncAdapter.syncImmediately(getActivity());
+//        HallasanSyncAdapter.syncImmediately(getActivity(), mCalendar);
 
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        updateWeather();
+//        updateWeather();
     }
 
     @Override
@@ -185,7 +149,6 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
                 sortOrder
         );
     }
-
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {

@@ -11,8 +11,8 @@ import android.os.Bundle;
  * Created by shinjaehun on 2017-05-27.
  */
 
-public class WeatherAuthenticator extends AbstractAccountAuthenticator {
-    public WeatherAuthenticator(Context context) {
+public class HallasanAuthenticator extends AbstractAccountAuthenticator {
+    public HallasanAuthenticator(Context context) {
         super(context);
     }
 

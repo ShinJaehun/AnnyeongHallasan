@@ -2,19 +2,16 @@ package com.shinjaehun.annyeonghallasan;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.FrameLayout;
+
+import com.shinjaehun.annyeonghallasan.sync.HallasanSyncAdapter;
 
 import java.util.Calendar;
-import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
     String LOG_TAG = MainActivity.class.getSimpleName();
     boolean isDebugging = false;
+    public static Calendar mCalendar;
 
 //    ArrayList<String> roads = new ArrayList<>();
 //    ArrayList<String> status = new ArrayList<>();
@@ -24,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        HallasanSyncAdapter.initalizeSyncAdapter(this);
 
 //        Button fetchBT = (Button)findViewById(R.id.fetch);
 
@@ -61,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        HallasanSyncAdapter.syncImmediately(getApplicationContext(), Calendar.getInstance());
 //        Calendar calendar = Calendar.getInstance();
 //
 //        new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();

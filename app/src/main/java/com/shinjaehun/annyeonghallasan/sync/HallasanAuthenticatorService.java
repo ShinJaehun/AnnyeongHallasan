@@ -9,13 +9,13 @@ import android.support.annotation.Nullable;
  * Created by shinjaehun on 2017-05-27.
  */
 
-public class WeatherAuthenticatorService extends Service {
+public class HallasanAuthenticatorService extends Service {
 
-    private WeatherAuthenticator mAuthenticator;
+    private HallasanAuthenticator mAuthenticator;
 
     @Override
     public void onCreate() {
-        mAuthenticator = new WeatherAuthenticator(this);
+        mAuthenticator = new HallasanAuthenticator(this);
     }
 
     @Nullable
