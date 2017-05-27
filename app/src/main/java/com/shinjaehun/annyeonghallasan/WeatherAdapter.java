@@ -26,6 +26,7 @@ public class WeatherAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
+
         View v = LayoutInflater.from(context).inflate(R.layout.grid_item_weather, parent, false);
         return v;
     }
@@ -33,10 +34,10 @@ public class WeatherAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
 
-        ImageView weatherImageIV = (ImageView)view.findViewById(R.id.weather_img);
-        TextView weatherLocationTV = (TextView)view.findViewById(R.id.weather_location);
-        TextView weatherTemperatureTV = (TextView)view.findViewById(R.id.weather_temperature);
-        TextView weatherInfoTV = (TextView)view.findViewById(R.id.weather_info);
+        ImageView weatherImageIV = (ImageView) view.findViewById(R.id.weather_img);
+        TextView weatherLocationTV = (TextView) view.findViewById(R.id.weather_location);
+        TextView weatherTemperatureTV = (TextView) view.findViewById(R.id.weather_temperature);
+        TextView weatherInfoTV = (TextView) view.findViewById(R.id.weather_info);
 
         if (cursor != null) {
             String location = cursor.getString(WeatherFragment.COL_WEATHER_LOCATION);
@@ -85,7 +86,10 @@ public class WeatherAdapter extends CursorAdapter {
 
             weatherTemperatureTV.setText(String.valueOf(cursor.getFloat(WeatherFragment.COL_WEATHER_T1H)));
 
-            Log.v(LOG_TAG,  "ID : " + cursor.getLong(WeatherFragment.COL_WEATHER_ID) + " 장소 : " + cursor.getString(WeatherFragment.COL_WEATHER_LOCATION) + " TimeStamp " + cursor.getString(WeatherFragment.COL_WEATHER_TIMESTAMP)
+        }
+
+        if (cursor != null) {
+            Log.v(LOG_TAG, "ID : " + cursor.getLong(WeatherFragment.COL_WEATHER_ID) + " 장소 : " + cursor.getString(WeatherFragment.COL_WEATHER_LOCATION) + " TimeStamp " + cursor.getString(WeatherFragment.COL_WEATHER_TIMESTAMP)
                     + " SKY " + cursor.getInt(WeatherFragment.COL_WEATHER_SKY));
         }
 

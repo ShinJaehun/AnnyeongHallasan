@@ -14,5 +14,6 @@
     <string name = "info_kwanumsa">관음사</string>
     <string name = "info_donnaeko">돈내코</string>
 
-
+    <string name="sync_account_type">annyeonghallasan.com</string>
+    <string name="content_authority">com.shinjaehun.annyeonghallasan</string>
 </resources>

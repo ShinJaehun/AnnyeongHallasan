@@ -1,8 +1,10 @@
 package com.shinjaehun.annyeonghallasan.service;
 
 import android.app.IntentService;
+import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -507,6 +509,21 @@ public class WeatherService extends IntentService {
         }
 
         cursor.close();
+    }
+
+    static public class AlarmReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            Bundle bundle = intent.getExtras();
+            Calendar calendar = (Calendar)bundle.getSerializable(LOCATION_QUERY_EXTRA);
+
+            Intent sendIntent = new Intent(context, WeatherService.class);
+            sendIntent.putExtra(WeatherService.LOCATION_QUERY_EXTRA, calendar);
+            context.startService(sendIntent);
+
+        }
     }
 
 }
