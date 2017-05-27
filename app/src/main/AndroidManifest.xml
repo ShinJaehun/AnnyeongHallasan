@@ -18,6 +18,7 @@
         <provider
             android:authorities="com.shinjaehun.annyeonghallasan"
             android:name=".data.HallasanProvider" />
+        <service android:name=".service.WeatherService" />
     </application>
 
     <uses-permission android:name="android.permission.INTERNET"/>

@@ -1,5 +1,6 @@
 package com.shinjaehun.annyeonghallasan;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.GridView;
 
 import com.shinjaehun.annyeonghallasan.data.HallasanContract;
+import com.shinjaehun.annyeonghallasan.service.WeatherService;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -101,8 +103,11 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     private void updateWeather() {
-        FetchWeatherTask weatherTask = new FetchWeatherTask(getContext(), mCalendar);
-        weatherTask.execute(getContext(), mCalendar);
+//        FetchWeatherTask weatherTask = new FetchWeatherTask(getContext(), mCalendar);
+//        weatherTask.execute(getContext(), mCalendar);
+        Intent intent = new Intent(getActivity(), WeatherService.class);
+        intent.putExtra(WeatherService.LOCATION_QUERY_EXTRA, mCalendar);
+        getActivity().startService(intent);
     }
 
     @Override
