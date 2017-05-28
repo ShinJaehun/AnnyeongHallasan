@@ -45,7 +45,6 @@ public class FetchWeatherTask extends AsyncTask<Object, Void, Void> {
     private final Calendar mCalendar;
     private String mTimeStamp;
 
-
     public FetchWeatherTask(Context context, Calendar calendar) {
         mContext = context;
         mCalendar = calendar;
@@ -61,10 +60,9 @@ public class FetchWeatherTask extends AsyncTask<Object, Void, Void> {
 //    final String NX_VALUE = String.valueOf(52);
 //    final String NY_VALUE = String.valueOf(36);
 
-    //    한라산
+//    한라산
 //    lat : 33.364235
 //    lon : 126.545517
-
 
     @Override
     protected Void doInBackground(Object... params) {
@@ -327,203 +325,98 @@ public class FetchWeatherTask extends AsyncTask<Object, Void, Void> {
         return ;
     }
 
-//    @Override
-//    protected void onPostExecute(Void aVoid) {
-//        super.onPostExecute(aVoid);
+//    long addWeather(String location, String timeStamp, String baseDate, String baseTime, int nx, int ny, float t1h, float rn1, float sky, float uuu, float vvv, float reh, float pty, float lgt, float vec, float wsd) {
+//        long weatherId;
 //
-//        ImageView weatherIv = null;
-//        TextView weatherTv = null;
-//        TextView temperatureTv = null;
+////        Cursor weatherCursor = mContext.getContentResolver().query(
+////                WeatherEntry.CONTENT_URI,
+////                new String[] { WeatherEntry._ID },
+////                WeatherEntry.COLUMN_TIMESTAMP + " = ? ",
+////                new String[] { timeStamp },
+////                null);
 //
-//        String sortOrder = WeatherEntry.COLUMN_TIMESTAMP + " ASC";
+////        if (weatherCursor.moveToFirst()) {
+////            int weatherIdIndex = weatherCursor.getColumnIndex(WeatherEntry._ID);
+////            weatherId = weatherCursor.getLong(weatherIdIndex);
+////        } else {
+//            ContentValues weatherValues = new ContentValues();
 //
-//        Uri weatherWithDateUri = WeatherEntry.buildWeatherUriWithDate(mTimeStamp);
+//            weatherValues.put(WeatherEntry.COLUMN_LOCATION, location);
+//            weatherValues.put(WeatherEntry.COLUMN_TIMESTAMP, timeStamp);
+//            weatherValues.put(WeatherEntry.COLUMN_BASE_DATE, baseDate);
+//            weatherValues.put(WeatherEntry.COLUMN_BASE_TIME, baseTime);
+//            weatherValues.put(WeatherEntry.COLUMN_NX, nx);
+//            weatherValues.put(WeatherEntry.COLUMN_NY, ny);
+//            weatherValues.put(WeatherEntry.COLUMN_T1H, t1h);
+//            weatherValues.put(WeatherEntry.COLUMN_RN1, rn1);
+//            weatherValues.put(WeatherEntry.COLUMN_SKY, sky);
+//            weatherValues.put(WeatherEntry.COLUMN_UUU, uuu);
+//            weatherValues.put(WeatherEntry.COLUMN_VVV, vvv);
+//            weatherValues.put(WeatherEntry.COLUMN_REH, reh);
+//            weatherValues.put(WeatherEntry.COLUMN_PTY, pty);
+//            weatherValues.put(WeatherEntry.COLUMN_LGT, lgt);
+//            weatherValues.put(WeatherEntry.COLUMN_VEC, vec);
+//            weatherValues.put(WeatherEntry.COLUMN_WSD, wsd);
+//
+//            Uri insertedUri = mContext.getContentResolver().insert(
+//                    WeatherEntry.CONTENT_URI, weatherValues);
+//            weatherId = ContentUris.parseId(insertedUri);
+////        }
+//
+////        weatherCursor.close();
+//        return weatherId;
+//    }
+//
+//    void query() {
+//        long weaterId;
+//
+////        long t = 201705202251L;
+//        String timeStamp = "201705202251";
+////        Cursor cursor = mContext.getContentResolver().query(
+////                WeatherEntry.CONTENT_URI,
+////                null,
+////                null,
+////                null,
+////                null
+////        );
+//
+////        Cursor cursor = mContext.getContentResolver().query(
+////                WeatherEntry.CONTENT_URI,
+////                null,
+////                WeatherEntry.COLUMN_TIMESTAMP + " = ? ",
+////                new String[] { timeStamp },
+////                null
+////        );
+//
+//        Uri weatherWithDateUri = WeatherEntry.buildWeatherUriWithDate(timeStamp);
 //        Cursor cursor = mContext.getContentResolver().query(
 //                weatherWithDateUri,
-//                WEATHER_COLUMNS,
 //                null,
 //                null,
-//                sortOrder
+//                null,
+//                null
 //        );
+//
+////        Cursor cursor = mContext.getContentResolver().query(
+////                WeatherEntry.CONTENT_URI.withAppendedPath(WeatherEntry.CONTENT_URI, String.valueOf(t)),
+////                null,
+////                null,
+////                null,
+////                null
+////        );
 //
 //        while (cursor.moveToNext()) {
 //
-//            switch (cursor.getString(COL_WEATHER_LOCATION)) {
-//                case "한라산" :
-//                    weatherIv = (ImageView)((MainActivity)mContext).findViewById(R.id.weather_img_hallasan);
-//                    weatherTv = (TextView)((MainActivity)mContext).findViewById(R.id.weather_hallasan);
-//                    temperatureTv = (TextView)((MainActivity)mContext).findViewById(R.id.temperature_hallasan);
-//                    break;
-//                case "어리목" :
-//                    weatherIv = (ImageView)((MainActivity)mContext).findViewById(R.id.weather_img_eorimok);
-//                    weatherTv = (TextView)((MainActivity)mContext).findViewById(R.id.weather_eorimok);
-//                    temperatureTv = (TextView)((MainActivity)mContext).findViewById(R.id.temperature_eorimok);
-//                    break;
-//                case "영실" :
-//                    weatherIv = (ImageView)((MainActivity)mContext).findViewById(R.id.weather_img_yeongsil);
-//                    weatherTv = (TextView)((MainActivity)mContext).findViewById(R.id.weather_yeongsil);
-//                    temperatureTv = (TextView)((MainActivity)mContext).findViewById(R.id.temperature_yeongsil);
-//                    break;
-//                case "성판악" :
-//                    weatherIv = (ImageView)((MainActivity)mContext).findViewById(R.id.weather_img_seongpanak);
-//                    weatherTv = (TextView)((MainActivity)mContext).findViewById(R.id.weather_seongpanak);
-//                    temperatureTv = (TextView)((MainActivity)mContext).findViewById(R.id.temperature_seongpanak);
-//                    break;
-//                case "관음사" :
-//                    weatherIv = (ImageView)((MainActivity)mContext).findViewById(R.id.weather_img_kwanumsa);
-//                    weatherTv = (TextView)((MainActivity)mContext).findViewById(R.id.weather_kwanumsa);
-//                    temperatureTv = (TextView)((MainActivity)mContext).findViewById(R.id.temperature_kwanumsa);
-//                    break;
-//                case "돈내코" :
-//                    weatherIv = (ImageView)((MainActivity)mContext).findViewById(R.id.weather_img_donnaeko);
-//                    weatherTv = (TextView)((MainActivity)mContext).findViewById(R.id.weather_donnaeko);
-//                    temperatureTv = (TextView)((MainActivity)mContext).findViewById(R.id.temperature_donnaeko);
-//                    break;
-//            }
 //
-//            int sky = cursor.getInt(COL_WEATHER_SKY);
-//            if (sky > 0) {
-//                switch (sky) {
-//                    case 1:
-//                        weatherIv.setImageResource(R.drawable.weather_sunny);
-//                        weatherTv.setText("맑음");
-//                        break;
-//                    case 2:
-//                        weatherIv.setImageResource(R.drawable.weather_cloud_sun);
-//                        weatherTv.setText("구름 조금");
-//                        break;
-//                    case 3:
-//                        weatherIv.setImageResource(R.drawable.weather_cloud);
-//                        weatherTv.setText("구름 많음");
-//                        break;
-//                    case 4:
-//                        weatherIv.setImageResource(R.drawable.weather_clouds);
-//                        weatherTv.setText("흐림");
-//                        break;
-//                }
-//            }
+//            int weatherIdIndex = cursor.getColumnIndex(WeatherEntry._ID);
+//            weaterId = cursor.getLong(weatherIdIndex);
 //
-//            int pty = cursor.getInt(COL_WEATHER_PTY);
-//            if (pty > 0) {
-//                switch (pty) {
-//                    case 1:
-//                        weatherIv.setImageResource(R.drawable.weather_cloud_rain);
-//                        weatherTv.setText("비");
-//                        break;
-//                    case 2:
-//                        weatherIv.setImageResource(R.drawable.weather_cloud_snow_rain);
-//                        weatherTv.setText("비/눈");
-//                        break;
-//                    case 3:
-//                        weatherIv.setImageResource(R.drawable.weather_cloud_snow2);
-//                        weatherTv.setText("눈");
-//                        break;
-//                }
-//            }
-//
-//            temperatureTv.setText(String.valueOf(cursor.getFloat(COL_WEATHER_T1H)));
-//
-//            Log.v(LOG_TAG,  "ID : " + cursor.getLong(COL_WEATHER_ID) + " 장소 : " + cursor.getString(COL_WEATHER_LOCATION) + " TimeStamp " + cursor.getString(COL_WEATHER_TIMESTAMP)
-//                    + " SKY " + cursor.getInt(COL_WEATHER_SKY));
-//
+//            int weatherLocationIndex = cursor.getColumnIndex(WeatherEntry.COLUMN_LOCATION);
+//            int weatherTimeStampIndex = cursor.getColumnIndex(WeatherEntry.COLUMN_TIMESTAMP);
+//            Log.v(LOG_TAG,  "ID : " + weaterId + " 장소 : " + cursor.getString(weatherLocationIndex) + " TimeStamp " + cursor.getString(weatherTimeStampIndex));
 //        }
 //
 //        cursor.close();
-//
 //    }
-
-    long addWeather(String location, String timeStamp, String baseDate, String baseTime, int nx, int ny, float t1h, float rn1, float sky, float uuu, float vvv, float reh, float pty, float lgt, float vec, float wsd) {
-        long weatherId;
-
-//        Cursor weatherCursor = mContext.getContentResolver().query(
-//                WeatherEntry.CONTENT_URI,
-//                new String[] { WeatherEntry._ID },
-//                WeatherEntry.COLUMN_TIMESTAMP + " = ? ",
-//                new String[] { timeStamp },
-//                null);
-
-//        if (weatherCursor.moveToFirst()) {
-//            int weatherIdIndex = weatherCursor.getColumnIndex(WeatherEntry._ID);
-//            weatherId = weatherCursor.getLong(weatherIdIndex);
-//        } else {
-            ContentValues weatherValues = new ContentValues();
-
-            weatherValues.put(WeatherEntry.COLUMN_LOCATION, location);
-            weatherValues.put(WeatherEntry.COLUMN_TIMESTAMP, timeStamp);
-            weatherValues.put(WeatherEntry.COLUMN_BASE_DATE, baseDate);
-            weatherValues.put(WeatherEntry.COLUMN_BASE_TIME, baseTime);
-            weatherValues.put(WeatherEntry.COLUMN_NX, nx);
-            weatherValues.put(WeatherEntry.COLUMN_NY, ny);
-            weatherValues.put(WeatherEntry.COLUMN_T1H, t1h);
-            weatherValues.put(WeatherEntry.COLUMN_RN1, rn1);
-            weatherValues.put(WeatherEntry.COLUMN_SKY, sky);
-            weatherValues.put(WeatherEntry.COLUMN_UUU, uuu);
-            weatherValues.put(WeatherEntry.COLUMN_VVV, vvv);
-            weatherValues.put(WeatherEntry.COLUMN_REH, reh);
-            weatherValues.put(WeatherEntry.COLUMN_PTY, pty);
-            weatherValues.put(WeatherEntry.COLUMN_LGT, lgt);
-            weatherValues.put(WeatherEntry.COLUMN_VEC, vec);
-            weatherValues.put(WeatherEntry.COLUMN_WSD, wsd);
-
-            Uri insertedUri = mContext.getContentResolver().insert(
-                    WeatherEntry.CONTENT_URI, weatherValues);
-            weatherId = ContentUris.parseId(insertedUri);
-//        }
-
-//        weatherCursor.close();
-        return weatherId;
-    }
-
-    void query() {
-        long weaterId;
-
-//        long t = 201705202251L;
-        String timeStamp = "201705202251";
-//        Cursor cursor = mContext.getContentResolver().query(
-//                WeatherEntry.CONTENT_URI,
-//                null,
-//                null,
-//                null,
-//                null
-//        );
-
-//        Cursor cursor = mContext.getContentResolver().query(
-//                WeatherEntry.CONTENT_URI,
-//                null,
-//                WeatherEntry.COLUMN_TIMESTAMP + " = ? ",
-//                new String[] { timeStamp },
-//                null
-//        );
-
-        Uri weatherWithDateUri = WeatherEntry.buildWeatherUriWithDate(timeStamp);
-        Cursor cursor = mContext.getContentResolver().query(
-                weatherWithDateUri,
-                null,
-                null,
-                null,
-                null
-        );
-
-//        Cursor cursor = mContext.getContentResolver().query(
-//                WeatherEntry.CONTENT_URI.withAppendedPath(WeatherEntry.CONTENT_URI, String.valueOf(t)),
-//                null,
-//                null,
-//                null,
-//                null
-//        );
-
-        while (cursor.moveToNext()) {
-
-
-            int weatherIdIndex = cursor.getColumnIndex(WeatherEntry._ID);
-            weaterId = cursor.getLong(weatherIdIndex);
-
-            int weatherLocationIndex = cursor.getColumnIndex(WeatherEntry.COLUMN_LOCATION);
-            int weatherTimeStampIndex = cursor.getColumnIndex(WeatherEntry.COLUMN_TIMESTAMP);
-            Log.v(LOG_TAG,  "ID : " + weaterId + " 장소 : " + cursor.getString(weatherLocationIndex) + " TimeStamp " + cursor.getString(weatherTimeStampIndex));
-        }
-
-        cursor.close();
-    }
 
 }

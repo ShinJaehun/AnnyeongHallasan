@@ -1,5 +1,7 @@
 package com.shinjaehun.annyeonghallasan;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,8 +14,8 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity {
 
     String LOG_TAG = MainActivity.class.getSimpleName();
-    static boolean isDebugging = false;
     public static Calendar mCalendar;
+    public static boolean isDebugging = false;
 
 //    ArrayList<String> roads = new ArrayList<>();
 //    ArrayList<String> status = new ArrayList<>();
@@ -81,58 +83,44 @@ public class MainActivity extends AppCompatActivity {
 //        return new String(s.getBytes(), startIdx, bytes);
 //    }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-////        return super.onCreateOptionsMenu(menu);
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-//        return true;
-//    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+//        return super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
+
+
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)     {
+        Calendar calendar = Calendar.getInstance();
         switch (item.getItemId()) {
             case R.id.action_debug:
+//                FetchRoadStatusTask.cleanMap();
                 isDebugging = true;
-//                HallasanSyncAdapter.syncImmediately(getApplicationContext(), Calendar.getInstance(), isDebugging);
+//                new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
+//                new FetchWeatherTask(MainActivity.this, calendar).execute();
+
+                Fragment fragment = null;
+                fragment = getSupportFragmentManager().findFragmentById(R.id.roadFragment);
+                final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.detach(fragment);
+                ft.attach(fragment);
+                ft.commit();
+
                 return true;
+
             case R.id.action_fetch:
+//                FetchRoadStatusTask.cleanMap();
+
                 isDebugging = false;
-//                HallasanSyncAdapter.syncImmediately(getApplicationContext(), Calendar.getInstance(), isDebugging);
+//                new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
+//                new FetchWeatherTask(MainActivity.this, calendar).execute();
+
                 return true;
+
         }
         return super.onOptionsItemSelected(item);
     }
-
-    //
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item)     {
-//        Calendar calendar = Calendar.getInstance();
-//        switch (item.getItemId()) {
-//            case R.id.action_debug:
-//                FetchRoadStatusTask.cleanMap();
-//
-//                isDebugging = true;
-//                new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
-//                new FetchWeatherTask(MainActivity.this, calendar).execute();
-//
-//                return true;
-//
-//            case R.id.action_fetch:
-//                FetchRoadStatusTask.cleanMap();
-//
-//                isDebugging = false;
-//                new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
-//                new FetchWeatherTask(MainActivity.this, calendar).execute();
-//
-//                return true;
-//
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
 }

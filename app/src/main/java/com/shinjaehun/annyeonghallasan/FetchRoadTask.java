@@ -27,25 +27,23 @@ public class FetchRoadTask extends AsyncTask<Object, Void, Void> {
     private final Context mContext;
     private final Calendar mCalendar;
     private String mTimeStamp;
-    private boolean isDebugging;
+//    private boolean isDebugging;
 
-    public FetchRoadTask(Context context, Calendar calendar, boolean isDebugging) {
+    public FetchRoadTask(Context context, Calendar calendar) {
         mContext = context;
         mCalendar = calendar;
         mTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(calendar.getTime());
-        this.isDebugging = isDebugging;
+//        this.isDebugging = isDebugging;
         Log.v(LOG_TAG, "현재시간" + " " + mTimeStamp);
     }
 
     @Override
     protected Void doInBackground(Object... params) {
-
-
         try {
             Document doc = null;
             String url = "http://www.jjpolice.go.kr/jjpolice/police25/traffic.htm?act=rss";
 
-            if (isDebugging) {
+            if (MainActivity.isDebugging) {
                 //XML 파일로 테스트하기
                 InputStream inputStream = mContext.getResources().openRawResource(R.raw.sample_data1);
                 try {
@@ -153,7 +151,6 @@ public class FetchRoadTask extends AsyncTask<Object, Void, Void> {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
         }
-
 
         return null;
     }

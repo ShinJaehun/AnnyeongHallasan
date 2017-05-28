@@ -218,6 +218,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<Road>> 
                         roadImgs.add((ImageView)((MainActivity) mContext).findViewById(R.id.road_516));
                         break;
                     case "번영로" :
+                        roadImgs.add((ImageView)((MainActivity) mContext).findViewById(R.id.road_beonyeong));
                         break;
                     case "평화로" :
                         roadImgs.add((ImageView)((MainActivity) mContext).findViewById(R.id.road_pyeonghwa));
@@ -248,7 +249,7 @@ public class FetchRoadStatusTask extends AsyncTask<Void, Void, ArrayList<Road>> 
                         break;
                     case "기타도로" :
                         if (r.getSection().contains("애조로")) {
-                            roadImgs.add((ImageView) ((MainActivity) mContext).findViewById(R.id.road_seoseong));
+                            roadImgs.add((ImageView) ((MainActivity) mContext).findViewById(R.id.road_aejo));
                         }
                         if (r.getSection().contains("일주도로")) {
                             roadImgs.add((ImageView) ((MainActivity) mContext).findViewById(R.id.road_ilju));
