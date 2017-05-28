@@ -12,7 +12,7 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity {
 
     String LOG_TAG = MainActivity.class.getSimpleName();
-    boolean isDebugging = false;
+    static boolean isDebugging = false;
     public static Calendar mCalendar;
 
 //    ArrayList<String> roads = new ArrayList<>();

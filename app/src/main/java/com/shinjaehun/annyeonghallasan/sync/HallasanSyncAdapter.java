@@ -7,9 +7,13 @@ import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.shinjaehun.annyeonghallasan.R;
@@ -40,9 +44,20 @@ import java.util.Calendar;
 
 public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final String LOG_TAG = HallasanSyncAdapter.class.getSimpleName();
+
     private static Calendar mCalendar;
     private static String mTimeStamp;
     private static boolean mIsDebugging;
+
+    // Interval at which to sync with the weather, in milliseconds.
+    // 60 seconds (1 minute)  180 = 3 hours
+//    public static final int SYNC_INTERVAL = 60 * 180;
+    public static final int SYNC_INTERVAL = 60;
+    public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
+
+    private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
+    private static final int WEATHER_NOTIFICATION_ID = 3004;
+
 
     public HallasanSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -54,7 +69,6 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
         roadProcess();
         weatherProcess();
-
     }
 
     private void weatherProcess() {
@@ -154,7 +168,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
             URL url = new URL(URLDecoder.decode(builtUri.toString(), "UTF-8"));
 
-            Log.v(LOG_TAG, "Built URI " + url.toString());
+//            Log.v(LOG_TAG, "Built URI " + url.toString());
 
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -185,7 +199,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
             String weatherJsonStr = buffer.toString();
 
-            Log.v(LOG_TAG, "Forecast Json String: " + weatherJsonStr);
+//            Log.v(LOG_TAG, "Forecast Json String: " + weatherJsonStr);
             getWeatherDataFromJson(location, weatherJsonStr);
             return ;
 
@@ -456,6 +470,44 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     public static void initalizeSyncAdapter(Context context) {
+        getSyncAccount(context);
+    }
+
+    public static void configurePeriodicSync(Context context, int syncInterval, int flexTime) {
+        Account account = getSyncAccount(context);
+        String authority = context.getString(R.string.content_authority);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            // we can enable inexact timers in our periodic sync
+            SyncRequest request = new SyncRequest.Builder().
+                    syncPeriodic(syncInterval, flexTime).
+                    setSyncAdapter(account, authority).
+                    setExtras(new Bundle()).build();
+            ContentResolver.requestSync(request);
+        } else {
+            ContentResolver.addPeriodicSync(account,
+                    authority, new Bundle(), syncInterval);
+        }
+    }
+
+
+    private static void onAccountCreated(Account newAccount, Context context) {
+        /*
+         * Since we've created an account
+         */
+        HallasanSyncAdapter.configurePeriodicSync(context, SYNC_INTERVAL, SYNC_FLEXTIME);
+
+        /*
+         * Without calling setSyncAutomatically, our periodic sync will not be enabled.
+         */
+        ContentResolver.setSyncAutomatically(newAccount, context.getString(R.string.content_authority), true);
+
+        /*
+         * Finally, let's do a sync to get things started
+         */
+        syncImmediately(context, mCalendar, mIsDebugging);
+    }
+
+    public static void initializeSyncAdapter(Context context) {
         getSyncAccount(context);
     }
 }

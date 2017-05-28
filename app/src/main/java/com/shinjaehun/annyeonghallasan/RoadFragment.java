@@ -59,13 +59,14 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        getLoaderManager().restartLoader(ROAD_LOADER, null, this);
+
         View v = inflater.inflate(R.layout.fragment_road, container, false);
         return v;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        getLoaderManager().initLoader(ROAD_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -91,8 +92,10 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
 
             long roadId = cursor.getLong(RoadFragment.COL_ROAD_ID);
             String location = cursor.getString(RoadFragment.COL_ROAD_NAME);
+            String timeStamp = cursor.getString(RoadFragment.COL_ROAD_TIMESTAMP);
+            int restrict = cursor.getInt(RoadFragment.COL_ROAD_RESTRICTION);
 
-            Log.v(LOG_TAG,  "ID : " + roadId + " 장소 : " + location);
+            Log.v(LOG_TAG,  "ID : " + roadId + " 장소 : " + location + " 타임스탬프 : " + timeStamp + " 제한여부 : " + restrict);
         }
 
     }

@@ -88,10 +88,10 @@ public class WeatherAdapter extends CursorAdapter {
 
         }
 
-        if (cursor != null) {
-            Log.v(LOG_TAG, "ID : " + cursor.getLong(WeatherFragment.COL_WEATHER_ID) + " 장소 : " + cursor.getString(WeatherFragment.COL_WEATHER_LOCATION) + " TimeStamp " + cursor.getString(WeatherFragment.COL_WEATHER_TIMESTAMP)
-                    + " SKY " + cursor.getInt(WeatherFragment.COL_WEATHER_SKY));
-        }
+//        if (cursor != null) {
+//            Log.v(LOG_TAG, "ID : " + cursor.getLong(WeatherFragment.COL_WEATHER_ID) + " 장소 : " + cursor.getString(WeatherFragment.COL_WEATHER_LOCATION) + " TimeStamp " + cursor.getString(WeatherFragment.COL_WEATHER_TIMESTAMP)
+//                    + " SKY " + cursor.getInt(WeatherFragment.COL_WEATHER_SKY));
+//        }
 
 //        cursor.close(); 닝기미 씨발 죽을려고 cursor를 닫아!!
 

@@ -9,11 +9,15 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
 import com.shinjaehun.annyeonghallasan.data.HallasanContract;
+import com.shinjaehun.annyeonghallasan.sync.HallasanSyncAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -77,11 +81,30 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        setHasOptionsMenu(true);
     }
+
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        inflater.inflate(R.menu.menu_main, menu);
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.action_debug:
+//                MainActivity.isDebugging = true;
+//                HallasanSyncAdapter.syncImmediately(getActivity(), Calendar.getInstance(), MainActivity.isDebugging);
+////                getLoaderManager().restartLoader(WEATHER_LOADER, null, this);
+//                return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        getLoaderManager().restartLoader(WEATHER_LOADER, null, this);
 
 //        Calendar calendar = Calendar.getInstance();
 //
@@ -127,7 +150,6 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        getLoaderManager().initLoader(WEATHER_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
