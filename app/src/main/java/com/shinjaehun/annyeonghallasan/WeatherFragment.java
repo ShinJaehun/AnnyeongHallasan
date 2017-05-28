@@ -1,5 +1,9 @@
 package com.shinjaehun.annyeonghallasan;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
@@ -17,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.GridView;
 
 import com.shinjaehun.annyeonghallasan.data.HallasanContract;
+import com.shinjaehun.annyeonghallasan.service.WeatherService;
 import com.shinjaehun.annyeonghallasan.sync.HallasanSyncAdapter;
 
 import java.text.SimpleDateFormat;
@@ -72,43 +77,16 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
     private static final int WEATHER_LOADER = 0;
 
     public WeatherFragment() {
-//        mCalendar = Calendar.getInstance();
-
     }
-
-//    private static Calendar mCalendar;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setHasOptionsMenu(true);
     }
-
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        inflater.inflate(R.menu.menu_main, menu);
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.action_debug:
-//                MainActivity.isDebugging = true;
-//                HallasanSyncAdapter.syncImmediately(getActivity(), Calendar.getInstance(), MainActivity.isDebugging);
-////                getLoaderManager().restartLoader(WEATHER_LOADER, null, this);
-//                return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        getLoaderManager().restartLoader(WEATHER_LOADER, null, this);
-
-//        Calendar calendar = Calendar.getInstance();
-//
-//        new FetchWeatherTask(getActivity().getApplicationContext(), calendar).execute();
 
         mWeatherAdapter = new WeatherAdapter(getContext(), null, 0);
         //이거 씨발 getActivity() 누구야!  cursor is deactivated prior to calling this method 이런 전혀 관련이 없는 것 같은 오류 메시지나 내 보이고1!!
@@ -123,33 +101,19 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     private void updateWeather() {
-//        FetchWeatherTask weatherTask = new FetchWeatherTask(getContext(), mCalendar);
-//        weatherTask.execute(getContext(), mCalendar);
-
-//        Intent intent = new Intent(getActivity(), WeatherService.class);
-//        intent.putExtra(WeatherService.LOCATION_QUERY_EXTRA, mCalendar);
-//        getActivity().startService(intent);
-
-//        Intent alarmIntent = new Intent(getActivity(), WeatherService.AlarmReceiver.class);
-//        alarmIntent.putExtra(WeatherService.LOCATION_QUERY_EXTRA, mCalendar);
-//
-//        PendingIntent pi = PendingIntent.getBroadcast(getActivity(), 0, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
-//
-//        AlarmManager am = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
-//        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, pi);
-
-//        HallasanSyncAdapter.syncImmediately(getActivity(), mCalendar);
-
+        FetchWeatherTask weatherTask = new FetchWeatherTask(getContext(), MainActivity.mCalendar);
+        weatherTask.execute();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-//        updateWeather();
+        updateWeather();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        getLoaderManager().initLoader(WEATHER_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 

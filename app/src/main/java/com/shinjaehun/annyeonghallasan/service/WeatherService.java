@@ -35,7 +35,7 @@ import java.util.Calendar;
 public class WeatherService extends IntentService {
 
     private final String LOG_TAG = WeatherService.class.getSimpleName();
-    public static final String LOCATION_QUERY_EXTRA = "lqe";
+    public static final String CALENDAR_EXTRA = "calendar";
 
     private Calendar mCalendar;
 
@@ -47,7 +47,7 @@ public class WeatherService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
 
         Bundle bundle = intent.getExtras();
-        mCalendar = (Calendar)bundle.getSerializable(LOCATION_QUERY_EXTRA);
+        mCalendar = (Calendar)bundle.getSerializable(CALENDAR_EXTRA );
 
 //        Calendar does not implement Parcelable.
 //        It does look like it implements Serializable however, so you might be able to serialize it down
@@ -417,99 +417,99 @@ public class WeatherService extends IntentService {
 //
 //    }
 
-    long addWeather(String location, String timeStamp, String baseDate, String baseTime, int nx, int ny, float t1h, float rn1, float sky, float uuu, float vvv, float reh, float pty, float lgt, float vec, float wsd) {
-        long weatherId;
-
-//        Cursor weatherCursor = mContext.getContentResolver().query(
-//                WeatherEntry.CONTENT_URI,
-//                new String[] { WeatherEntry._ID },
-//                WeatherEntry.COLUMN_TIMESTAMP + " = ? ",
-//                new String[] { timeStamp },
-//                null);
-
-//        if (weatherCursor.moveToFirst()) {
-//            int weatherIdIndex = weatherCursor.getColumnIndex(WeatherEntry._ID);
-//            weatherId = weatherCursor.getLong(weatherIdIndex);
-//        } else {
-        ContentValues weatherValues = new ContentValues();
-
-        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_LOCATION, location);
-        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_TIMESTAMP, timeStamp);
-        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_BASE_DATE, baseDate);
-        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_BASE_TIME, baseTime);
-        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_NX, nx);
-        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_NY, ny);
-        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_T1H, t1h);
-        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_RN1, rn1);
-        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_SKY, sky);
-        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_UUU, uuu);
-        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_VVV, vvv);
-        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_REH, reh);
-        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_PTY, pty);
-        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_LGT, lgt);
-        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_VEC, vec);
-        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_WSD, wsd);
-
-        Uri insertedUri = this.getContentResolver().insert(
-                HallasanContract.WeatherEntry.CONTENT_URI, weatherValues);
-        weatherId = ContentUris.parseId(insertedUri);
+//    long addWeather(String location, String timeStamp, String baseDate, String baseTime, int nx, int ny, float t1h, float rn1, float sky, float uuu, float vvv, float reh, float pty, float lgt, float vec, float wsd) {
+//        long weatherId;
+//
+////        Cursor weatherCursor = mContext.getContentResolver().query(
+////                WeatherEntry.CONTENT_URI,
+////                new String[] { WeatherEntry._ID },
+////                WeatherEntry.COLUMN_TIMESTAMP + " = ? ",
+////                new String[] { timeStamp },
+////                null);
+//
+////        if (weatherCursor.moveToFirst()) {
+////            int weatherIdIndex = weatherCursor.getColumnIndex(WeatherEntry._ID);
+////            weatherId = weatherCursor.getLong(weatherIdIndex);
+////        } else {
+//        ContentValues weatherValues = new ContentValues();
+//
+//        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_LOCATION, location);
+//        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_TIMESTAMP, timeStamp);
+//        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_BASE_DATE, baseDate);
+//        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_BASE_TIME, baseTime);
+//        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_NX, nx);
+//        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_NY, ny);
+//        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_T1H, t1h);
+//        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_RN1, rn1);
+//        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_SKY, sky);
+//        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_UUU, uuu);
+//        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_VVV, vvv);
+//        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_REH, reh);
+//        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_PTY, pty);
+//        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_LGT, lgt);
+//        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_VEC, vec);
+//        weatherValues.put(HallasanContract.WeatherEntry.COLUMN_WSD, wsd);
+//
+//        Uri insertedUri = this.getContentResolver().insert(
+//                HallasanContract.WeatherEntry.CONTENT_URI, weatherValues);
+//        weatherId = ContentUris.parseId(insertedUri);
+////        }
+//
+////        weatherCursor.close();
+//        return weatherId;
+//    }
+//
+//    void query() {
+//        long weaterId;
+//
+////        long t = 201705202251L;
+//        String timeStamp = "201705202251";
+////        Cursor cursor = mContext.getContentResolver().query(
+////                WeatherEntry.CONTENT_URI,
+////                null,
+////                null,
+////                null,
+////                null
+////        );
+//
+////        Cursor cursor = mContext.getContentResolver().query(
+////                WeatherEntry.CONTENT_URI,
+////                null,
+////                WeatherEntry.COLUMN_TIMESTAMP + " = ? ",
+////                new String[] { timeStamp },
+////                null
+////        );
+//
+//        Uri weatherWithDateUri = HallasanContract.WeatherEntry.buildWeatherUriWithDate(timeStamp);
+//        Cursor cursor = this.getContentResolver().query(
+//                weatherWithDateUri,
+//                null,
+//                null,
+//                null,
+//                null
+//        );
+//
+////        Cursor cursor = mContext.getContentResolver().query(
+////                WeatherEntry.CONTENT_URI.withAppendedPath(WeatherEntry.CONTENT_URI, String.valueOf(t)),
+////                null,
+////                null,
+////                null,
+////                null
+////        );
+//
+//        while (cursor.moveToNext()) {
+//
+//
+//            int weatherIdIndex = cursor.getColumnIndex(HallasanContract.WeatherEntry._ID);
+//            weaterId = cursor.getLong(weatherIdIndex);
+//
+//            int weatherLocationIndex = cursor.getColumnIndex(HallasanContract.WeatherEntry.COLUMN_LOCATION);
+//            int weatherTimeStampIndex = cursor.getColumnIndex(HallasanContract.WeatherEntry.COLUMN_TIMESTAMP);
+//            Log.v(LOG_TAG,  "ID : " + weaterId + " 장소 : " + cursor.getString(weatherLocationIndex) + " TimeStamp " + cursor.getString(weatherTimeStampIndex));
 //        }
-
-//        weatherCursor.close();
-        return weatherId;
-    }
-
-    void query() {
-        long weaterId;
-
-//        long t = 201705202251L;
-        String timeStamp = "201705202251";
-//        Cursor cursor = mContext.getContentResolver().query(
-//                WeatherEntry.CONTENT_URI,
-//                null,
-//                null,
-//                null,
-//                null
-//        );
-
-//        Cursor cursor = mContext.getContentResolver().query(
-//                WeatherEntry.CONTENT_URI,
-//                null,
-//                WeatherEntry.COLUMN_TIMESTAMP + " = ? ",
-//                new String[] { timeStamp },
-//                null
-//        );
-
-        Uri weatherWithDateUri = HallasanContract.WeatherEntry.buildWeatherUriWithDate(timeStamp);
-        Cursor cursor = this.getContentResolver().query(
-                weatherWithDateUri,
-                null,
-                null,
-                null,
-                null
-        );
-
-//        Cursor cursor = mContext.getContentResolver().query(
-//                WeatherEntry.CONTENT_URI.withAppendedPath(WeatherEntry.CONTENT_URI, String.valueOf(t)),
-//                null,
-//                null,
-//                null,
-//                null
-//        );
-
-        while (cursor.moveToNext()) {
-
-
-            int weatherIdIndex = cursor.getColumnIndex(HallasanContract.WeatherEntry._ID);
-            weaterId = cursor.getLong(weatherIdIndex);
-
-            int weatherLocationIndex = cursor.getColumnIndex(HallasanContract.WeatherEntry.COLUMN_LOCATION);
-            int weatherTimeStampIndex = cursor.getColumnIndex(HallasanContract.WeatherEntry.COLUMN_TIMESTAMP);
-            Log.v(LOG_TAG,  "ID : " + weaterId + " 장소 : " + cursor.getString(weatherLocationIndex) + " TimeStamp " + cursor.getString(weatherTimeStampIndex));
-        }
-
-        cursor.close();
-    }
+//
+//        cursor.close();
+//    }
 
     static public class AlarmReceiver extends BroadcastReceiver {
 
@@ -517,10 +517,10 @@ public class WeatherService extends IntentService {
         public void onReceive(Context context, Intent intent) {
 
             Bundle bundle = intent.getExtras();
-            Calendar calendar = (Calendar)bundle.getSerializable(LOCATION_QUERY_EXTRA);
+            Calendar calendar = (Calendar)bundle.getSerializable(CALENDAR_EXTRA );
 
             Intent sendIntent = new Intent(context, WeatherService.class);
-            sendIntent.putExtra(WeatherService.LOCATION_QUERY_EXTRA, calendar);
+            sendIntent.putExtra(WeatherService.CALENDAR_EXTRA , calendar);
             context.startService(sendIntent);
 
         }

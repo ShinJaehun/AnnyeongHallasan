@@ -1,5 +1,6 @@
 package com.shinjaehun.annyeonghallasan;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -16,6 +17,7 @@ import android.support.v4.app.Fragment;
 
 import com.shinjaehun.annyeonghallasan.data.HallasanContract;
 import com.shinjaehun.annyeonghallasan.model.Road;
+import com.shinjaehun.annyeonghallasan.service.RoadService;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -53,20 +55,29 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     private static final int ROAD_LOADER = 1;
 
     public RoadFragment() {
-//        mCalendar = Calendar.getInstance();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        getLoaderManager().restartLoader(ROAD_LOADER, null, this);
-
         View v = inflater.inflate(R.layout.fragment_road, container, false);
         return v;
     }
 
+    private void updateRoad() {
+        FetchRoadTask roadTask = new FetchRoadTask(getContext(), MainActivity.mCalendar, MainActivity.isDebugging);
+        roadTask.execute();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateRoad();
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        getLoaderManager().initLoader(ROAD_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 

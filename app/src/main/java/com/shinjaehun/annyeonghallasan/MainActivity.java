@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        HallasanSyncAdapter.initalizeSyncAdapter(this);
+//        HallasanSyncAdapter.initalizeSyncAdapter(this);
 
 //        Button fetchBT = (Button)findViewById(R.id.fetch);
 
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        HallasanSyncAdapter.syncImmediately(getApplicationContext(), Calendar.getInstance(), isDebugging);
+//        HallasanSyncAdapter.syncImmediately(getApplicationContext(), Calendar.getInstance(), isDebugging);
 //
 //        new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
 //        new FetchWeatherTask(MainActivity.this, calendar).execute();
@@ -99,11 +99,11 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_debug:
                 isDebugging = true;
-                HallasanSyncAdapter.syncImmediately(getApplicationContext(), Calendar.getInstance(), isDebugging);
+//                HallasanSyncAdapter.syncImmediately(getApplicationContext(), Calendar.getInstance(), isDebugging);
                 return true;
             case R.id.action_fetch:
                 isDebugging = false;
-                HallasanSyncAdapter.syncImmediately(getApplicationContext(), Calendar.getInstance(), isDebugging);
+//                HallasanSyncAdapter.syncImmediately(getApplicationContext(), Calendar.getInstance(), isDebugging);
                 return true;
         }
         return super.onOptionsItemSelected(item);
