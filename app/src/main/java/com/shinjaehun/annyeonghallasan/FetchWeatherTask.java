@@ -3,10 +3,12 @@ package com.shinjaehun.annyeonghallasan;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,6 +33,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 /**
@@ -43,13 +48,16 @@ public class FetchWeatherTask extends AsyncTask<Object, Void, Void> {
 
     private final Context mContext;
     private final Calendar mCalendar;
-    private String mTimeStamp;
+    private final String mTimeStamp;
 
     public FetchWeatherTask(Context context, Calendar calendar) {
         mContext = context;
         mCalendar = calendar;
-        mTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(calendar.getTime());
-        Log.v(LOG_TAG, "현재시간" + " " + mTimeStamp);
+        mTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime());
+
+//        Log.v(LOG_TAG, "현재시간" + " " + mTimeStamp);
+//        SharedPreferences timeStampPF = PreferenceManager.getDefaultSharedPreferences(mContext);
+//        mTimeStamp = timeStampPF.getString(MainActivity.TIME_STAMP, null);
     }
 
     private boolean DEBUG = true;
@@ -107,18 +115,48 @@ public class FetchWeatherTask extends AsyncTask<Object, Void, Void> {
 //        weathers.add(fetchWeatherJson("관음사", baseDate, baseTime, 53, 36)); // 33.423744 126.555786
 //        weathers.add(fetchWeatherJson("돈내코", baseDate, baseTime, 53, 34)); // 33.3101519,126.5681177
 
-        fetchWeatherJson("한라산", baseDate, baseTime, 53, 35);
-        fetchWeatherJson("어리목", baseDate, baseTime, 52, 36);
-        fetchWeatherJson("영실", baseDate, baseTime, 52, 34);
-        fetchWeatherJson("성판악", baseDate, baseTime, 54, 35);
-        fetchWeatherJson("관음사", baseDate, baseTime, 53, 36);
-        fetchWeatherJson("돈내코", baseDate, baseTime, 53, 34);
+
+        boolean inserted = false;
+        String sortOrder = HallasanContract.WeatherEntry._ID + " DESC";
+        Uri weatherWithDateUri = HallasanContract.WeatherEntry.buildWeatherUriWithDate(mTimeStamp);
+        Cursor cursor = mContext.getContentResolver().query(weatherWithDateUri, null, null, null, sortOrder);
+        // 일단 MainActivity의 timeStamp로 query
+
+        if (cursor.moveToFirst()) {
+            do {
+                String insertedTimeStamp = cursor.getString(WeatherFragment.COL_WEATHER_TIMESTAMP);
+                if (mTimeStamp.equals(insertedTimeStamp))
+                    inserted = true;
+                //이전에 insert된 값이 존재하는가?
+            } while (cursor.moveToNext());
+        }
+
+        if (!inserted) {
+            //이전에 insert된 값이 없다면 일단 Fetch
+
+            Vector<ContentValues> cVVector = new Vector<>();
+
+            cVVector.add(fetchWeatherJson("한라산", baseDate, baseTime, 53, 35));
+            cVVector.add(fetchWeatherJson("어리목", baseDate, baseTime, 52, 36));
+            cVVector.add(fetchWeatherJson("영실", baseDate, baseTime, 52, 34));
+            cVVector.add(fetchWeatherJson("성판악", baseDate, baseTime, 54, 35));
+            cVVector.add(fetchWeatherJson("관음사", baseDate, baseTime, 53, 36));
+            cVVector.add(fetchWeatherJson("돈내코", baseDate, baseTime, 53, 34));
+
+            if (cVVector.size() > 0) {
+                //Fetch한 값을 DB에 insert!
+                ContentValues[] cvArray = new ContentValues[cVVector.size()];
+                cVVector.toArray(cvArray);
+                mContext.getContentResolver().bulkInsert(HallasanContract.WeatherEntry.CONTENT_URI, cvArray);
+            }
+
+        }
 
         return null;
 
     }
 
-    private void fetchWeatherJson(String location, String baseDate, String baseTime, int x, int y) {
+    private ContentValues fetchWeatherJson(String location, String baseDate, String baseTime, int x, int y) {
 
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -175,7 +213,7 @@ public class FetchWeatherTask extends AsyncTask<Object, Void, Void> {
             StringBuffer buffer = new StringBuffer();
             if (inputStream == null) {
                 // Nothing to do.
-                return ;
+                return null;
             }
             reader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -189,20 +227,19 @@ public class FetchWeatherTask extends AsyncTask<Object, Void, Void> {
 
             if (buffer.length() == 0) {
                 // Stream was empty.  No point in parsing.
-                return ;
+                return null;
             }
 
             String weatherJsonStr = buffer.toString();
 
             Log.v(LOG_TAG, "Forecast Json String: " + weatherJsonStr);
-            getWeatherDataFromJson(location, weatherJsonStr);
-            return ;
+            return getWeatherDataFromJson(location, baseDate, baseTime, x, y, weatherJsonStr);
 
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
             // If the code didn't successfully get the weather data, there's no point in attempting
             // to parse it.
-            return ;
+            return null;
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
@@ -219,10 +256,10 @@ public class FetchWeatherTask extends AsyncTask<Object, Void, Void> {
             }
         }
 
-        return ;
+        return null;
     }
 
-    private void getWeatherDataFromJson(String location, String weatherJsonStr)
+    private ContentValues getWeatherDataFromJson(String location, String baseDate, String baseTime, int x, int y, String weatherJsonStr)
             throws JSONException {
 
         try {
@@ -232,7 +269,15 @@ public class FetchWeatherTask extends AsyncTask<Object, Void, Void> {
             JSONObject itemsObject = bodyObject.getJSONObject("items");
             JSONArray item = itemsObject.getJSONArray("item");
 
-            ContentValues weaterValues = new ContentValues();
+            ContentValues weatherValues = new ContentValues();
+            //ContentValues로 저장하는 방법을 좀 더 직관적으로 수정함
+
+            weatherValues.put(WeatherEntry.COLUMN_LOCATION, location);
+            weatherValues.put(WeatherEntry.COLUMN_TIMESTAMP, mTimeStamp);
+            weatherValues.put(WeatherEntry.COLUMN_BASE_DATE, baseDate);
+            weatherValues.put(WeatherEntry.COLUMN_BASE_TIME, baseTime);
+            weatherValues.put(WeatherEntry.COLUMN_NX, x);
+            weatherValues.put(WeatherEntry.COLUMN_NY, y);
 
             for (int i = 0; i < item.length(); i++) {
                 JSONObject weatherObject = (JSONObject) item.get(i);
@@ -240,183 +285,29 @@ public class FetchWeatherTask extends AsyncTask<Object, Void, Void> {
                 String category = weatherObject.get("category").toString();
                 float value = Float.parseFloat(weatherObject.get("obsrValue").toString());
 
-                if (i == 0) {
-
-                    weaterValues.put(WeatherEntry.COLUMN_LOCATION, location);
-                    weaterValues.put(WeatherEntry.COLUMN_TIMESTAMP, mTimeStamp);
-                    weaterValues.put(WeatherEntry.COLUMN_BASE_DATE, weatherObject.get("baseDate").toString());
-                    weaterValues.put(WeatherEntry.COLUMN_BASE_TIME, weatherObject.get("baseTime").toString());
-                    weaterValues.put(WeatherEntry.COLUMN_NX, (int) weatherObject.get("nx"));
-                    weaterValues.put(WeatherEntry.COLUMN_NY, (int) weatherObject.get("ny"));
-                }
-
-                WeatherEntry.Category c = null;
-
-                try {
-                    c = WeatherEntry.Category.valueOf(category);
-                } catch (IllegalArgumentException e) {
-                    Log.e(LOG_TAG, "Category Exception " + e);
-                }
-
-                switch (c) {
-                    case T1H:
-                        weaterValues.put(WeatherEntry.COLUMN_T1H, value);
-                        break;
-                    case RN1:
-                        weaterValues.put(WeatherEntry.COLUMN_RN1, value);
-                        break;
-                    case SKY:
-                        weaterValues.put(WeatherEntry.COLUMN_SKY, value);
-                        break;
-                    case UUU:
-                        weaterValues.put(WeatherEntry.COLUMN_UUU, value);
-                        break;
-                    case VVV:
-                        weaterValues.put(WeatherEntry.COLUMN_VVV, value);
-                        break;
-                    case REH:
-                        weaterValues.put(WeatherEntry.COLUMN_REH, value);
-                        break;
-                    case PTY:
-                        weaterValues.put(WeatherEntry.COLUMN_PTY, value);
-                        break;
-                    case LGT:
-                        weaterValues.put(WeatherEntry.COLUMN_LGT, value);
-                        break;
-                    case VEC:
-                        weaterValues.put(WeatherEntry.COLUMN_VEC, value);
-                        break;
-                    case WSD:
-                        weaterValues.put(WeatherEntry.COLUMN_WSD, value);
-                        break;
-                }
-
+                weatherValues.put(category, value);
 
             }
 
-            if (weaterValues.size() > 0) {
-                //DB에 insert
-//                Uri weatherWithDateUri = WeatherEntry.buildWeatherUriWithDate(mTimeStamp);
-//                Cursor c = mContext.getContentResolver().query(
-//                        weatherWithDateUri,
-//                        new String[] { WeatherEntry.COLUMN_LOCATION, WeatherEntry.COLUMN_TIMESTAMP },
-//                        null,
-//                        null,
-//                        null
-//                );
-//
-//                while (c.moveToNext()) {
-//                    Log.v(LOG_TAG, "장소 : " + c.getString(0) + " 타임스탬프 : " + c.getString(1));
-//
+//                ContentValue 출력하는 코드 : 지우지 마!
+//                Set<Map.Entry<String, Object>> s = weatherValues.valueSet();
+//                Iterator itr = s.iterator();
+//                Log.d("DatabaseSync", "ContentValue Length :: " + weatherValues.size());
+//                while(itr.hasNext())
+//                {
+//                    Map.Entry me = (Map.Entry)itr.next();
+//                    String key = me.getKey().toString();
+//                    Object value =  me.getValue();
+//                    Log.d("DatabaseSync", "Key:"+key+", values:"+(String)(value == null?null:value.toString()));
 //                }
-//                이렇게 DB에서 타임스탬프를 가져와서 비교하는 건 아닌 거 같다!
-//                query에 많은 자원이 소모되기 때문 아닐까...
 
-                mContext.getContentResolver().insert(WeatherEntry.CONTENT_URI, weaterValues);
-
-            }
-
-//            long id = addWeather(weather.getLocation(), mTimeStamp, weather.getBaseDate(), weather.getBaseTime(), weather.getNx(), weather.getNy(), weather.getT1h(), weather.getRn1(), weather.getSky(), weather.getUuu(), weather.getVvv(), weather.getReh(), weather.getPty(), weather.getLgt(), weather.getVec(), weather.getWsd());
+            return weatherValues;
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
         }
-        return ;
+        return null;
     }
-
-//    long addWeather(String location, String timeStamp, String baseDate, String baseTime, int nx, int ny, float t1h, float rn1, float sky, float uuu, float vvv, float reh, float pty, float lgt, float vec, float wsd) {
-//        long weatherId;
-//
-////        Cursor weatherCursor = mContext.getContentResolver().query(
-////                WeatherEntry.CONTENT_URI,
-////                new String[] { WeatherEntry._ID },
-////                WeatherEntry.COLUMN_TIMESTAMP + " = ? ",
-////                new String[] { timeStamp },
-////                null);
-//
-////        if (weatherCursor.moveToFirst()) {
-////            int weatherIdIndex = weatherCursor.getColumnIndex(WeatherEntry._ID);
-////            weatherId = weatherCursor.getLong(weatherIdIndex);
-////        } else {
-//            ContentValues weatherValues = new ContentValues();
-//
-//            weatherValues.put(WeatherEntry.COLUMN_LOCATION, location);
-//            weatherValues.put(WeatherEntry.COLUMN_TIMESTAMP, timeStamp);
-//            weatherValues.put(WeatherEntry.COLUMN_BASE_DATE, baseDate);
-//            weatherValues.put(WeatherEntry.COLUMN_BASE_TIME, baseTime);
-//            weatherValues.put(WeatherEntry.COLUMN_NX, nx);
-//            weatherValues.put(WeatherEntry.COLUMN_NY, ny);
-//            weatherValues.put(WeatherEntry.COLUMN_T1H, t1h);
-//            weatherValues.put(WeatherEntry.COLUMN_RN1, rn1);
-//            weatherValues.put(WeatherEntry.COLUMN_SKY, sky);
-//            weatherValues.put(WeatherEntry.COLUMN_UUU, uuu);
-//            weatherValues.put(WeatherEntry.COLUMN_VVV, vvv);
-//            weatherValues.put(WeatherEntry.COLUMN_REH, reh);
-//            weatherValues.put(WeatherEntry.COLUMN_PTY, pty);
-//            weatherValues.put(WeatherEntry.COLUMN_LGT, lgt);
-//            weatherValues.put(WeatherEntry.COLUMN_VEC, vec);
-//            weatherValues.put(WeatherEntry.COLUMN_WSD, wsd);
-//
-//            Uri insertedUri = mContext.getContentResolver().insert(
-//                    WeatherEntry.CONTENT_URI, weatherValues);
-//            weatherId = ContentUris.parseId(insertedUri);
-////        }
-//
-////        weatherCursor.close();
-//        return weatherId;
-//    }
-//
-//    void query() {
-//        long weaterId;
-//
-////        long t = 201705202251L;
-//        String timeStamp = "201705202251";
-////        Cursor cursor = mContext.getContentResolver().query(
-////                WeatherEntry.CONTENT_URI,
-////                null,
-////                null,
-////                null,
-////                null
-////        );
-//
-////        Cursor cursor = mContext.getContentResolver().query(
-////                WeatherEntry.CONTENT_URI,
-////                null,
-////                WeatherEntry.COLUMN_TIMESTAMP + " = ? ",
-////                new String[] { timeStamp },
-////                null
-////        );
-//
-//        Uri weatherWithDateUri = WeatherEntry.buildWeatherUriWithDate(timeStamp);
-//        Cursor cursor = mContext.getContentResolver().query(
-//                weatherWithDateUri,
-//                null,
-//                null,
-//                null,
-//                null
-//        );
-//
-////        Cursor cursor = mContext.getContentResolver().query(
-////                WeatherEntry.CONTENT_URI.withAppendedPath(WeatherEntry.CONTENT_URI, String.valueOf(t)),
-////                null,
-////                null,
-////                null,
-////                null
-////        );
-//
-//        while (cursor.moveToNext()) {
-//
-//
-//            int weatherIdIndex = cursor.getColumnIndex(WeatherEntry._ID);
-//            weaterId = cursor.getLong(weatherIdIndex);
-//
-//            int weatherLocationIndex = cursor.getColumnIndex(WeatherEntry.COLUMN_LOCATION);
-//            int weatherTimeStampIndex = cursor.getColumnIndex(WeatherEntry.COLUMN_TIMESTAMP);
-//            Log.v(LOG_TAG,  "ID : " + weaterId + " 장소 : " + cursor.getString(weatherLocationIndex) + " TimeStamp " + cursor.getString(weatherTimeStampIndex));
-//        }
-//
-//        cursor.close();
-//    }
 
 }

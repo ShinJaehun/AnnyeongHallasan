@@ -91,6 +91,7 @@ public class HallasanProvider extends ContentProvider {
                         null,
                         sortOrder);
                 break;
+
             default:
                 throw new UnsupportedOperationException("Unknown uri : " + uri);
         }
@@ -186,45 +187,45 @@ public class HallasanProvider extends ContentProvider {
         return rowsUpdated;
     }
 
-//    public int bulkInsert(Uri uri, ContentValues[] values) {
-//        final SQLiteDatabase db = mDBHelper.getWritableDatabase();
-//        switch (sUriMatcher.match(uri)) {
-//            case WEATHER:
-//                db.beginTransaction();
-//                int returnWeatherCount = 0;
-//                try {
-//                    for (ContentValues value : values) {
-//                        long weatherId = db.insert(HallasanContract.WeatherEntry.TABLE_NAME, null, value);
-//                        if (weatherId != -1) {
-//                            returnWeatherCount++;
-//                        }
-//                    }
-//                    db.setTransactionSuccessful();
-//                } finally {
-//                    db.endTransaction();
-//                }
-//                getContext().getContentResolver().notifyChange(uri, null);
-//                return returnWeatherCount;
-//            case ROAD:
-//                db.beginTransaction();
-//                int returnRoadCount = 0;
-//                try {
-//                    for (ContentValues value : values) {
-//                        long roadId = db.insert(HallasanContract.RoadEntry.TABLE_NAME, null, value);
-//                        if (roadId != -1) {
-//                            returnRoadCount++;
-//                        }
-//                    }
-//                    db.setTransactionSuccessful();
-//                } finally {
-//                    db.endTransaction();
-//                }
-//                getContext().getContentResolver().notifyChange(uri, null);
-//                return returnRoadCount;
-//            default:
-//                return super.bulkInsert(uri, values);
-//        }
-//    }
+    public int bulkInsert(Uri uri, ContentValues[] values) {
+        final SQLiteDatabase db = mDBHelper.getWritableDatabase();
+        switch (sUriMatcher.match(uri)) {
+            case WEATHER:
+                db.beginTransaction();
+                int returnWeatherCount = 0;
+                try {
+                    for (ContentValues value : values) {
+                        long weatherId = db.insert(HallasanContract.WeatherEntry.TABLE_NAME, null, value);
+                        if (weatherId != -1) {
+                            returnWeatherCount++;
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+                getContext().getContentResolver().notifyChange(uri, null);
+                return returnWeatherCount;
+            case ROAD:
+                db.beginTransaction();
+                int returnRoadCount = 0;
+                try {
+                    for (ContentValues value : values) {
+                        long roadId = db.insert(HallasanContract.RoadEntry.TABLE_NAME, null, value);
+                        if (roadId != -1) {
+                            returnRoadCount++;
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+                getContext().getContentResolver().notifyChange(uri, null);
+                return returnRoadCount;
+            default:
+                return super.bulkInsert(uri, values);
+        }
+    }
 
     @Override
     @TargetApi(11)

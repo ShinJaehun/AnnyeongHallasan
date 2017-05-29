@@ -1,5 +1,7 @@
 package com.shinjaehun.annyeonghallasan;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -7,15 +9,17 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.shinjaehun.annyeonghallasan.sync.HallasanSyncAdapter;
-
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
 
     String LOG_TAG = MainActivity.class.getSimpleName();
+    public static final String TIME_STAMP = "time_stamp";
+
     public static Calendar mCalendar;
     public static boolean isDebugging = false;
+//    private static SharedPreferences timeStampPF;
 
 //    ArrayList<String> roads = new ArrayList<>();
 //    ArrayList<String> status = new ArrayList<>();
@@ -24,6 +28,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCalendar = Calendar.getInstance();
+
+//        timeStampPF = PreferenceManager.getDefaultSharedPreferences(this);
+//
+//        if (timeStampPF.getString(TIME_STAMP, null) == null) {
+//            SharedPreferences.Editor editor = timeStampPF.edit();
+//            editor.putString(TIME_STAMP, new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime()));
+//            editor.commit();
+//        }
 
         setContentView(R.layout.activity_main);
 
@@ -75,9 +87,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
 //        FetchRoadStatusTask.cleanMap();
         //계속 깜빡이는 것도 나쁘진 않아 보여;;;
-
         super.onPause();
     }
+
+//    @Override
+//    protected void onDestroy() {
+//        SharedPreferences.Editor editor = timeStampPF.edit();
+//        editor.clear();
+//        editor.commit();
+//
+//        super.onDestroy();
+//    }
 
     //    private static String getByteString(String s, int startIdx, int bytes) {
 //        return new String(s.getBytes(), startIdx, bytes);
@@ -102,12 +122,13 @@ public class MainActivity extends AppCompatActivity {
 //                new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
 //                new FetchWeatherTask(MainActivity.this, calendar).execute();
 
-                Fragment fragment = null;
-                fragment = getSupportFragmentManager().findFragmentById(R.id.roadFragment);
-                final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.detach(fragment);
-                ft.attach(fragment);
-                ft.commit();
+//                Fragment fragment = null;
+//                fragment = getSupportFragmentManager().findFragmentById(R.id.roadFragment);
+//                final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//                ft.detach(fragment);
+//                ft.attach(fragment);
+//                ft.commit();
+// Fragment만 변경하면 될 줄 알았는데 잘 안 된다... 바로 반영 안 됨
 
                 return true;
 
