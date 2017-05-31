@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -41,22 +42,13 @@ public class MainActivity extends AppCompatActivity {
 //        }
 
         setContentView(R.layout.activity_main);
-        Log.v(LOG_TAG, "디버깅인가요 " + isDebugging);
 
-        if (isDebugging == false) {
-            RoadFragment roadFragment = new RoadFragment();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.roadFragment, roadFragment);
-            fragmentTransaction.commit();
-        } else {
-            RoadDebuggingFragment roadDebuggingFragment = new RoadDebuggingFragment();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.roadFragment, roadDebuggingFragment);
-            fragmentTransaction.commit();
+//            RoadFragment roadFragment = new RoadFragment();
+//            FragmentManager fragmentManager = getSupportFragmentManager();
+//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//            fragmentTransaction.replace(R.id.roadFragment, roadFragment);
+//            fragmentTransaction.commit();
 
-        }
 //        HallasanSyncAdapter.initalizeSyncAdapter(this);
 
 //        Button fetchBT = (Button)findViewById(R.id.fetch);
@@ -110,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        isDebugging = false;
         super.onDestroy();
     }
 
@@ -140,6 +131,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item)     {
         Calendar calendar = Calendar.getInstance();
         Intent intent = getIntent();
+        String mainTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime());
+        String rightNow = new SimpleDateFormat("yyyyMMddHHmm").format(calendar.getTime());
 
         switch (item.getItemId()) {
             case R.id.action_debug:
@@ -148,11 +141,12 @@ public class MainActivity extends AppCompatActivity {
 //                new FetchRoadTask(getApplicationContext(), calendar, isDebugging).execute();
 //                new FetchWeatherTask(getApplicationContext(), calendar).execute();
 
-                finish();
-                startActivity(intent);
-
-
-
+                if (mainTimeStamp.equals(rightNow)) {
+                    Toast.makeText(this, "디버깅은 1분 후에 가능!", Toast.LENGTH_SHORT).show();
+                } else {
+                    finish();
+                    startActivity(intent);
+                }
 //                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.roadFragment);
 //                final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 //                ft.detach(fragment);
@@ -168,8 +162,13 @@ public class MainActivity extends AppCompatActivity {
                 isDebugging = false;
 //                new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
 //                new FetchWeatherTask(MainActivity.this, calendar).execute();
-                finish();
-                startActivity(intent);
+
+                if (mainTimeStamp.equals(rightNow)) {
+                    Toast.makeText(this, "디버깅은 1분 후에 가능!", Toast.LENGTH_SHORT).show();
+                } else {
+                    finish();
+                    startActivity(intent);
+                }
                 return true;
 
         }
