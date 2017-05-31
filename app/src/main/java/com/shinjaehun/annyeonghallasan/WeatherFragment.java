@@ -122,19 +122,24 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        String sortOrder = HallasanContract.WeatherEntry.COLUMN_TIMESTAMP + " ASC";
+        if (id == WEATHER_LOADER) {
 
-        String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(MainActivity.mCalendar.getTime());
+            String sortOrder = HallasanContract.WeatherEntry.COLUMN_TIMESTAMP + " ASC";
 
-        Uri weatherWithDateUri = HallasanContract.WeatherEntry.buildWeatherUriWithDate(timeStamp);
+            String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(MainActivity.mCalendar.getTime());
 
-        return new CursorLoader(getContext(),
-                weatherWithDateUri,
-                WEATHER_COLUMNS,
-                null,
-                null,
-                sortOrder
-        );
+            Uri weatherWithDateUri = HallasanContract.WeatherEntry.buildWeatherUriWithDate(timeStamp);
+
+            return new CursorLoader(getContext(),
+                    weatherWithDateUri,
+                    WEATHER_COLUMNS,
+                    null,
+                    null,
+                    sortOrder
+            );
+        }
+
+        return null;
     }
 
     @Override

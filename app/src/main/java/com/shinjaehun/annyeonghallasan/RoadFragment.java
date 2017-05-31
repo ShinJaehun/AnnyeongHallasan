@@ -1,5 +1,6 @@
 package com.shinjaehun.annyeonghallasan;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -39,7 +40,7 @@ import java.util.Calendar;
  * Created by shinjaehun on 2017-05-22.
  */
 
-public class RoadFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class RoadFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final String LOG_TAG = RoadFragment.class.getSimpleName();
 
     public static final String[] ROAD_COLUMNS = {
@@ -54,15 +55,15 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
             HallasanContract.RoadEntry.COLUMN_CHAIN
     };
 
-    static final int COL_ROAD_ID = 0;
-    static final int COL_ROAD_NAME = 1;
-    static final int COL_ROAD_TIMESTAMP = 2;
-    static final int COL_ROAD_BASE_DATE = 3;
-    static final int COL_ROAD_RESTRICTION = 4;
-    static final int COL_ROAD_SECTION = 5;
-    static final int COL_ROAD_SNOWFALL = 6;
-    static final int COL_ROAD_FREEZING = 7;
-    static final int COL_ROAD_CHAIN = 8;
+    public static final int COL_ROAD_ID = 0;
+    public static final int COL_ROAD_NAME = 1;
+    public static final int COL_ROAD_TIMESTAMP = 2;
+    public static final int COL_ROAD_BASE_DATE = 3;
+    public static final int COL_ROAD_RESTRICTION = 4;
+    public static final int COL_ROAD_SECTION = 5;
+    public static final int COL_ROAD_SNOWFALL = 6;
+    public static final int COL_ROAD_FREEZING = 7;
+    public static final int COL_ROAD_CHAIN = 8;
 
     private static final int ROAD_LOADER = 1;
 
@@ -88,12 +89,15 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     public RoadFragment() {
     }
 
+    View v;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 //        setHasOptionsMenu(true);
-        View v = inflater.inflate(R.layout.fragment_road, container, false);
 
+        View v = inflater.inflate(R.layout.fragment_road, container, false);
+//
         road_1100Iv = (ImageView)v.findViewById(R.id.road_1100);
         road_516Iv = (ImageView)v.findViewById(R.id.road_516);
         road_pyeonghwaIv = (ImageView)v.findViewById(R.id.road_pyeonghwa);
@@ -135,14 +139,20 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
 //    }
 
     private void updateRoad() {
-        FetchRoadTask roadTask = new FetchRoadTask(getContext(), MainActivity.mCalendar);
-        roadTask.execute();
+//        if (MainActivity.isDebugging) {
+//            FetchRoadDebuggingTask roadDebuggingTask = new FetchRoadDebuggingTask(getContext(), MainActivity.mCalendar);
+//            roadDebuggingTask.execute();
+//        } else {
+            FetchRoadTask roadTask = new FetchRoadTask(getContext(), MainActivity.mCalendar);
+            roadTask.execute();
+//        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
         updateRoad();
+
     }
 
     @Override
@@ -154,95 +164,104 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        String sortOrder = HallasanContract.RoadEntry.COLUMN_TIMESTAMP + " ASC";
+        if (id == ROAD_LOADER) {
 
-        String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(MainActivity.mCalendar.getTime());
-        Uri roadWithDateUri = HallasanContract.RoadEntry.buildRoadUriWithDate(timeStamp);
+            String sortOrder = HallasanContract.RoadEntry.COLUMN_TIMESTAMP + " DESC";
 
-        return new CursorLoader(getContext(),
-                roadWithDateUri,
-                RoadFragment.ROAD_COLUMNS,
-                null,
-                null,
-                sortOrder
-        );
+            String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(MainActivity.mCalendar.getTime());
+            Uri roadWithDateUri = HallasanContract.RoadEntry.buildRoadUriWithDate(timeStamp);
+
+            return new CursorLoader(getContext(),
+                    roadWithDateUri,
+                    RoadFragment.ROAD_COLUMNS,
+                    null,
+                    null,
+                    sortOrder
+            );
+        }
+
+        return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         roadImgs = new ArrayList<>();
 
+        Log.v(LOG_TAG, "onLoadFinished에서 Cursor 크기 " + cursor.getCount());
+
         while (cursor.moveToNext()) {
 
-            long roadId = cursor.getLong(RoadFragment.COL_ROAD_ID);
-            String location = cursor.getString(RoadFragment.COL_ROAD_NAME);
             String timeStamp = cursor.getString(RoadFragment.COL_ROAD_TIMESTAMP);
-            int restrict = cursor.getInt(RoadFragment.COL_ROAD_RESTRICTION);
 
-            Log.v(LOG_TAG,  "ID : " + roadId + " 장소 : " + location + " 타임스탬프 : " + timeStamp + " 제한여부 : " + restrict);
+                long roadId = cursor.getLong(RoadFragment.COL_ROAD_ID);
+                String location = cursor.getString(RoadFragment.COL_ROAD_NAME);
 
-            if (restrict == HallasanContract.RoadEntry.RESTRICTION_ENABLED) {
-                switch (location) {
-                    case "1100도로" :
-                        //여러 ImageView를 동시에 깜빡이게 하기 위해서는 같은 handler를 동시에
-                        roadImgs.add(road_1100Iv);
-                        break;
-                    case "5.16도로" :
-                        roadImgs.add(road_516Iv);
-                        break;
-                    case "번영로" :
-                        roadImgs.add(road_beonyeongIv);
-                        break;
-                    case "평화로" :
-                        roadImgs.add(road_pyeonghwaIv);
-                        break;
-                    case "한창로" :
-                        roadImgs.add(road_hanchangIv);
-                        break;
-                    case "남조로" :
-                        roadImgs.add(road_namjoIv);
-                        break;
-                    case "비자림로" :
-                        roadImgs.add(road_bijaIv);
-                        break;
-                    case "서성로" :
-                        roadImgs.add(road_seoseongIv);
-                        break;
-                    case "제1산록도로" :
-                        roadImgs.add(road_sallok1Iv);
-                        break;
-                    case "제2산록도로" :
-                        roadImgs.add(road_sallok2Iv);
-                        break;
-                    case "명림로" :
-                        roadImgs.add(road_myeongnimIv);
-                        break;
-                    case "첨단로" :
-                        roadImgs.add(road_cheomdanIv);
-                        break;
-                    case "기타도로" :
-                        if (cursor.getString(RoadFragment.COL_ROAD_SECTION).contains("애조로")) {
-                            roadImgs.add(road_aejoIv);
-                        }
-                        if (cursor.getString(RoadFragment.COL_ROAD_SECTION).contains("일주도로")) {
-                            roadImgs.add(road_iljuIv);
-                        }
-                        break;
-                    default:
-                        break;
+                int restrict = cursor.getInt(RoadFragment.COL_ROAD_RESTRICTION);
+
+                Log.v(LOG_TAG, "ID : " + roadId + " 장소 : " + location + " 타임스탬프 : " + timeStamp + " 제한여부 : " + restrict);
+
+                if (restrict == HallasanContract.RoadEntry.RESTRICTION_ENABLED) {
+                    switch (location) {
+                        case "1100도로":
+                            //여러 ImageView를 동시에 깜빡이게 하기 위해서는 같은 handler를 동시에
+                            roadImgs.add(road_1100Iv);
+                            break;
+                        case "5.16도로":
+                            roadImgs.add(road_516Iv);
+                            break;
+                        case "번영로":
+                            roadImgs.add(road_beonyeongIv);
+                            break;
+                        case "평화로":
+                            roadImgs.add(road_pyeonghwaIv);
+                            break;
+                        case "한창로":
+                            roadImgs.add(road_hanchangIv);
+                            break;
+                        case "남조로":
+                            roadImgs.add(road_namjoIv);
+                            break;
+                        case "비자림로":
+                            roadImgs.add(road_bijaIv);
+                            break;
+                        case "서성로":
+                            roadImgs.add(road_seoseongIv);
+                            break;
+                        case "제1산록도로":
+                            roadImgs.add(road_sallok1Iv);
+                            break;
+                        case "제2산록도로":
+                            roadImgs.add(road_sallok2Iv);
+                            break;
+                        case "명림로":
+                            roadImgs.add(road_myeongnimIv);
+                            break;
+                        case "첨단로":
+                            roadImgs.add(road_cheomdanIv);
+                            break;
+                        case "기타도로":
+                            if (cursor.getString(RoadFragment.COL_ROAD_SECTION).contains("애조로")) {
+                                roadImgs.add(road_aejoIv);
+                            }
+                            if (cursor.getString(RoadFragment.COL_ROAD_SECTION).contains("일주도로")) {
+                                roadImgs.add(road_iljuIv);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
                 }
-            }
 
-            if (roadImgs.size() == 0) {
-                normalTV.setVisibility(View.VISIBLE);
-                startBlink(normalTV);
-            } else {
-                for (ImageView i : roadImgs) {
+                if (roadImgs.size() == 0) {
+                    normalTV.setVisibility(View.VISIBLE);
+                    startBlink(normalTV);
+                } else {
+                    for (ImageView i : roadImgs) {
 
-                    i.setVisibility(View.VISIBLE);
-                    startBlink(i);
+                        i.setVisibility(View.VISIBLE);
+                        startBlink(i);
+                    }
                 }
-            }
 
 //        FrameLayout roadStatusL = (FrameLayout)((MainActivity)mContext).findViewById(R.id.layout_road_status);
 //        roadStatusL.setOnClickListener(new View.OnClickListener() {
@@ -256,6 +275,7 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
 //        });
 
         }
+
     }
 
     private void startBlink(View i) {
@@ -315,6 +335,7 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        loader = null;
+
     }
+
 }

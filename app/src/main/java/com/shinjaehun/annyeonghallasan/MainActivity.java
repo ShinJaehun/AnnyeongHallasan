@@ -1,11 +1,14 @@
 package com.shinjaehun.annyeonghallasan;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -38,7 +41,22 @@ public class MainActivity extends AppCompatActivity {
 //        }
 
         setContentView(R.layout.activity_main);
+        Log.v(LOG_TAG, "디버깅인가요 " + isDebugging);
 
+        if (isDebugging == false) {
+            RoadFragment roadFragment = new RoadFragment();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.roadFragment, roadFragment);
+            fragmentTransaction.commit();
+        } else {
+            RoadDebuggingFragment roadDebuggingFragment = new RoadDebuggingFragment();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.roadFragment, roadDebuggingFragment);
+            fragmentTransaction.commit();
+
+        }
 //        HallasanSyncAdapter.initalizeSyncAdapter(this);
 
 //        Button fetchBT = (Button)findViewById(R.id.fetch);
@@ -90,7 +108,13 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
-//    @Override
+    @Override
+    protected void onDestroy() {
+        isDebugging = false;
+        super.onDestroy();
+    }
+
+    //    @Override
 //    protected void onDestroy() {
 //        SharedPreferences.Editor editor = timeStampPF.edit();
 //        editor.clear();
@@ -115,15 +139,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item)     {
         Calendar calendar = Calendar.getInstance();
+        Intent intent = getIntent();
+
         switch (item.getItemId()) {
             case R.id.action_debug:
 //                FetchRoadStatusTask.cleanMap();
                 isDebugging = true;
-//                new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
-//                new FetchWeatherTask(MainActivity.this, calendar).execute();
+//                new FetchRoadTask(getApplicationContext(), calendar, isDebugging).execute();
+//                new FetchWeatherTask(getApplicationContext(), calendar).execute();
 
-//                Fragment fragment = null;
-//                fragment = getSupportFragmentManager().findFragmentById(R.id.roadFragment);
+                finish();
+                startActivity(intent);
+
+
+
+//                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.roadFragment);
 //                final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 //                ft.detach(fragment);
 //                ft.attach(fragment);
@@ -138,7 +168,8 @@ public class MainActivity extends AppCompatActivity {
                 isDebugging = false;
 //                new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
 //                new FetchWeatherTask(MainActivity.this, calendar).execute();
-
+                finish();
+                startActivity(intent);
                 return true;
 
         }
