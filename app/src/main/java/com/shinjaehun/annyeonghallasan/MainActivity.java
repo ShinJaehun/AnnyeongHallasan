@@ -19,7 +19,7 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity {
 
     String LOG_TAG = MainActivity.class.getSimpleName();
-    public static final String TIME_STAMP = "time_stamp";
+//    public static final String TIME_STAMP = "time_stamp";
 
     public static Calendar mCalendar;
     public static boolean isDebugging = false;
@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
 //
 //        new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
 //        new FetchWeatherTask(MainActivity.this, calendar).execute();
+//        new FetchRoadTask(getApplicationContext(), mCalendar, isDebugging, )
     }
 
     @Override
@@ -146,13 +147,19 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     finish();
                     startActivity(intent);
+
+//                    RoadFragment roadFragment = new RoadFragment();
+//                    FragmentManager fragmentManager = getSupportFragmentManager();
+//                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//                    fragmentTransaction.replace(R.id.roadFragment, roadFragment);
+//                    fragmentTransaction.commit();
                 }
 //                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.roadFragment);
 //                final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 //                ft.detach(fragment);
 //                ft.attach(fragment);
 //                ft.commit();
-// Fragment만 변경하면 될 줄 알았는데 잘 안 된다... 바로 반영 안 됨
+// Fragment만 변경하면 될 줄 알았는데 잘 안 된다... 바로 반영 안 됨 -> AsyncTask 인스턴스는 오직 한번만 호출되기 때문!
 
                 return true;
 

@@ -1,5 +1,8 @@
 package com.shinjaehun.annyeonghallasan;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -31,10 +35,13 @@ import android.widget.TextView;
 import com.shinjaehun.annyeonghallasan.data.HallasanContract;
 import com.shinjaehun.annyeonghallasan.model.Road;
 import com.shinjaehun.annyeonghallasan.service.RoadService;
+import com.shinjaehun.annyeonghallasan.service.WeatherService;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by shinjaehun on 2017-05-22.
@@ -65,38 +72,39 @@ public class RoadFragment extends Fragment{
     public static final int COL_ROAD_FREEZING = 7;
     public static final int COL_ROAD_CHAIN = 8;
 
-    private static final int ROAD_LOADER = 1;
-
-    ImageView road_1100Iv;
-    ImageView road_516Iv;
-    ImageView road_pyeonghwaIv;
-    ImageView road_beonyeongIv;
-    ImageView road_hanchangIv;
-    ImageView road_namjoIv;
-    ImageView road_bijaIv;
-    ImageView road_seoseongIv;
-    ImageView road_sallok1Iv;
-    ImageView road_sallok2Iv;
-    ImageView road_myeongnimIv;
-    ImageView road_cheomdanIv;
-    ImageView road_aejoIv;
-    ImageView road_iljuIv;
-    static TextView normalTV;
+//    private static final int ROAD_LOADER = 1;
+//
+//    ImageView road_1100Iv;
+//    ImageView road_516Iv;
+//    ImageView road_pyeonghwaIv;
+//    ImageView road_beonyeongIv;
+//    ImageView road_hanchangIv;
+//    ImageView road_namjoIv;
+//    ImageView road_bijaIv;
+//    ImageView road_seoseongIv;
+//    ImageView road_sallok1Iv;
+//    ImageView road_sallok2Iv;
+//    ImageView road_myeongnimIv;
+//    ImageView road_cheomdanIv;
+//    ImageView road_aejoIv;
+//    ImageView road_iljuIv;
+//    static TextView normalTV;
 
     static ArrayList<ImageView> roadImgs;
 //    private boolean isDebugging = false;
 
     public RoadFragment() {
     }
-
-    View v;
+//    static FetchRoadTask roadTask;
+    SharedPreferences prefs = null;
+    private static final String CHECK_FIRST_RUN = "check_first_run";
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 //        setHasOptionsMenu(true);
 
-        v = inflater.inflate(R.layout.fragment_road, container, false);
+        View v = inflater.inflate(R.layout.fragment_road, container, false);
 //
 //        road_1100Iv = (ImageView)v.findViewById(R.id.road_1100);
 //        road_516Iv = (ImageView)v.findViewById(R.id.road_516);
@@ -139,15 +147,66 @@ public class RoadFragment extends Fragment{
 //    }
 
     private void updateRoad() {
-
-            FetchRoadTask roadTask = new FetchRoadTask(getContext(), MainActivity.mCalendar, v);
+            FetchRoadTask roadTask = new FetchRoadTask(getContext(), MainActivity.mCalendar, MainActivity.isDebugging);
             roadTask.execute();
+    }
+//
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+////        updateRoad();
+//    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        updateRoad();
+    public void onResume() {
+        super.onResume();
+
+        boolean firstTime = prefs.getBoolean(CHECK_FIRST_RUN, true);
+//        Log.v(LOG_TAG, "처음인가요: " + firstTime);
+        if (firstTime) {
+            updateRoad();
+//            roadTask.execute();
+            prefs.edit().putBoolean(CHECK_FIRST_RUN, false).commit();
+        } else {
+            final Handler handler = new Handler();
+            Timer timer = new Timer();
+            TimerTask doAsynchronousTask = new TimerTask() {
+                @Override
+                public void run() {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            try {
+//                                updateRoad();
+//                                roadTask.execute();
+//
+                                Fragment fragment = getFragmentManager().findFragmentById(R.id.roadFragment);
+                                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                                fragmentTransaction.detach(fragment);
+                                fragmentTransaction.attach(fragment);
+                                fragmentTransaction.commit();
+
+                            } catch (Exception e) {
+
+                            }
+                        }
+                    });
+                }
+            };
+            timer.schedule(doAsynchronousTask, 0, 65000); //execute in every 50000 ms
+        }
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        prefs.edit().putBoolean(CHECK_FIRST_RUN, true).commit();
 
     }
 
@@ -155,6 +214,15 @@ public class RoadFragment extends Fragment{
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 //        getLoaderManager().initLoader(ROAD_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
+    }
+
+    public class RoadAlarmReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            FetchRoadTask roadTask = new FetchRoadTask(getContext(), MainActivity.mCalendar, MainActivity.isDebugging);
+            roadTask.execute();
+        }
     }
 
 //    @Override

@@ -19,7 +19,7 @@
             android:authorities="@string/content_authority"
             android:name=".data.HallasanProvider"/>
         <!--<service android:name=".service.RoadService" />-->
-        <service android:name=".service.WeatherService" />
+        <!--<service android:name=".service.WeatherService" />-->
 
 
     </application>

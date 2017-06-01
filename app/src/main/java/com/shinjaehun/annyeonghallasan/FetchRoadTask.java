@@ -39,14 +39,14 @@ public class FetchRoadTask extends AsyncTask<Object, Void, Cursor> {
     private final Context mContext;
     private final Calendar mCalendar;
     private final String mTimeStamp;
+    private boolean isDebugging;
 
-    private View v;
     final Animation animation;
 
-    public FetchRoadTask(Context context, Calendar calendar, View v) {
+    public FetchRoadTask(Context context, Calendar calendar, Boolean isDebugging) {
         mContext = context;
         mCalendar = calendar;
-        this.v = v;
+        this.isDebugging = isDebugging;
 
         animation = new AlphaAnimation((float) 0.5, 0);
 //        Log.v(LOG_TAG, "현재시간" + " " + mTimeStamp);
@@ -81,7 +81,7 @@ public class FetchRoadTask extends AsyncTask<Object, Void, Cursor> {
                 Document doc = null;
                 String url = "http://www.jjpolice.go.kr/jjpolice/police25/traffic.htm?act=rss";
 
-                if (MainActivity.isDebugging) {
+                if (isDebugging) {
 //                    //XML 파일로 테스트하기
                     InputStream inputStream = mContext.getResources().openRawResource(R.raw.sample_data1);
                     try {
@@ -227,21 +227,21 @@ public class FetchRoadTask extends AsyncTask<Object, Void, Cursor> {
         ImageView road_iljuIv;
         TextView normalTV;
 
-        road_1100Iv = (ImageView) v.findViewById(R.id.road_1100);
-        road_516Iv = (ImageView) v.findViewById(R.id.road_516);
-        road_pyeonghwaIv = (ImageView) v.findViewById(R.id.road_pyeonghwa);
-        road_beonyeongIv = (ImageView) v.findViewById(R.id.road_beonyeong);
-        road_hanchangIv = (ImageView) v.findViewById(R.id.road_hanchang);
-        road_namjoIv = (ImageView) v.findViewById(R.id.road_namjo);
-        road_bijaIv = (ImageView) v.findViewById(R.id.road_bija);
-        road_seoseongIv = (ImageView) v.findViewById(R.id.road_seoseong);
-        road_sallok1Iv = (ImageView) v.findViewById(R.id.road_sallok1);
-        road_sallok2Iv = (ImageView) v.findViewById(R.id.road_sallok2);
-        road_myeongnimIv = (ImageView) v.findViewById(R.id.road_myeongnim);
-        road_cheomdanIv = (ImageView) v.findViewById(R.id.road_cheomdan);
-        road_aejoIv = (ImageView) v.findViewById(R.id.road_aejo);
-        road_iljuIv = (ImageView) v.findViewById(R.id.road_ilju);
-        normalTV = (TextView) v.findViewById(R.id.normal);
+        road_1100Iv = (ImageView)((MainActivity)mContext).findViewById(R.id.road_1100);
+        road_516Iv = (ImageView)((MainActivity)mContext).findViewById(R.id.road_516);
+        road_pyeonghwaIv = (ImageView) ((MainActivity)mContext).findViewById(R.id.road_pyeonghwa);
+        road_beonyeongIv = (ImageView) ((MainActivity)mContext).findViewById(R.id.road_beonyeong);
+        road_hanchangIv = (ImageView) ((MainActivity)mContext).findViewById(R.id.road_hanchang);
+        road_namjoIv = (ImageView) ((MainActivity)mContext).findViewById(R.id.road_namjo);
+        road_bijaIv = (ImageView) ((MainActivity)mContext).findViewById(R.id.road_bija);
+        road_seoseongIv = (ImageView) ((MainActivity)mContext).findViewById(R.id.road_seoseong);
+        road_sallok1Iv = (ImageView) ((MainActivity)mContext).findViewById(R.id.road_sallok1);
+        road_sallok2Iv = (ImageView) ((MainActivity)mContext).findViewById(R.id.road_sallok2);
+        road_myeongnimIv = (ImageView) ((MainActivity)mContext).findViewById(R.id.road_myeongnim);
+        road_cheomdanIv = (ImageView) ((MainActivity)mContext).findViewById(R.id.road_cheomdan);
+        road_aejoIv = (ImageView) ((MainActivity)mContext).findViewById(R.id.road_aejo);
+        road_iljuIv = (ImageView) ((MainActivity)mContext).findViewById(R.id.road_ilju);
+        normalTV = (TextView) ((MainActivity)mContext).findViewById(R.id.normal);
 
         while (cursor.moveToNext()) {
 
