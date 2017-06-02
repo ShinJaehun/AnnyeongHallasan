@@ -81,6 +81,9 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
     public WeatherFragment() {
     }
 
+//    private SharedPreferences timePrefs = null;
+//    private String mTimeStamp;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,7 +106,7 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     private void updateWeather() {
-        FetchWeatherTask weatherTask = new FetchWeatherTask(getContext(), MainActivity.mCalendar);
+        FetchWeatherTask weatherTask = new FetchWeatherTask(getContext(), MainActivity.mCalendar, MainActivity.mTimeStamp);
         weatherTask.execute();
     }
 
@@ -126,9 +129,12 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
 
             String sortOrder = HallasanContract.WeatherEntry.COLUMN_TIMESTAMP + " ASC";
 
-            String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(MainActivity.mCalendar.getTime());
+//            timePrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+//            mTimeStamp = timePrefs.getString(MainActivity.TIME_STAMP, null);
 
-            Uri weatherWithDateUri = HallasanContract.WeatherEntry.buildWeatherUriWithDate(timeStamp);
+//            String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(MainActivity.mCalendar.getTime());
+
+            Uri weatherWithDateUri = HallasanContract.WeatherEntry.buildWeatherUriWithDate(MainActivity.mTimeStamp);
 
             return new CursorLoader(getContext(),
                     weatherWithDateUri,

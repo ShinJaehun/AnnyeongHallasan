@@ -50,10 +50,10 @@ public class FetchWeatherTask extends AsyncTask<Object, Void, Void> {
     private final Calendar mCalendar;
     private final String mTimeStamp;
 
-    public FetchWeatherTask(Context context, Calendar calendar) {
+    public FetchWeatherTask(Context context, Calendar calendar, String timeStamp) {
         mContext = context;
         mCalendar = calendar;
-        mTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime());
+        mTimeStamp = timeStamp;
 
 //        Log.v(LOG_TAG, "현재시간" + " " + mTimeStamp);
 //        SharedPreferences timeStampPF = PreferenceManager.getDefaultSharedPreferences(mContext);

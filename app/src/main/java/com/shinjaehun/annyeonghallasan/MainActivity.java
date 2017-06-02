@@ -1,17 +1,10 @@
 package com.shinjaehun.annyeonghallasan;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -19,11 +12,13 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity {
 
     String LOG_TAG = MainActivity.class.getSimpleName();
-//    public static final String TIME_STAMP = "time_stamp";
+    public static final String TIME_STAMP = "time_stamp";
 
     public static Calendar mCalendar;
-    public static boolean isDebugging = false;
-//    private static SharedPreferences timeStampPF;
+//    public static boolean isDebugging = false;
+//    private static SharedPreferences timePrefs;
+
+    public static String mTimeStamp;
 
 //    ArrayList<String> roads = new ArrayList<>();
 //    ArrayList<String> status = new ArrayList<>();
@@ -33,11 +28,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mCalendar = Calendar.getInstance();
 
-//        timeStampPF = PreferenceManager.getDefaultSharedPreferences(this);
+        mTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime());
+        Log.v(LOG_TAG, "MainActivity의 타임스탬프는 : " + mTimeStamp);
+//        timePrefs = PreferenceManager.getDefaultSharedPreferences(this);
 //
-//        if (timeStampPF.getString(TIME_STAMP, null) == null) {
-//            SharedPreferences.Editor editor = timeStampPF.edit();
-//            editor.putString(TIME_STAMP, new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime()));
+//        if (timePrefs.getString(TIME_STAMP, null) == null) {
+//            SharedPreferences.Editor editor = timePrefs.edit();
+//            editor.putString(TIME_STAMP, timeStamp);
 //            editor.commit();
 //        }
 
@@ -101,84 +98,81 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    //    @Override
+//    @Override
 //    protected void onDestroy() {
-//        SharedPreferences.Editor editor = timeStampPF.edit();
-//        editor.clear();
-//        editor.commit();
-//
 //        super.onDestroy();
+//
+////        SharedPreferences.Editor editor = timePrefs.edit();
+////        editor.clear();
+////        editor.commit();
+//
 //    }
 
-    //    private static String getByteString(String s, int startIdx, int bytes) {
-//        return new String(s.getBytes(), startIdx, bytes);
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+////        return super.onCreateOptionsMenu(menu);
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        return true;
 //    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-//        return super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)     {
-        Calendar calendar = Calendar.getInstance();
-        Intent intent = getIntent();
-        String mainTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime());
-        String rightNow = new SimpleDateFormat("yyyyMMddHHmm").format(calendar.getTime());
-
-        switch (item.getItemId()) {
-            case R.id.action_debug:
-//                FetchRoadStatusTask.cleanMap();
-                isDebugging = true;
-//                new FetchRoadTask(getApplicationContext(), calendar, isDebugging).execute();
-//                new FetchWeatherTask(getApplicationContext(), calendar).execute();
-
-                if (mainTimeStamp.equals(rightNow)) {
-                    Toast.makeText(this, "디버깅은 1분 후에 가능!", Toast.LENGTH_SHORT).show();
-                } else {
-                    finish();
-                    startActivity(intent);
-
-//                    RoadFragment roadFragment = new RoadFragment();
-//                    FragmentManager fragmentManager = getSupportFragmentManager();
-//                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//                    fragmentTransaction.replace(R.id.roadFragment, roadFragment);
-//                    fragmentTransaction.commit();
-                }
-//                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.roadFragment);
-//                final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//                ft.detach(fragment);
-//                ft.attach(fragment);
-//                ft.commit();
-// Fragment만 변경하면 될 줄 알았는데 잘 안 된다... 바로 반영 안 됨 -> AsyncTask 인스턴스는 오직 한번만 호출되기 때문!
-
-                return true;
-
-            case R.id.action_fetch:
-//                FetchRoadStatusTask.cleanMap();
-
-                isDebugging = false;
-//                new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
-//                new FetchWeatherTask(MainActivity.this, calendar).execute();
-
-                if (mainTimeStamp.equals(rightNow)) {
-                    Toast.makeText(this, "디버깅은 1분 후에 가능!", Toast.LENGTH_SHORT).show();
-                } else {
-                    finish();
-                    startActivity(intent);
-                }
-                return true;
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//
+//
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item)     {
+//        Calendar calendar = Calendar.getInstance();
+//        Intent intent = getIntent();
+//        String mainTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime());
+//        String rightNow = new SimpleDateFormat("yyyyMMddHHmm").format(calendar.getTime());
+//
+//        switch (item.getItemId()) {
+//            case R.id.action_debug:
+////                FetchRoadStatusTask.cleanMap();
+//                isDebugging = true;
+////                new FetchRoadTask(getApplicationContext(), calendar, isDebugging).execute();
+////                new FetchWeatherTask(getApplicationContext(), calendar).execute();
+//
+//                if (mainTimeStamp.equals(rightNow)) {
+//                    Toast.makeText(this, "디버깅은 1분 후에 가능!", Toast.LENGTH_SHORT).show();
+//                } else {
+////                    finish();
+////                    startActivity(intent);
+//
+////                    RoadFragment roadFragment = new RoadFragment();
+////                    FragmentManager fragmentManager = getSupportFragmentManager();
+////                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+////                    fragmentTransaction.replace(R.id.roadFragment, roadFragment);
+////                    fragmentTransaction.commit();
+//                }
+////                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.roadFragment);
+////                final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+////                ft.detach(fragment);
+////                ft.attach(fragment);
+////                ft.commit();
+//// Fragment만 변경하면 될 줄 알았는데 잘 안 된다... 바로 반영 안 됨 -> AsyncTask 인스턴스는 오직 한번만 호출되기 때문!
+//
+//                return true;
+//
+//            case R.id.action_fetch:
+////                FetchRoadStatusTask.cleanMap();
+//
+//                isDebugging = false;
+////                new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
+////                new FetchWeatherTask(MainActivity.this, calendar).execute();
+//
+//                if (mainTimeStamp.equals(rightNow)) {
+//                    Toast.makeText(this, "디버깅은 1분 후에 가능!", Toast.LENGTH_SHORT).show();
+//                } else {
+////                    finish();
+////                    startActivity(intent);
+////                    RoadFragment roadFragment = new RoadFragment();
+////                    FragmentManager fragmentManager = getSupportFragmentManager();
+////                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+////                    fragmentTransaction.replace(R.id.roadFragment, roadFragment);
+////                    fragmentTransaction.commit();
+//                }
+//                return true;
+//
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 }
