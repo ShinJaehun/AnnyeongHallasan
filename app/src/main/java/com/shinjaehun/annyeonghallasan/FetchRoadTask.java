@@ -1,32 +1,14 @@
 package com.shinjaehun.annyeonghallasan;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.shinjaehun.annyeonghallasan.data.HallasanContract;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Vector;
 
 /**
  * Created by shinjaehun on 2017-05-28.
@@ -34,14 +16,12 @@ import java.util.Vector;
 
 public class FetchRoadTask extends AsyncTask<Object, Void, Void> {
 
+    final Animation animation;
     private final String LOG_TAG = FetchRoadTask.class.getSimpleName();
-
     private final Context mContext;
-//    private final Calendar mCalendar;
+    //    private final Calendar mCalendar;
     private final String mTimeStamp;
     private boolean isDebugging;
-
-    final Animation animation;
 
     public FetchRoadTask(Context context, String timeStamp, Boolean isDebugging) {
         mContext = context;
@@ -348,7 +328,6 @@ public class FetchRoadTask extends AsyncTask<Object, Void, Void> {
 //        animation.setRepeatMode(Animation.REVERSE);
 //        i.startAnimation(animation);
 //    }
-
 
 
 }

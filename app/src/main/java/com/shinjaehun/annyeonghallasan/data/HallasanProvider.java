@@ -5,9 +5,7 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,13 +16,12 @@ import android.support.annotation.Nullable;
 
 public class HallasanProvider extends ContentProvider {
 
-    private static final UriMatcher sUriMatcher = buildUriMatcher();
-    private HallasanDBhelper mDBHelper;
-
     private static final int WEATHER = 100;
     private static final int WEATHER_WITH_DATE = 101;
     private static final int ROAD = 200;
     private static final int ROAD_WITH_DATE = 201;
+    private static final UriMatcher sUriMatcher = buildUriMatcher();
+    private HallasanDBhelper mDBHelper;
 
     private static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -75,7 +72,7 @@ public class HallasanProvider extends ContentProvider {
                         HallasanContract.WeatherEntry.TABLE_NAME,
                         projection,
                         HallasanContract.WeatherEntry.COLUMN_TIMESTAMP + " = ? ",
-                        new String[] { weatherTimeStamp },
+                        new String[]{weatherTimeStamp},
                         null,
                         null,
                         sortOrder);
@@ -86,7 +83,7 @@ public class HallasanProvider extends ContentProvider {
                         HallasanContract.RoadEntry.TABLE_NAME,
                         projection,
                         HallasanContract.RoadEntry.COLUMN_TIMESTAMP + " = ? ",
-                        new String[] { roadTimeStamp },
+                        new String[]{roadTimeStamp},
                         null,
                         null,
                         sortOrder);

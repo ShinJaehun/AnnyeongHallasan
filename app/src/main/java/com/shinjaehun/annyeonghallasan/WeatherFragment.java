@@ -2,9 +2,9 @@ package com.shinjaehun.annyeonghallasan;
 
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -15,15 +15,12 @@ import android.view.ViewGroup;
 import android.widget.GridView;
 
 import com.shinjaehun.annyeonghallasan.data.HallasanContract;
-import com.shinjaehun.annyeonghallasan.sync.HallasanSyncAdapter;
 
 /**
  * Created by shinjaehun on 2017-05-22.
  */
 
 public class WeatherFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    private final String LOG_TAG = WeatherFragment.class.getSimpleName();
-
     public static final String[] WEATHER_COLUMNS = {
             //getColumnIndex 대신 cursor의 값을 쉽게 사용하기 위한 Projection
             HallasanContract.WeatherEntry.TABLE_NAME + "." + HallasanContract.WeatherEntry._ID,
@@ -44,7 +41,6 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
             HallasanContract.WeatherEntry.COLUMN_VEC,
             HallasanContract.WeatherEntry.COLUMN_WSD
     };
-
     //Projection에서 몇몇 값만 받아오기로 했다면 아래 COL도 변경되어야 함
     static final int COL_WEATHER_ID = 0;
     static final int COL_WEATHER_LOCATION = 1;
@@ -63,9 +59,9 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
     static final int COL_WEATHER_LGT = 14;
     static final int COL_WEATHER_VEC = 15;
     static final int COL_WEATHER_WSD = 16;
-
-    private WeatherAdapter mWeatherAdapter;
     private static final int WEATHER_LOADER = 0;
+    private final String LOG_TAG = WeatherFragment.class.getSimpleName();
+    private WeatherAdapter mWeatherAdapter;
 
     public WeatherFragment() {
     }
@@ -89,7 +85,7 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
 
         View v = inflater.inflate(R.layout.fragment_weather, container, false);
 
-        GridView gridView = (GridView)v.findViewById(R.id.gridview_weather);
+        GridView gridView = (GridView) v.findViewById(R.id.gridview_weather);
         gridView.setAdapter(mWeatherAdapter);
 
         return v;

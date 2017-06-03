@@ -1,14 +1,13 @@
 package com.shinjaehun.annyeonghallasan;
 
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 
-import com.shinjaehun.annyeonghallasan.data.HallasanContract;
 import com.shinjaehun.annyeonghallasan.sync.HallasanSyncAdapter;
 
 import java.text.SimpleDateFormat;
@@ -16,14 +15,12 @@ import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
 
-    String LOG_TAG = MainActivity.class.getSimpleName();
     public static final String TIME_STAMP = "time_stamp";
-
     public static Calendar mCalendar;
-//    public static boolean isDebugging = false;
-    private static SharedPreferences timePrefs;
-
     public static String mTimeStamp;
+    //    public static boolean isDebugging = false;
+    private static SharedPreferences timePrefs;
+    String LOG_TAG = MainActivity.class.getSimpleName();
 
 //    ArrayList<String> roads = new ArrayList<>();
 //    ArrayList<String> status = new ArrayList<>();
@@ -34,8 +31,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mCalendar = Calendar.getInstance();
-        mTimeStamp =  new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime());
-
+        mTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime());
 
 
         timePrefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -111,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
 
 
     }

@@ -1,42 +1,14 @@
 package com.shinjaehun.annyeonghallasan;
 
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.shinjaehun.annyeonghallasan.data.HallasanContract;
-import com.shinjaehun.annyeonghallasan.data.HallasanProvider;
-import com.shinjaehun.annyeonghallasan.model.Weather;
-import com.shinjaehun.annyeonghallasan.data.HallasanContract.WeatherEntry;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
 
 /**
  * Created by shinjaehun on 2017-01-06.
@@ -78,7 +50,6 @@ public class FetchWeatherTask extends AsyncTask<Object, Void, Void> {
         String sortOrder = HallasanContract.WeatherEntry._ID + " DESC";
         Uri weatherWithDateUri = HallasanContract.WeatherEntry.buildWeatherUriWithDate(mTimeStamp);
         Cursor cursor = mContext.getContentResolver().query(weatherWithDateUri, null, null, null, sortOrder);
-
 
 
         return null;

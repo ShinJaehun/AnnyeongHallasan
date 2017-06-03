@@ -3,14 +3,12 @@ package com.shinjaehun.annyeonghallasan;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.shinjaehun.annyeonghallasan.data.HallasanContract;
 /**
  * Created by shinjaehun on 2017-05-23.
  */
@@ -92,7 +90,6 @@ public class WeatherAdapter extends CursorAdapter {
             weatherTemperatureTV.setText(String.valueOf(cursor.getFloat(WeatherFragment.COL_WEATHER_T1H)));
 
         }
-
 
 
 //        cursor.close(); 닝기미 씨발 죽을려고 cursor를 닫아!!
