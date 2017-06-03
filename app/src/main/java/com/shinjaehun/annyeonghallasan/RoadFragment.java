@@ -1,8 +1,10 @@
 package com.shinjaehun.annyeonghallasan;
 
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -10,6 +12,9 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -17,10 +22,14 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.shinjaehun.annyeonghallasan.data.HallasanContract;
+import com.shinjaehun.annyeonghallasan.sync.HallasanSyncAdapter;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by shinjaehun on 2017-05-22.
@@ -67,13 +76,10 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     ImageView road_iljuIv;
     private boolean isDebugging = false;
 
+    private Animation animation;
+
     public RoadFragment() {
     }
-//    static FetchRoadTask roadTask;
-//    private SharedPreferences timePrefs = null;
-//    private String mTimeStamp;
-
-//    private static final String CHECK_FIRST_RUN = "check_first_run";
 
     @Nullable
     @Override
@@ -112,41 +118,33 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
 //        String rightNow = new SimpleDateFormat("yyyyMMddHHmm").format(calendar.getTime());
 //        Log.v(LOG_TAG, "지금 시간은 : " + rightNow);
 //
+//
+//        SharedPreferences timePrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+//        String oldTimeStamp = timePrefs.getString(MainActivity.TIME_STAMP, null);
+//
 //        switch (item.getItemId()) {
 //            case R.id.action_debug:
 //
-//                if (mTimeStamp.equals(rightNow)) {
-//                    Toast.makeText(getContext(), "디버깅은 1분 후에 가능!", Toast.LENGTH_SHORT).show();
-//                } else {
+//                if (!oldTimeStamp.equals(rightNow) || oldTimeStamp == null) {
+//                    Log.v(LOG_TAG, "Menu에서 Sync 합니다!!!!!! : 현재 타임스탬프는 " + rightNow + " 예전 타임스탬프는 " + oldTimeStamp);
 //
-//                    mTimeStamp = rightNow;
+//                    Boolean isDebugging = true;
+//                    HallasanSyncAdapter.syncImmediately(getContext(), Calendar.getInstance(), isDebugging);
 //                    SharedPreferences.Editor editor = timePrefs.edit();
 //                    editor.putString(MainActivity.TIME_STAMP, rightNow);
 //                    editor.commit();
+//                } else {
+//                    Log.v(LOG_TAG, "Menu에서 Sync는 이루어지지 않았습니다 : 현재 타임스탬프는 " + rightNow + " 예전 타임스탬프는 " + oldTimeStamp);
 //
-//                    isDebugging = true;
-//                    updateRoad();
-//                    return true;
 //                }
-//                    case R.id.action_fetch:
-//                        if (mTimeStamp.equals(rightNow)) {
-//                            Toast.makeText(getContext(), "디버깅은 1분 후에 가능!", Toast.LENGTH_SHORT).show();
-//                        } else {
-//
-//                            mTimeStamp = rightNow;
-//                            SharedPreferences.Editor editor = timePrefs.edit();
-//                            editor.putString(MainActivity.TIME_STAMP, rightNow);
-//                            editor.commit();
-//                            isDebugging = false;
-//
-//                            updateRoad();
-//                            return true;
-//                        }
-//                }
+//        }
 //        return super.onOptionsItemSelected(item);
 //
 //    }
-
+// 이렇게 메뉴를 처리하면 디버깅에서 쓸 DB가 갱신되긴 하는데 바로 RoadFragment에 도로가 변경되지는 않는다.
+// 물론 앱을 종료했다가 다시 시작하면 내용이 반영된다.
+// 아마 Adapter를 사용하지 않기 때문에 바로 반영되지는 않는 것으로 보인다.
+// 그런 이유로 이 부분은 사용하지 않기로 했다.
 
     private void updateRoad() {
         FetchRoadTask roadTask = new FetchRoadTask(getContext(), MainActivity.mTimeStamp, isDebugging);
@@ -161,57 +159,12 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
         updateRoad();
     }
 
+
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onResume() {
+        super.onResume();
+        animation = new AlphaAnimation((float) 0.5, 0);
     }
-
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//
-//        boolean firstTime = prefs.getBoolean(CHECK_FIRST_RUN, true);
-////        Log.v(LOG_TAG, "처음인가요: " + firstTime);
-//        if (firstTime) {
-//            updateRoad();
-////            roadTask.execute();
-//            prefs.edit().putBoolean(CHECK_FIRST_RUN, false).commit();
-//        } else {
-//            final Handler handler = new Handler();
-//            Timer timer = new Timer();
-//            TimerTask doAsynchronousTask = new TimerTask() {
-//                @Override
-//                public void run() {
-//                    handler.post(new Runnable() {
-//                        public void run() {
-//                            try {
-////                                updateRoad();
-////                                roadTask.execute();
-////
-//                                Fragment fragment = getFragmentManager().findFragmentById(R.id.roadFragment);
-//                                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-//                                fragmentTransaction.detach(fragment);
-//                                fragmentTransaction.attach(fragment);
-//                                fragmentTransaction.commit();
-//
-//                            } catch (Exception e) {
-//
-//                            }
-//                        }
-//                    });
-//                }
-//            };
-//            timer.schedule(doAsynchronousTask, 0, 65000); //execute in every 50000 ms
-//        }
-//    }
-
-
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        prefs.edit().putBoolean(CHECK_FIRST_RUN, true).commit();
-//
-//    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -285,7 +238,6 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
             if (restrict == HallasanContract.RoadEntry.RESTRICTION_ENABLED) {
                 switch (location) {
                     case "1100도로":
-                        //여러 ImageView를 동시에 깜빡이게 하기 위해서는 같은 handler를 동시에
                         roadImgs.add(road_1100Iv);
                         break;
                     case "5.16도로":
@@ -348,22 +300,27 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
 
         }
 
-        if (roadImgs.size() == 0) {
-            normalTV.setVisibility(View.VISIBLE);
-            startBlink(normalTV);
-        } else {
-            for (ImageView i : roadImgs) {
+        //처음 Fragment를 만들었을 때는 받아온 게 없으니 roadImgs는 0이다. 그니까 normalTV가 번쩍이기 시작한다.
+        //근데 Sync를 해서 roadImgs가 생기면 roadImgs는 0이 아니게 된다. 그럼 roadImgs도 번쩍인다.
+        //그니까 normalTV와 roadImgs가 모두 번쩍이는 결과가 생긴다.
+        //이걸 해결해야 해... 여기 사용된 MainActivity.sync를 쓰는 건 효과가 없는 것 같다.
 
-                i.setVisibility(View.VISIBLE);
-                startBlink(i);
+//        if (roadImgs.size() == 0 && MainActivity.sync != 0) {
+        if (cursor.getCount() != 0) {
+            if (roadImgs.size() == 0){
+                normalTV.setVisibility(View.VISIBLE);
+                startBlink(normalTV);
+            } else {
+                for (ImageView i : roadImgs) {
+                    i.setVisibility(View.VISIBLE);
+                    startBlink(i);
+                }
             }
         }
-//        }
 
     }
 
     private void startBlink(View i) {
-        final Animation animation = new AlphaAnimation((float) 0.5, 0);
         animation.setDuration(500);
         animation.setInterpolator(new LinearInterpolator());
         animation.setRepeatCount(Animation.INFINITE);
@@ -371,7 +328,18 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
         i.startAnimation(animation);
     }
 
-//    private static Runnable r = new Runnable() {
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        normalTV.setVisibility(View.INVISIBLE);
+//        normalTV.clearAnimation();
+//        for (ImageView i : roadImgs) {
+//            i.setVisibility(View.INVISIBLE);
+//            i.clearAnimation();
+//        }
+//    }
+
+    //    private static Runnable r = new Runnable() {
 //
 //        @Override
 //        public void run() {

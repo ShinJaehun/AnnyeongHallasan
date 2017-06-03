@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         String oldTimeStamp = timePrefs.getString(MainActivity.TIME_STAMP, null);
 
         if (!mTimeStamp.equals(oldTimeStamp) || oldTimeStamp == null) {
-            Log.v(LOG_TAG, "Sync 했습니다!!!!!! : 현재 타임스탬프는 " + mTimeStamp + " 예전 타임스탬프는 " + oldTimeStamp);
+            Log.v(LOG_TAG, "Sync 합니다!!!!!! : 현재 타임스탬프는 " + mTimeStamp + " 예전 타임스탬프는 " + oldTimeStamp);
 
             Boolean isDebugging = false;
             HallasanSyncAdapter.syncImmediately(getApplicationContext(), Calendar.getInstance(), isDebugging);
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
             editor.commit();
 
         } else {
-            Log.v(LOG_TAG, "Sync는 이루어지지 않았습니다 : 현재 타임스탬프는 " + mTimeStamp + " 예전 타임스탬프는 " + oldTimeStamp);
+            Log.v(LOG_TAG, "Sync는 이루어지지 않습니다 : 현재 타임스탬프는 " + mTimeStamp + " 예전 타임스탬프는 " + oldTimeStamp);
         }
 
         RoadFragment roadFragment = new RoadFragment();
