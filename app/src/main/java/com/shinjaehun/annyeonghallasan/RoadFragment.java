@@ -74,7 +74,6 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     ImageView road_cheomdanIv;
     ImageView road_aejoIv;
     ImageView road_iljuIv;
-    private boolean isDebugging = false;
 
     private Animation animation;
 
@@ -107,59 +106,6 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
         return v;
     }
 
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        inflater.inflate(R.menu.menu_main, menu);
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        Calendar calendar = Calendar.getInstance();
-//        String rightNow = new SimpleDateFormat("yyyyMMddHHmm").format(calendar.getTime());
-//        Log.v(LOG_TAG, "지금 시간은 : " + rightNow);
-//
-//
-//        SharedPreferences timePrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-//        String oldTimeStamp = timePrefs.getString(MainActivity.TIME_STAMP, null);
-//
-//        switch (item.getItemId()) {
-//            case R.id.action_debug:
-//
-//                if (!oldTimeStamp.equals(rightNow) || oldTimeStamp == null) {
-//                    Log.v(LOG_TAG, "Menu에서 Sync 합니다!!!!!! : 현재 타임스탬프는 " + rightNow + " 예전 타임스탬프는 " + oldTimeStamp);
-//
-//                    Boolean isDebugging = true;
-//                    HallasanSyncAdapter.syncImmediately(getContext(), Calendar.getInstance(), isDebugging);
-//                    SharedPreferences.Editor editor = timePrefs.edit();
-//                    editor.putString(MainActivity.TIME_STAMP, rightNow);
-//                    editor.commit();
-//                } else {
-//                    Log.v(LOG_TAG, "Menu에서 Sync는 이루어지지 않았습니다 : 현재 타임스탬프는 " + rightNow + " 예전 타임스탬프는 " + oldTimeStamp);
-//
-//                }
-//        }
-//        return super.onOptionsItemSelected(item);
-//
-//    }
-// 이렇게 메뉴를 처리하면 디버깅에서 쓸 DB가 갱신되긴 하는데 바로 RoadFragment에 도로가 변경되지는 않는다.
-// 물론 앱을 종료했다가 다시 시작하면 내용이 반영된다.
-// 아마 Adapter를 사용하지 않기 때문에 바로 반영되지는 않는 것으로 보인다.
-// 그런 이유로 이 부분은 사용하지 않기로 했다.
-
-    private void updateRoad() {
-        FetchRoadTask roadTask = new FetchRoadTask(getContext(), MainActivity.mTimeStamp, isDebugging);
-        roadTask.execute();
-
-//        RoadSyncAdapter.syncImmediately(getContext(), MainActivity.mTimeStamp, isDebugging);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        updateRoad();
-    }
-
-
     @Override
     public void onResume() {
         super.onResume();
@@ -168,25 +114,15 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-//        if(getLoaderManager().getLoader(ROAD_LOADER) == null) {
-//            getLoaderManager().initLoader(ROAD_LOADER, null, this);
-//        } else {
-//            getLoaderManager().restartLoader(ROAD_LOADER, null, this);
-//        }
-
         getLoaderManager().initLoader(ROAD_LOADER, null, this);
-
         super.onActivityCreated(savedInstanceState);
     }
 
-    //    public class RoadAlarmReceiver extends BroadcastReceiver {
-//
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            FetchRoadTask roadTask = new FetchRoadTask(getContext(), MainActivity.mCalendar, MainActivity.isDebugging);
-//            roadTask.execute();
-//        }
-//    }
+    void timeStampChanged() {
+        // timestamp가 변경되면 이걸 실행시켜서 Loader의 Uri를 변경해야 함!
+        getLoaderManager().restartLoader(ROAD_LOADER, null, this);
+
+    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -199,7 +135,18 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
 
 //            timePrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 //            mTimeStamp = timePrefs.getString(MainActivity.TIME_STAMP, null);
-            Uri roadWithDateUri = HallasanContract.RoadEntry.buildRoadUriWithDate(MainActivity.mTimeStamp);
+
+//            SharedPreferences timePrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+//            String mainTimeStamp = timePrefs.getString(MainActivity.TIME_STAMP, null);
+
+            // 결국은 timestamp에 따라 loader가 달라지니 timestamp가 변경되었을 때는
+            // loader가 그 timestamp에 해당하는 uri를 갖도록 해 줘야 한다
+            // 그니까 timeStampChanged에서 restartLoader를 해서 onCreateLoader가 재실행되도록 해야 하는거야...
+            // 이걸 무슨 Activity나 Fragment의 Lifecycle 관련지어서 졸라 해맸어ㅠㅠ
+            Calendar calendar = Calendar.getInstance();
+            String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(calendar.getTime());
+
+            Uri roadWithDateUri = HallasanContract.RoadEntry.buildRoadUriWithDate(timeStamp);
 
             return new CursorLoader(getContext(),
                     roadWithDateUri,
@@ -217,6 +164,8 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         roadImgs = new ArrayList<>();
 
+        clearAnimation();
+
         Log.v(LOG_TAG, "onLoadFinished에서 Road Cursor 크기 " + cursor.getCount());
 
 //        String mainTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(MainActivity.mCalendar.getTime());
@@ -227,7 +176,6 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
             String timeStamp = cursor.getString(RoadFragment.COL_ROAD_TIMESTAMP);
 //            Log.v(LOG_TAG, "커서 타임스탬프 : " + timeStamp);
 
-//            if (timeStamp.equals(mTimeStamp)) {
             long roadId = cursor.getLong(RoadFragment.COL_ROAD_ID);
             String location = cursor.getString(RoadFragment.COL_ROAD_NAME);
 
@@ -320,6 +268,54 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
 
     }
 
+    private void clearAnimation() {
+        // 이걸 안 해 놓으면 계속 그려버린다.
+        normalTV.setVisibility(View.INVISIBLE);
+        normalTV.clearAnimation();
+
+        road_1100Iv.setVisibility(View.INVISIBLE);
+        road_1100Iv.clearAnimation();
+
+        road_516Iv.setVisibility(View.INVISIBLE);
+        road_516Iv.clearAnimation();
+
+        road_pyeonghwaIv.setVisibility(View.INVISIBLE);
+        road_pyeonghwaIv.clearAnimation();
+
+        road_beonyeongIv.setVisibility(View.INVISIBLE);
+        road_beonyeongIv.clearAnimation();
+
+        road_hanchangIv.setVisibility(View.INVISIBLE);
+        road_hanchangIv.clearAnimation();
+
+        road_namjoIv.setVisibility(View.INVISIBLE);
+        road_namjoIv.clearAnimation();
+
+        road_bijaIv.setVisibility(View.INVISIBLE);
+        road_bijaIv.clearAnimation();
+
+        road_seoseongIv.setVisibility(View.INVISIBLE);
+        road_seoseongIv.clearAnimation();
+
+        road_sallok1Iv.setVisibility(View.INVISIBLE);
+        road_sallok1Iv.clearAnimation();
+
+        road_sallok2Iv.setVisibility(View.INVISIBLE);
+        road_sallok2Iv.clearAnimation();
+
+        road_myeongnimIv.setVisibility(View.INVISIBLE);
+        road_myeongnimIv.clearAnimation();
+
+        road_cheomdanIv.setVisibility(View.INVISIBLE);
+        road_cheomdanIv.clearAnimation();
+
+        road_aejoIv.setVisibility(View.INVISIBLE);
+        road_aejoIv.clearAnimation();
+
+        road_iljuIv.setVisibility(View.INVISIBLE);
+        road_iljuIv.clearAnimation();
+    }
+
     private void startBlink(View i) {
         animation.setDuration(500);
         animation.setInterpolator(new LinearInterpolator());
@@ -327,63 +323,6 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
         animation.setRepeatMode(Animation.REVERSE);
         i.startAnimation(animation);
     }
-
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        normalTV.setVisibility(View.INVISIBLE);
-//        normalTV.clearAnimation();
-//        for (ImageView i : roadImgs) {
-//            i.setVisibility(View.INVISIBLE);
-//            i.clearAnimation();
-//        }
-//    }
-
-    //    private static Runnable r = new Runnable() {
-//
-//        @Override
-//        public void run() {
-//            if (img_blink) {
-//                if (roadImgs.size() == 0) {
-//                    normalTV.setAlpha(0);
-//                } else {
-//                    for (ImageView i : roadImgs) {
-//                        i.setAlpha(0);
-//                    }
-//                    //원래는 "img.setAlpha(0)" 이런 식으로 되어 있었는데 imgs의 모든 ImageView에 값을 할당하도록 변경함
-//                }
-//                img_blink = false;
-//            } else {
-//                if (roadImgs.size() == 0) {
-//                    normalTV.setAlpha(1.0f);
-//                } else {
-//                    for (ImageView i : roadImgs) {
-//                        i.setAlpha(1000);
-//                    }
-//                }
-//                img_blink = true;
-//            }
-//            handler.postDelayed(r, 700);
-//        }
-//    };
-
-//    static public void cleanMap() {
-//        //MainActivity에서 호출 가능하도록 static으로
-//        if (handler != null) {
-//            handler.removeCallbacks(r);
-//        }
-//
-//        if (roadImgs != null) {
-//            if (roadImgs.size() == 0) {
-//                normalTV.setVisibility(View.GONE);
-//            } else {
-//                for (ImageView i : roadImgs) {
-//                    i.setVisibility(View.GONE);
-//                }
-//            }
-//        }
-//        //임시로 이렇게 해 두자
-//    }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {

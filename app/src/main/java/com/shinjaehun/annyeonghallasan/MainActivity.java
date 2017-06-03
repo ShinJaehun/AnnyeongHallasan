@@ -7,6 +7,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.shinjaehun.annyeonghallasan.sync.HallasanSyncAdapter;
 
@@ -16,7 +18,6 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity {
 
     public static final String TIME_STAMP = "time_stamp";
-    public static Calendar mCalendar;
     public static String mTimeStamp;
     //    public static boolean isDebugging = false;
     private static SharedPreferences timePrefs;
@@ -30,8 +31,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mCalendar = Calendar.getInstance();
-        mTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime());
+        Calendar calendar = Calendar.getInstance();
+        mTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(calendar.getTime());
 
 
         timePrefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
             Log.v(LOG_TAG, "Sync 합니다!!!!!! : 현재 타임스탬프는 " + mTimeStamp + " 예전 타임스탬프는 " + oldTimeStamp);
 
             Boolean isDebugging = false;
-            HallasanSyncAdapter.syncImmediately(getApplicationContext(), Calendar.getInstance(), isDebugging);
+            HallasanSyncAdapter.syncImmediately(this, calendar, isDebugging);
 
             SharedPreferences.Editor editor = timePrefs.edit();
             editor.putString(TIME_STAMP, mTimeStamp);
@@ -128,71 +129,58 @@ public class MainActivity extends AppCompatActivity {
 //
 //    }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-////        return super.onCreateOptionsMenu(menu);
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-//        return true;
-//    }
-//
-//
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item)     {
-//        Calendar calendar = Calendar.getInstance();
-//        Intent intent = getIntent();
-//        String mainTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime());
-//        String rightNow = new SimpleDateFormat("yyyyMMddHHmm").format(calendar.getTime());
-//
-//        switch (item.getItemId()) {
-//            case R.id.action_debug:
-////                FetchRoadStatusTask.cleanMap();
-//                isDebugging = true;
-////                new FetchRoadTask(getApplicationContext(), calendar, isDebugging).execute();
-////                new FetchWeatherTask(getApplicationContext(), calendar).execute();
-//
-//                if (mainTimeStamp.equals(rightNow)) {
-//                    Toast.makeText(this, "디버깅은 1분 후에 가능!", Toast.LENGTH_SHORT).show();
-//                } else {
-////                    finish();
-////                    startActivity(intent);
-//
-////                    RoadFragment roadFragment = new RoadFragment();
-////                    FragmentManager fragmentManager = getSupportFragmentManager();
-////                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-////                    fragmentTransaction.replace(R.id.roadFragment, roadFragment);
-////                    fragmentTransaction.commit();
-//                }
-////                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.roadFragment);
-////                final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-////                ft.detach(fragment);
-////                ft.attach(fragment);
-////                ft.commit();
-//// Fragment만 변경하면 될 줄 알았는데 잘 안 된다... 바로 반영 안 됨 -> AsyncTask 인스턴스는 오직 한번만 호출되기 때문!
-//
-//                return true;
-//
-//            case R.id.action_fetch:
-////                FetchRoadStatusTask.cleanMap();
-//
-//                isDebugging = false;
-////                new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
-////                new FetchWeatherTask(MainActivity.this, calendar).execute();
-//
-//                if (mainTimeStamp.equals(rightNow)) {
-//                    Toast.makeText(this, "디버깅은 1분 후에 가능!", Toast.LENGTH_SHORT).show();
-//                } else {
-////                    finish();
-////                    startActivity(intent);
-////                    RoadFragment roadFragment = new RoadFragment();
-////                    FragmentManager fragmentManager = getSupportFragmentManager();
-////                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-////                    fragmentTransaction.replace(R.id.roadFragment, roadFragment);
-////                    fragmentTransaction.commit();
-//                }
-//                return true;
-//
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+//        return super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)     {
+        Calendar calendar = Calendar.getInstance();
+        String rightNow = new SimpleDateFormat("yyyyMMddHHmm").format(calendar.getTime());
+        Log.v(LOG_TAG, "메뉴에서 지금 시간은 : " + rightNow);
+
+        SharedPreferences timePrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String oldTimeStamp = timePrefs.getString(MainActivity.TIME_STAMP, null);
+
+        Boolean isDebugging = false;
+        switch (item.getItemId()) {
+            case R.id.action_debug:
+
+                isDebugging = true;
+                break;
+            case R.id.action_fetch:
+                isDebugging = false;
+                break;
+        }
+
+        if (!oldTimeStamp.equals(rightNow) || oldTimeStamp == null) {
+            Log.v(LOG_TAG, "Menu에서 Sync 합니다!!!!!! : 현재 타임스탬프는 " + rightNow + " 예전 타임스탬프는 " + oldTimeStamp);
+
+            HallasanSyncAdapter.syncImmediately(this, calendar, isDebugging);
+
+            RoadFragment rf = (RoadFragment)getSupportFragmentManager().findFragmentById(R.id.roadFragment);
+            if (rf != null) {
+                rf.timeStampChanged();
+
+            }
+
+            WeatherFragment wf = (WeatherFragment)getSupportFragmentManager().findFragmentById(R.id.weatherFragment);
+            if (wf != null) {
+                wf.timeStampChanged();
+            }
+
+            SharedPreferences.Editor editor = timePrefs.edit();
+            editor.putString(MainActivity.TIME_STAMP, rightNow);
+            editor.commit();
+
+        } else {
+            Log.v(LOG_TAG, "Menu에서 Sync는 이루어지지 않았습니다 : 현재 타임스탬프는 " + rightNow + " 예전 타임스탬프는 " + oldTimeStamp);
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

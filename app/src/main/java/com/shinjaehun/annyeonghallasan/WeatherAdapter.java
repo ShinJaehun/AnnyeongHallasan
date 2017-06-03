@@ -88,7 +88,6 @@ public class WeatherAdapter extends CursorAdapter {
             }
 
             weatherTemperatureTV.setText(String.valueOf(cursor.getFloat(WeatherFragment.COL_WEATHER_T1H)));
-
         }
 
 

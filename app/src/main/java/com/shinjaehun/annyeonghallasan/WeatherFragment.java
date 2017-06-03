@@ -1,8 +1,10 @@
 package com.shinjaehun.annyeonghallasan;
 
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -15,6 +17,10 @@ import android.view.ViewGroup;
 import android.widget.GridView;
 
 import com.shinjaehun.annyeonghallasan.data.HallasanContract;
+import com.shinjaehun.annyeonghallasan.sync.HallasanSyncAdapter;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Created by shinjaehun on 2017-05-22.
@@ -66,16 +72,6 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
     public WeatherFragment() {
     }
 
-//    private SharedPreferences timePrefs = null;
-//    private String mTimeStamp;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        updateWeather();
-
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -92,22 +88,14 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
 
     }
 
-    private void updateWeather() {
-        FetchWeatherTask weatherTask = new FetchWeatherTask(getContext(), MainActivity.mCalendar, MainActivity.mTimeStamp);
-        weatherTask.execute();
-
-//        HallasanSyncAdapter.syncImmediately(getContext(), MainActivity.mCalendar, MainActivity.mTimeStamp);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         getLoaderManager().initLoader(WEATHER_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
+    }
+
+    void timeStampChanged() {
+        getLoaderManager().restartLoader(WEATHER_LOADER, null, this);
     }
 
     @Override
@@ -120,9 +108,10 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
 //            timePrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 //            mTimeStamp = timePrefs.getString(MainActivity.TIME_STAMP, null);
 
-//            String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(MainActivity.mCalendar.getTime());
+            Calendar calendar = Calendar.getInstance();
+            String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(calendar.getTime());
 
-            Uri weatherWithDateUri = HallasanContract.WeatherEntry.buildWeatherUriWithDate(MainActivity.mTimeStamp);
+            Uri weatherWithDateUri = HallasanContract.WeatherEntry.buildWeatherUriWithDate(timeStamp);
 
             return new CursorLoader(getContext(),
                     weatherWithDateUri,
