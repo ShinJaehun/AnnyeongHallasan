@@ -8,9 +8,8 @@
     tools:context="com.shinjaehun.annyeonghallasan.MainActivity"
     android:weightSum="1">
 
-    <fragment
+    <LinearLayout
         android:id="@+id/roadFragment"
-        android:name="com.shinjaehun.annyeonghallasan.RoadFragment"
         tools:layout="@layout/fragment_road"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,16 +17,16 @@
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin">
-        </fragment>
+        android:paddingTop="@dimen/activity_vertical_margin" />
 
-    <fragment
+
+    <LinearLayout
         android:id="@+id/weatherFragment"
-        android:name="com.shinjaehun.annyeonghallasan.WeatherFragment"
         tools:layout="@layout/fragment_weather"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        </fragment>
+        android:layout_height="wrap_content" />
+
 
             <!--
                 <LinearLayout

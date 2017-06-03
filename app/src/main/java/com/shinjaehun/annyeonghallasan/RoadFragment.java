@@ -37,6 +37,7 @@ import com.shinjaehun.annyeonghallasan.data.HallasanContract;
 import com.shinjaehun.annyeonghallasan.model.Road;
 import com.shinjaehun.annyeonghallasan.service.RoadService;
 import com.shinjaehun.annyeonghallasan.service.WeatherService;
+import com.shinjaehun.annyeonghallasan.sync.RoadSyncAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -178,6 +179,8 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     private void updateRoad() {
             FetchRoadTask roadTask = new FetchRoadTask(getContext(), MainActivity.mTimeStamp, isDebugging);
             roadTask.execute();
+
+//        RoadSyncAdapter.syncImmediately(getContext(), MainActivity.mTimeStamp, isDebugging);
     }
 
     @Override
@@ -289,7 +292,7 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         roadImgs = new ArrayList<>();
 
-        Log.v(LOG_TAG, "onLoadFinished에서 Cursor 크기 " + cursor.getCount());
+        Log.v(LOG_TAG, "onLoadFinished에서 Road Cursor 크기 " + cursor.getCount());
 
 //        String mainTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(MainActivity.mCalendar.getTime());
 //        Log.v(LOG_TAG, "메인 타임스탬프 : " + mainTimeStamp);

@@ -2,9 +2,14 @@ package com.shinjaehun.annyeonghallasan;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+
+import com.shinjaehun.annyeonghallasan.data.HallasanContract;
+import com.shinjaehun.annyeonghallasan.sync.HallasanSyncAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -16,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static Calendar mCalendar;
 //    public static boolean isDebugging = false;
-//    private static SharedPreferences timePrefs;
+    private static SharedPreferences timePrefs;
 
     public static String mTimeStamp;
 
@@ -26,25 +31,37 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mCalendar = Calendar.getInstance();
-
-        mTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime());
-        Log.v(LOG_TAG, "MainActivity의 타임스탬프는 : " + mTimeStamp);
-//        timePrefs = PreferenceManager.getDefaultSharedPreferences(this);
-//
-//        if (timePrefs.getString(TIME_STAMP, null) == null) {
-//            SharedPreferences.Editor editor = timePrefs.edit();
-//            editor.putString(TIME_STAMP, timeStamp);
-//            editor.commit();
-//        }
-
         setContentView(R.layout.activity_main);
 
-//            RoadFragment roadFragment = new RoadFragment();
-//            FragmentManager fragmentManager = getSupportFragmentManager();
-//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//            fragmentTransaction.replace(R.id.roadFragment, roadFragment);
-//            fragmentTransaction.commit();
+        mCalendar = Calendar.getInstance();
+        mTimeStamp =  new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime());
+
+
+
+        timePrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String oldTimeStamp = timePrefs.getString(MainActivity.TIME_STAMP, null);
+
+        if (!mTimeStamp.equals(oldTimeStamp) || oldTimeStamp == null) {
+            Log.v(LOG_TAG, "Sync 했습니다!!!!!! : 현재 타임스탬프는 " + mTimeStamp + " 예전 타임스탬프는 " + oldTimeStamp);
+
+            Boolean isDebugging = false;
+            HallasanSyncAdapter.syncImmediately(getApplicationContext(), Calendar.getInstance(), isDebugging);
+
+            SharedPreferences.Editor editor = timePrefs.edit();
+            editor.putString(TIME_STAMP, mTimeStamp);
+            editor.commit();
+
+        } else {
+            Log.v(LOG_TAG, "Sync는 이루어지지 않았습니다 : 현재 타임스탬프는 " + mTimeStamp + " 예전 타임스탬프는 " + oldTimeStamp);
+        }
+
+        RoadFragment roadFragment = new RoadFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.roadFragment, roadFragment);
+        WeatherFragment weatherFragment = new WeatherFragment();
+        fragmentTransaction.replace(R.id.weatherFragment, weatherFragment);
+        fragmentTransaction.commit();
 
 //        HallasanSyncAdapter.initalizeSyncAdapter(this);
 
@@ -84,11 +101,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-//        HallasanSyncAdapter.syncImmediately(getApplicationContext(), Calendar.getInstance(), isDebugging);
+
 //
 //        new FetchRoadStatusTask(MainActivity.this, calendar, isDebugging).execute();
 //        new FetchWeatherTask(MainActivity.this, calendar).execute();
 //        new FetchRoadTask(getApplicationContext(), mCalendar, isDebugging, )
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+
+
     }
 
     @Override

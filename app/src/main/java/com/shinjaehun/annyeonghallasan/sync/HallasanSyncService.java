@@ -13,16 +13,16 @@ import android.util.Log;
 public class HallasanSyncService extends Service {
     private final String LOG_TAG = HallasanSyncService.class.getSimpleName();
 
-    private static final Object wSyncAdapterLock = new Object();
-    private static HallasanSyncAdapter wSyncAdapter = null;
+    private static final Object hSyncAdapterLock = new Object();
+    private static HallasanSyncAdapter hSyncAdapter = null;
 
     @Override
     public void onCreate() {
-        Log.v(LOG_TAG, "SyncService Called!");
+        Log.v(LOG_TAG, "HallasanSyncService Called!");
 
-        synchronized (wSyncAdapterLock) {
-            if (wSyncAdapter == null) {
-                wSyncAdapter = new HallasanSyncAdapter(getApplicationContext(), true);
+        synchronized (hSyncAdapterLock) {
+            if (hSyncAdapter == null) {
+                hSyncAdapter = new HallasanSyncAdapter(getApplicationContext(), true);
             }
         }
 
@@ -31,6 +31,6 @@ public class HallasanSyncService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return wSyncAdapter.getSyncAdapterBinder();
+        return hSyncAdapter.getSyncAdapterBinder();
     }
 }

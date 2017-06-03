@@ -15,15 +15,50 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+<!--
         <provider
             android:authorities="@string/content_authority"
             android:name=".data.HallasanProvider"/>
-        <!--<service android:name=".service.RoadService" />-->
-        <!--<service android:name=".service.WeatherService" />-->
+-->
 
+        <provider
+            android:authorities="@string/content_authority"
+            android:name=".data.HallasanProvider"
+            android:exported="false"
+            android:syncable="true" />
+
+        <service
+            android:name=".sync.HallasanAuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+        <service
+            android:name=".sync.HallasanSyncService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
 
     </application>
 
     <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- Permissions required by the sync adapter -->
+    <uses-permission
+        android:name="android.permission.READ_SYNC_SETTINGS"/>
+    <uses-permission
+        android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+    <uses-permission
+        android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
 
 </manifest>

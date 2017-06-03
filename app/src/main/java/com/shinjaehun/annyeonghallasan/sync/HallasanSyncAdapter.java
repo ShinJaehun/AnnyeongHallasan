@@ -7,18 +7,13 @@ import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.shinjaehun.annyeonghallasan.R;
 import com.shinjaehun.annyeonghallasan.data.HallasanContract;
-import com.shinjaehun.annyeonghallasan.model.Road;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,8 +30,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Vector;
 
 /**
  * Created by shinjaehun on 2017-05-27.
@@ -45,18 +40,19 @@ import java.util.Calendar;
 public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final String LOG_TAG = HallasanSyncAdapter.class.getSimpleName();
 
+    private static Context mContext;
     private static Calendar mCalendar;
     private static String mTimeStamp;
-    private static boolean mIsDebugging;
+    private static Boolean mDebugging;
 
     // Interval at which to sync with the weather, in milliseconds.
     // 60 seconds (1 minute)  180 = 3 hours
 //    public static final int SYNC_INTERVAL = 60 * 180;
-    public static final int SYNC_INTERVAL = 60;
-    public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
-
-    private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
-    private static final int WEATHER_NOTIFICATION_ID = 3004;
+//    public static final int SYNC_INTERVAL = 60;
+//    public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
+//
+//    private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
+//    private static final int WEATHER_NOTIFICATION_ID = 3004;
 
 
     public HallasanSyncAdapter(Context context, boolean autoInitialize) {
@@ -65,7 +61,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
     @Override
     public void onPerformSync(Account account, Bundle bundle, String s, ContentProviderClient contentProviderClient, SyncResult syncResult) {
-        Log.v(LOG_TAG, "onPerformSync Called!");
+        Log.v(LOG_TAG, "WeatherSyncAdatpter onPerformSync Called!");
 
         roadProcess();
         weatherProcess();
@@ -113,17 +109,31 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 //        weathers.add(fetchWeatherJson("관음사", baseDate, baseTime, 53, 36)); // 33.423744 126.555786
 //        weathers.add(fetchWeatherJson("돈내코", baseDate, baseTime, 53, 34)); // 33.3101519,126.5681177
 
-        fetchWeatherJson("한라산", baseDate, baseTime, 53, 35);
-        fetchWeatherJson("어리목", baseDate, baseTime, 52, 36);
-        fetchWeatherJson("영실", baseDate, baseTime, 52, 34);
-        fetchWeatherJson("성판악", baseDate, baseTime, 54, 35);
-        fetchWeatherJson("관음사", baseDate, baseTime, 53, 36);
-        fetchWeatherJson("돈내코", baseDate, baseTime, 53, 34);
+//        fetchWeatherJson("한라산", baseDate, baseTime, 53, 35);
+//        fetchWeatherJson("어리목", baseDate, baseTime, 52, 36);
+//        fetchWeatherJson("영실", baseDate, baseTime, 52, 34);
+//        fetchWeatherJson("성판악", baseDate, baseTime, 54, 35);
+//        fetchWeatherJson("관음사", baseDate, baseTime, 53, 36);
+//        fetchWeatherJson("돈내코", baseDate, baseTime, 53, 34);
+        Vector<ContentValues> cVVector = new Vector<>();
 
+        cVVector.add(fetchWeatherJson("한라산", baseDate, baseTime, 53, 35));
+        cVVector.add(fetchWeatherJson("어리목", baseDate, baseTime, 52, 36));
+        cVVector.add(fetchWeatherJson("영실", baseDate, baseTime, 52, 34));
+        cVVector.add(fetchWeatherJson("성판악", baseDate, baseTime, 54, 35));
+        cVVector.add(fetchWeatherJson("관음사", baseDate, baseTime, 53, 36));
+        cVVector.add(fetchWeatherJson("돈내코", baseDate, baseTime, 53, 34));
+
+        if (cVVector.size() > 0) {
+            //Fetch한 값을 DB에 insert!
+            ContentValues[] cvArray = new ContentValues[cVVector.size()];
+            cVVector.toArray(cvArray);
+            int size = mContext.getContentResolver().bulkInsert(HallasanContract.WeatherEntry.CONTENT_URI, cvArray);
+            Log.v(LOG_TAG, "HallasanSyncAdapter에서 " + mTimeStamp + "에 Weather DB로 집어 넣은 다음 크기 " + size);
+        }
     }
 
-
-    private void fetchWeatherJson(String location, String baseDate, String baseTime, int x, int y) {
+    private ContentValues fetchWeatherJson(String location, String baseDate, String baseTime, int x, int y) {
 
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -180,7 +190,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             StringBuffer buffer = new StringBuffer();
             if (inputStream == null) {
                 // Nothing to do.
-                return ;
+                return null;
             }
             reader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -194,20 +204,20 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
             if (buffer.length() == 0) {
                 // Stream was empty.  No point in parsing.
-                return ;
+                return null;
             }
 
             String weatherJsonStr = buffer.toString();
 
 //            Log.v(LOG_TAG, "Forecast Json String: " + weatherJsonStr);
-            getWeatherDataFromJson(location, weatherJsonStr);
-            return ;
+            return getWeatherDataFromJson(location, baseDate, baseTime, x, y, weatherJsonStr);
+
 
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
             // If the code didn't successfully get the weather data, there's no point in attempting
             // to parse it.
-            return ;
+            return null;
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
@@ -224,10 +234,10 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             }
         }
 
-        return ;
+        return null;
     }
 
-    private void getWeatherDataFromJson(String location, String weatherJsonStr)
+    private ContentValues getWeatherDataFromJson(String location, String baseDate, String baseTime, int x, int y, String weatherJsonStr)
             throws JSONException {
 
         try {
@@ -237,7 +247,15 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             JSONObject itemsObject = bodyObject.getJSONObject("items");
             JSONArray item = itemsObject.getJSONArray("item");
 
-            ContentValues weaterValues = new ContentValues();
+            ContentValues weatherValues = new ContentValues();
+            //ContentValues로 저장하는 방법을 좀 더 직관적으로 수정함
+
+            weatherValues.put(HallasanContract.WeatherEntry.COLUMN_LOCATION, location);
+            weatherValues.put(HallasanContract.WeatherEntry.COLUMN_TIMESTAMP, mTimeStamp);
+            weatherValues.put(HallasanContract.WeatherEntry.COLUMN_BASE_DATE, baseDate);
+            weatherValues.put(HallasanContract.WeatherEntry.COLUMN_BASE_TIME, baseTime);
+            weatherValues.put(HallasanContract.WeatherEntry.COLUMN_NX, x);
+            weatherValues.put(HallasanContract.WeatherEntry.COLUMN_NY, y);
 
             for (int i = 0; i < item.length(); i++) {
                 JSONObject weatherObject = (JSONObject) item.get(i);
@@ -245,105 +263,52 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
                 String category = weatherObject.get("category").toString();
                 float value = Float.parseFloat(weatherObject.get("obsrValue").toString());
 
-                if (i == 0) {
-                    weaterValues.put(HallasanContract.WeatherEntry.COLUMN_LOCATION, location);
-                    weaterValues.put(HallasanContract.WeatherEntry.COLUMN_TIMESTAMP, mTimeStamp);
-                    weaterValues.put(HallasanContract.WeatherEntry.COLUMN_BASE_DATE, weatherObject.get("baseDate").toString());
-                    weaterValues.put(HallasanContract.WeatherEntry.COLUMN_BASE_TIME, weatherObject.get("baseTime").toString());
-                    weaterValues.put(HallasanContract.WeatherEntry.COLUMN_NX, (int) weatherObject.get("nx"));
-                    weaterValues.put(HallasanContract.WeatherEntry.COLUMN_NY, (int) weatherObject.get("ny"));
-                }
-
-                HallasanContract.WeatherEntry.Category c = null;
-
-                try {
-                    c = HallasanContract.WeatherEntry.Category.valueOf(category);
-                } catch (IllegalArgumentException e) {
-                    Log.e(LOG_TAG, "Category Exception " + e);
-                }
-
-                switch (c) {
-                    case T1H:
-                        weaterValues.put(HallasanContract.WeatherEntry.COLUMN_T1H, value);
-                        break;
-                    case RN1:
-                        weaterValues.put(HallasanContract.WeatherEntry.COLUMN_RN1, value);
-                        break;
-                    case SKY:
-                        weaterValues.put(HallasanContract.WeatherEntry.COLUMN_SKY, value);
-                        break;
-                    case UUU:
-                        weaterValues.put(HallasanContract.WeatherEntry.COLUMN_UUU, value);
-                        break;
-                    case VVV:
-                        weaterValues.put(HallasanContract.WeatherEntry.COLUMN_VVV, value);
-                        break;
-                    case REH:
-                        weaterValues.put(HallasanContract.WeatherEntry.COLUMN_REH, value);
-                        break;
-                    case PTY:
-                        weaterValues.put(HallasanContract.WeatherEntry.COLUMN_PTY, value);
-                        break;
-                    case LGT:
-                        weaterValues.put(HallasanContract.WeatherEntry.COLUMN_LGT, value);
-                        break;
-                    case VEC:
-                        weaterValues.put(HallasanContract.WeatherEntry.COLUMN_VEC, value);
-                        break;
-                    case WSD:
-                        weaterValues.put(HallasanContract.WeatherEntry.COLUMN_WSD, value);
-                        break;
-                }
-
+                weatherValues.put(category, value);
 
             }
 
-            if (weaterValues.size() > 0) {
-                //DB에 insert
-//                Uri weatherWithDateUri = WeatherEntry.buildWeatherUriWithDate(mTimeStamp);
-//                Cursor c = mContext.getContentResolver().query(
-//                        weatherWithDateUri,
-//                        new String[] { WeatherEntry.COLUMN_LOCATION, WeatherEntry.COLUMN_TIMESTAMP },
-//                        null,
-//                        null,
-//                        null
-//                );
-//
-//                while (c.moveToNext()) {
-//                    Log.v(LOG_TAG, "장소 : " + c.getString(0) + " 타임스탬프 : " + c.getString(1));
-//
+//                ContentValue 출력하는 코드 : 지우지 마!
+//                Set<Map.Entry<String, Object>> s = weatherValues.valueSet();
+//                Iterator itr = s.iterator();
+//                Log.d("DatabaseSync", "ContentValue Length :: " + weatherValues.size());
+//                while(itr.hasNext())
+//                {
+//                    Map.Entry me = (Map.Entry)itr.next();
+//                    String key = me.getKey().toString();
+//                    Object value =  me.getValue();
+//                    Log.d("DatabaseSync", "Key:"+key+", values:"+(String)(value == null?null:value.toString()));
 //                }
-//                이렇게 DB에서 타임스탬프를 가져와서 비교하는 건 아닌 거 같다!
-//                query에 많은 자원이 소모되기 때문 아닐까...
 
-                getContext().getContentResolver().insert(HallasanContract.WeatherEntry.CONTENT_URI, weaterValues);
-
-            }
-
-//            long id = addWeather(weather.getLocation(), mTimeStamp, weather.getBaseDate(), weather.getBaseTime(), weather.getNx(), weather.getNy(), weather.getT1h(), weather.getRn1(), weather.getSky(), weather.getUuu(), weather.getVvv(), weather.getReh(), weather.getPty(), weather.getLgt(), weather.getVec(), weather.getWsd());
+            return weatherValues;
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
         }
-        return ;
+        return null;
+
     }
 
     private void roadProcess() {
+        Log.v(LOG_TAG, "RoadSyncAdatpter onPerformSync Called!");
+
+        //이전에 insert된 값이 없다면 일단 fetch
+        Vector<ContentValues> cVVector = new Vector<ContentValues>(13);
+
         try {
             Document doc = null;
             String url = "http://www.jjpolice.go.kr/jjpolice/police25/traffic.htm?act=rss";
 
-            if (mIsDebugging) {
-                //XML 파일로 테스트하기
-                InputStream inputStream = getContext().getResources().openRawResource(R.raw.sample_data1);
+            if (mDebugging) {
+//                    //XML 파일로 테스트하기
+                InputStream inputStream = mContext.getResources().openRawResource(R.raw.sample_data1);
                 try {
                     doc = Jsoup.parse(inputStream, "UTF-8", url);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else {
-                //실제 URL로 테스트하기
+//                    실제 URL로 테스트하기
                 try {
                     doc = Jsoup.connect(url).get();
                 } catch (IOException e) {
@@ -357,12 +322,12 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
             String base_date = dateData.get(0).text().toString().trim();
 
-            ContentValues roadValues = new ContentValues();
+            ContentValues roadValues;
 //        ArrayList<Road> roads = new ArrayList<>();
             //제주지방경찰청에서 제공하는 13개의 도로 DATA
 
             for (int i = 1; i < 14; i++) {
-
+                roadValues = new ContentValues();
                 String n = roadTitleData.get(i).text().replace("<![CDATA[", "").replace("]]>", "").toString().trim();
                 //정말 귀찮은데 도로명에 <![CDATA[~~~]> 이거 붙는 거 없애고
 
@@ -434,22 +399,146 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
                 }
                 roadValues.put(HallasanContract.RoadEntry.COLUMN_CHAIN, chain);
 
-                if (roadValues.size() > 0) {
-                    getContext().getContentResolver().insert(HallasanContract.RoadEntry.CONTENT_URI, roadValues);
-                }
+                cVVector.add(roadValues);
+//                        mContext.getContentResolver().insert(HallasanContract.RoadEntry.CONTENT_URI, roadValues);
             }
+
         } catch (RuntimeException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
         }
-        return;
+
+        if (cVVector.size() > 0) {
+            //fetch에 성공했으면 DB에 쓰기
+            ContentValues[] cvArray = new ContentValues[cVVector.size()];
+            cVVector.toArray(cvArray);
+            int size = mContext.getContentResolver().bulkInsert(HallasanContract.RoadEntry.CONTENT_URI, cvArray);
+            Log.v(LOG_TAG, "HallasanSyncAdapter에서 " + mTimeStamp + "에 Road DB로 집어 넣은 다음 크기 " + size);
+        }
     }
 
-    public static void syncImmediately(Context context, Calendar calendar, boolean isDebugging) {
-        mIsDebugging = isDebugging;
+//    private void roadProcess() {
+//        try {
+//            Document doc = null;
+//            String url = "http://www.jjpolice.go.kr/jjpolice/police25/traffic.htm?act=rss";
+//
+//            if (mIsDebugging) {
+//                //XML 파일로 테스트하기
+//                InputStream inputStream = getContext().getResources().openRawResource(R.raw.sample_data1);
+//                try {
+//                    doc = Jsoup.parse(inputStream, "UTF-8", url);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            } else {
+//                //실제 URL로 테스트하기
+//                try {
+//                    doc = Jsoup.connect(url).get();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            Elements dateData = doc.select("date");
+//            Elements roadTitleData = doc.select("title");
+//            Elements roadDescriptionData = doc.select("description");
+//
+//            String base_date = dateData.get(0).text().toString().trim();
+//
+//            ContentValues roadValues = new ContentValues();
+////        ArrayList<Road> roads = new ArrayList<>();
+//            //제주지방경찰청에서 제공하는 13개의 도로 DATA
+//
+//            for (int i = 1; i < 14; i++) {
+//
+//                String n = roadTitleData.get(i).text().replace("<![CDATA[", "").replace("]]>", "").toString().trim();
+//                //정말 귀찮은데 도로명에 <![CDATA[~~~]> 이거 붙는 거 없애고
+//
+//                String name;
+//                if (n.matches(".*[0-9]\\)$")) {
+//                    //"숫자)"로 끝나는 문자열이라면
+//                    name = n.substring(0, n.indexOf("("));
+//                    // 도로명 "1100도로(1139)"에서 도로 번호를 생략
+//
+//                } else {
+//                    name = n;
+//                    // 도로번호가 없는 도로명은 그대로 쓰기
+//                }
+//
+//                roadValues.put(HallasanContract.RoadEntry.COLUMN_NAME, name);
+//                roadValues.put(HallasanContract.RoadEntry.COLUMN_TIMESTAMP, mTimeStamp);
+//                roadValues.put(HallasanContract.RoadEntry.COLUMN_BASE_DATE, base_date);
+//
+//                String description = roadDescriptionData.get(i).text().replaceAll("&nbsp;", "").replaceAll("&amp;nbsp;", "").toString().trim();
+//                //description에 nbsp랑 amp 붙는거 너무 짜증나!
+//
+//                String[] v = description.split(":", -6);
+//
+////                    Log.v(LOG_TAG, location + " 크기는 " + v.length);
+////                    Log.v(LOG_TAG, location + "," + v[0].trim() );
+////                    Log.v(LOG_TAG, location + "," + v[1].trim() );
+////                    Log.v(LOG_TAG, location + "," + v[2].trim() );
+////                    Log.v(LOG_TAG, location + "," + v[3].trim() );
+////                    Log.v(LOG_TAG, location + "," + v[4].trim() );
+////                    Log.v(LOG_TAG, location + "," + v[5].trim() );
+///*
+//                    통제하는 경우 description 내용
+//                    구간 : 제주대 입구 ~ 성판악 적설 : 1 결빙 : 대형 통재상항 :    소형 통재상항 : 체인
+//
+//                    통제하지 않는 경우 descrition 내용
+//                    구간 : 정상 적설 : 결빙 : 대형 통재상항 :    소형 통재상항 :
+//*/
+//                int restrict = HallasanContract.RoadEntry.RESTRICTION_DISABLED;
+//                String section = "정상";
+//                if (!v[1].contains("정상")) {
+//                    //통제하는 경우
+//                    restrict = HallasanContract.RoadEntry.RESTRICTION_ENABLED;
+//                    section = v[1].substring(0, v[1].indexOf("적설")).trim();
+//                    //통제구간 : "제주대 입구 ~ 성판악"
+//                }
+//                roadValues.put(HallasanContract.RoadEntry.COLUMN_RESTRICTION, restrict);
+//                roadValues.put(HallasanContract.RoadEntry.COLUMN_SECTION, section);
+//
+//                Float snowfall = 0f;
+//                if (v[2].matches(".*\\d+.*")) {
+//                    snowfall = Float.parseFloat(v[2].substring(0, v[2].indexOf("결빙")).trim());
+//                    //적설
+//                }
+//                roadValues.put(HallasanContract.RoadEntry.COLUMN_SNOWFALL, snowfall);
+//
+//                Float freezing = 0f;
+//                if (v[3].matches(".*\\d+.*")) {
+//                    freezing = Float.parseFloat(v[3].substring(0, v[3].indexOf("대형")).trim());
+//                    //결빙
+//                }
+//                roadValues.put(HallasanContract.RoadEntry.COLUMN_FREEZING, freezing);
+//
+//                int chain = HallasanContract.RoadEntry.CHAIN_NONE;
+//                if (v[4].contains("체인")) {
+//                    chain = HallasanContract.RoadEntry.CHAIN_SMALL;
+//                }
+//                if (v[5].contains("체인")) {
+//                    chain = HallasanContract.RoadEntry.CHAIN_BIG;
+//                }
+//                roadValues.put(HallasanContract.RoadEntry.COLUMN_CHAIN, chain);
+//
+//                if (roadValues.size() > 0) {
+//                    getContext().getContentResolver().insert(HallasanContract.RoadEntry.CONTENT_URI, roadValues);
+//                }
+//            }
+//        } catch (RuntimeException e) {
+//            Log.e(LOG_TAG, e.getMessage(), e);
+//            e.printStackTrace();
+//        }
+//        return;
+//    }
+
+    public static void syncImmediately(Context context, Calendar calendar, Boolean debugging) {
+        mContext = context;
         mCalendar = calendar;
-        mTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(calendar.getTime());
-        Log.v(LOG_TAG, "현재시각은 : " + mTimeStamp);
+        mTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime());
+        Log.v(LOG_TAG, "HallasanSyncAdapter에서 MainActivity의 타임스탬프는 : " + mTimeStamp);
+        mDebugging = debugging;
 
         Bundle bundle = new Bundle();
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
@@ -468,46 +557,46 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
         }
         return newAccount;
     }
-
-    public static void initalizeSyncAdapter(Context context) {
-        getSyncAccount(context);
-    }
-
-    public static void configurePeriodicSync(Context context, int syncInterval, int flexTime) {
-        Account account = getSyncAccount(context);
-        String authority = context.getString(R.string.content_authority);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            // we can enable inexact timers in our periodic sync
-            SyncRequest request = new SyncRequest.Builder().
-                    syncPeriodic(syncInterval, flexTime).
-                    setSyncAdapter(account, authority).
-                    setExtras(new Bundle()).build();
-            ContentResolver.requestSync(request);
-        } else {
-            ContentResolver.addPeriodicSync(account,
-                    authority, new Bundle(), syncInterval);
-        }
-    }
-
-
-    private static void onAccountCreated(Account newAccount, Context context) {
-        /*
-         * Since we've created an account
-         */
-        HallasanSyncAdapter.configurePeriodicSync(context, SYNC_INTERVAL, SYNC_FLEXTIME);
-
-        /*
-         * Without calling setSyncAutomatically, our periodic sync will not be enabled.
-         */
-        ContentResolver.setSyncAutomatically(newAccount, context.getString(R.string.content_authority), true);
-
-        /*
-         * Finally, let's do a sync to get things started
-         */
-        syncImmediately(context, mCalendar, mIsDebugging);
-    }
-
-    public static void initializeSyncAdapter(Context context) {
-        getSyncAccount(context);
-    }
+//
+//    public static void initalizeSyncAdapter(Context context) {
+//        getSyncAccount(context);
+//    }
+//
+//    public static void configurePeriodicSync(Context context, int syncInterval, int flexTime) {
+//        Account account = getSyncAccount(context);
+//        String authority = context.getString(R.string.content_authority);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            // we can enable inexact timers in our periodic sync
+//            SyncRequest request = new SyncRequest.Builder().
+//                    syncPeriodic(syncInterval, flexTime).
+//                    setSyncAdapter(account, authority).
+//                    setExtras(new Bundle()).build();
+//            ContentResolver.requestSync(request);
+//        } else {
+//            ContentResolver.addPeriodicSync(account,
+//                    authority, new Bundle(), syncInterval);
+//        }
+//    }
+//
+//
+//    private static void onAccountCreated(Account newAccount, Context context) {
+//        /*
+//         * Since we've created an account
+//         */
+//        HallasanSyncAdapter.configurePeriodicSync(context, SYNC_INTERVAL, SYNC_FLEXTIME);
+//
+//        /*
+//         * Without calling setSyncAutomatically, our periodic sync will not be enabled.
+//         */
+//        ContentResolver.setSyncAutomatically(newAccount, context.getString(R.string.content_authority), true);
+//
+//        /*
+//         * Finally, let's do a sync to get things started
+//         */
+//        syncImmediately(context, mCalendar, mIsDebugging);
+//    }
+//
+//    public static void initializeSyncAdapter(Context context) {
+//        getSyncAccount(context);
+//    }
 }

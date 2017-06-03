@@ -1,39 +1,28 @@
 package com.shinjaehun.annyeonghallasan;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
 import com.shinjaehun.annyeonghallasan.data.HallasanContract;
-import com.shinjaehun.annyeonghallasan.service.WeatherService;
 import com.shinjaehun.annyeonghallasan.sync.HallasanSyncAdapter;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 /**
  * Created by shinjaehun on 2017-05-22.
  */
 
 public class WeatherFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    private final String LOG_TAG = WeatherFragment.class.getSimpleName();
 
     public static final String[] WEATHER_COLUMNS = {
             //getColumnIndex 대신 cursor의 값을 쉽게 사용하기 위한 Projection
@@ -87,6 +76,8 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        updateWeather();
+
     }
 
     @Nullable
@@ -108,12 +99,13 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
     private void updateWeather() {
         FetchWeatherTask weatherTask = new FetchWeatherTask(getContext(), MainActivity.mCalendar, MainActivity.mTimeStamp);
         weatherTask.execute();
+
+//        HallasanSyncAdapter.syncImmediately(getContext(), MainActivity.mCalendar, MainActivity.mTimeStamp);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        updateWeather();
     }
 
     @Override
@@ -150,6 +142,18 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        Log.v(LOG_TAG, "onLoadFinished에서 Weather Cursor 크기 " + cursor.getCount());
+
+        while (cursor.moveToNext()) {
+
+            String timeStamp = cursor.getString(WeatherFragment.COL_WEATHER_TIMESTAMP);
+
+            long id = cursor.getLong(WeatherFragment.COL_WEATHER_ID);
+            String location = cursor.getString(WeatherFragment.COL_WEATHER_LOCATION);
+
+            Log.v(LOG_TAG, "ID : " + id + " 장소 : " + location + " 타임스탬프 : " + timeStamp);
+        }
+
         mWeatherAdapter.swapCursor(cursor);
     }
 

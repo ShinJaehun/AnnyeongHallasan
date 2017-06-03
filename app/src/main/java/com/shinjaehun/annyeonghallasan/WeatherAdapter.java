@@ -38,11 +38,11 @@ public class WeatherAdapter extends CursorAdapter {
         TextView weatherLocationTV = (TextView) view.findViewById(R.id.weather_location);
         TextView weatherTemperatureTV = (TextView) view.findViewById(R.id.weather_temperature);
         TextView weatherInfoTV = (TextView) view.findViewById(R.id.weather_info);
-
-        if (cursor != null) {
-            Log.v(LOG_TAG, "ID : " + cursor.getLong(WeatherFragment.COL_WEATHER_ID) + " 장소 : " + cursor.getString(WeatherFragment.COL_WEATHER_LOCATION) + " TimeStamp " + cursor.getString(WeatherFragment.COL_WEATHER_TIMESTAMP)
-                    + " SKY " + cursor.getInt(WeatherFragment.COL_WEATHER_SKY));
-        }
+//
+//        if (cursor != null) {
+//            Log.v(LOG_TAG, "ID : " + cursor.getLong(WeatherFragment.COL_WEATHER_ID) + " 장소 : " + cursor.getString(WeatherFragment.COL_WEATHER_LOCATION) + " TimeStamp " + cursor.getString(WeatherFragment.COL_WEATHER_TIMESTAMP)
+//                    + " SKY " + cursor.getInt(WeatherFragment.COL_WEATHER_SKY));
+//        }
 
         if (cursor != null) {
             String location = cursor.getString(WeatherFragment.COL_WEATHER_LOCATION);
