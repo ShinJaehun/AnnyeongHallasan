@@ -1,5 +1,6 @@
 package com.shinjaehun.annyeonghallasan;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -57,7 +58,9 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     public static final int COL_ROAD_FREEZING = 7;
     public static final int COL_ROAD_CHAIN = 8;
     private static final String LOG_TAG = RoadFragment.class.getSimpleName();
+
     private static final int ROAD_LOADER = 1;
+
     static TextView normalTV;
     static ArrayList<ImageView> roadImgs;
     ImageView road_1100Iv;
@@ -110,6 +113,8 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     public void onResume() {
         super.onResume();
         animation = new AlphaAnimation((float) 0.5, 0);
+        getLoaderManager().restartLoader(ROAD_LOADER, null, this);
+// 백그라운드에서 다시 활성화시켰을 때 Loader 재시작 이거 안 하면 Loader는 재시작 하더라도 그대로...
     }
 
     @Override
@@ -121,11 +126,12 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     void timeStampChanged() {
         // timestamp가 변경되면 이걸 실행시켜서 Loader의 Uri를 변경해야 함!
         getLoaderManager().restartLoader(ROAD_LOADER, null, this);
-
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Log.v(LOG_TAG, "RoadFragment의 onCreateLoader입니다.");
+
 
         if (id == ROAD_LOADER) {
 
@@ -162,6 +168,7 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+
         roadImgs = new ArrayList<>();
 
         clearAnimation();

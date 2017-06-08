@@ -89,6 +89,12 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        getLoaderManager().restartLoader(WEATHER_LOADER, null, this);
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         getLoaderManager().initLoader(WEATHER_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
