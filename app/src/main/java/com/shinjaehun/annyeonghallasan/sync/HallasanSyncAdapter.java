@@ -12,6 +12,7 @@ import android.content.SyncResult;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.format.Time;
 import android.util.Log;
 
 import com.shinjaehun.annyeonghallasan.R;
@@ -101,7 +102,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
 //        ArrayList<WeatherReport> weatherReports = new ArrayList<>();
 //        weatherReports.add(new WeatherReport("한라산", fetchWeatherJson(baseDate, baseTime, 53, 35))); // 33.364235 126.545517
-//        weatherReports.add(new WeatherReport("어리목", fetchWeatherJson(baseDate, baseTime, 52, 36))); // 33.391859 126.4933766
+//        weatherReports.add(new WeatherReport("어리목", fetchWeatherJson(baseDate, baseTime, 52, 35))); // 33.391859 126.4933766
 //        weatherReports.add(new WeatherReport("영실", fetchWeatherJson(baseDate, baseTime, 52, 34))); // 33.339573 126.478188
 //        weatherReports.add(new WeatherReport("성판악", fetchWeatherJson(baseDate, baseTime, 54, 35))); // 33.3844174 126.6166709
 //        weatherReports.add(new WeatherReport("관음사", fetchWeatherJson(baseDate, baseTime, 53, 36))); // 33.423744 126.555786
@@ -125,7 +126,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
         Vector<ContentValues> cVVector = new Vector<>();
 
         cVVector.add(fetchWeatherJson("한라산", baseDate, baseTime, 53, 35));
-        cVVector.add(fetchWeatherJson("어리목", baseDate, baseTime, 52, 36));
+        cVVector.add(fetchWeatherJson("어리목", baseDate, baseTime, 52, 35));
         cVVector.add(fetchWeatherJson("영실", baseDate, baseTime, 52, 34));
         cVVector.add(fetchWeatherJson("성판악", baseDate, baseTime, 54, 35));
         cVVector.add(fetchWeatherJson("관음사", baseDate, baseTime, 53, 36));
@@ -138,6 +139,15 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             int size = getContext().getContentResolver().bulkInsert(HallasanContract.WeatherEntry.CONTENT_URI, cvArray);
 
             Log.v(LOG_TAG, "HallasanSyncAdapter에서 " + mTimeStamp + "에 Weather DB로 집어 넣은 다음 크기 " + size);
+
+//            Calendar oldCal = Calendar.getInstance();
+//            oldCal.add(Calendar.DATE, -1);
+//
+//            String oldTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(oldCal.getTime());
+//            Log.v(LOG_TAG, "어제 날짜는 " + oldTimeStamp);
+
+//            getContext().getContentResolver().delete(HallasanContract.WeatherEntry.CONTENT_URI, HallasanContract.WeatherEntry.COLUMN_TIMESTAMP + " < ?",
+//                    new String[] { mTimeStamp });
         }
     }
 
@@ -415,7 +425,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private void roadProcess() {
 
-        mDebugging = false;
+//        mDebugging = false;
 
         //이전에 insert된 값이 없다면 일단 fetch
         Vector<ContentValues> cVVector = new Vector<ContentValues>(13);
@@ -542,20 +552,18 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    public static void syncImmediately(Context context) {
+    public static void syncImmediately(Context context, Boolean isDebugging) {
         Log.v(LOG_TAG, "SyncIMMEDIATELY!!!!!");
 //        mContext = context;
 //        mCalendar = Calendar.getInstance();
 //        mTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime());
 //        Log.v(LOG_TAG, "HallasanSyncAdapter에서 Sync합니다! 타임스탬프는 : " + mTimeStamp);
-//        mDebugging = false;
+        mDebugging = isDebugging;
 
-        new Bundle();
-
-//        Bundle bundle = new Bundle();
+        Bundle bundle = new Bundle();
 //        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
 //        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-//        ContentResolver.requestSync(getSyncAccount(context), context.getString(R.string.content_authority), bundle);
+        ContentResolver.requestSync(getSyncAccount(context), context.getString(R.string.content_authority), bundle);
     }
 
     public static Account getSyncAccount(Context context) {
@@ -602,7 +610,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
         /*
          * Finally, let's do a sync to get things started
          */
-        syncImmediately(context);
+        syncImmediately(context, false);
     }
 
     public static void initializeSyncAdapter(Context context) {

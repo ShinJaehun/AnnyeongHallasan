@@ -135,7 +135,7 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
 
         if (id == ROAD_LOADER) {
 
-            String sortOrder = HallasanContract.RoadEntry.COLUMN_TIMESTAMP + " DESC";
+            String sortOrder = HallasanContract.RoadEntry.COLUMN_TIMESTAMP + " DESC limit 13";
 
 //            String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(MainActivity.mCalendar.getTime());
 
@@ -149,20 +149,27 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
             // loader가 그 timestamp에 해당하는 uri를 갖도록 해 줘야 한다
             // 그니까 timeStampChanged에서 restartLoader를 해서 onCreateLoader가 재실행되도록 해야 하는거야...
             // 이걸 무슨 Activity나 Fragment의 Lifecycle 관련지어서 졸라 해맸어ㅠㅠ
-            Calendar calendar = Calendar.getInstance();
-            String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(calendar.getTime());
-
-            Uri roadWithDateUri = HallasanContract.RoadEntry.buildRoadUriWithDate(timeStamp);
+//            Calendar calendar = Calendar.getInstance();
+//            String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(calendar.getTime());
+//
+//            Uri roadWithDateUri = HallasanContract.RoadEntry.buildRoadUriWithDate(timeStamp);
+//
+//            return new CursorLoader(getContext(),
+//                    roadWithDateUri,
+//                    RoadFragment.ROAD_COLUMNS,
+//                    null,
+//                    null,
+//                    sortOrder
+//            );
 
             return new CursorLoader(getContext(),
-                    roadWithDateUri,
+                    HallasanContract.RoadEntry.CONTENT_URI,
                     RoadFragment.ROAD_COLUMNS,
                     null,
                     null,
                     sortOrder
             );
         }
-
         return null;
     }
 
@@ -179,7 +186,6 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
 //        Log.v(LOG_TAG, "메인 타임스탬프 : " + mainTimeStamp);
 
         while (cursor.moveToNext()) {
-
             String timeStamp = cursor.getString(RoadFragment.COL_ROAD_TIMESTAMP);
 //            Log.v(LOG_TAG, "커서 타임스탬프 : " + timeStamp);
 

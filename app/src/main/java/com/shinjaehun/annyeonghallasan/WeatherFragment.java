@@ -109,18 +109,26 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
 
         if (id == WEATHER_LOADER) {
 
-            String sortOrder = HallasanContract.WeatherEntry.COLUMN_TIMESTAMP + " ASC";
+            String sortOrder = HallasanContract.WeatherEntry.COLUMN_TIMESTAMP + " DESC limit 6";
 
 //            timePrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 //            mTimeStamp = timePrefs.getString(MainActivity.TIME_STAMP, null);
 
-            Calendar calendar = Calendar.getInstance();
-            String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(calendar.getTime());
-
-            Uri weatherWithDateUri = HallasanContract.WeatherEntry.buildWeatherUriWithDate(timeStamp);
+//            Calendar calendar = Calendar.getInstance();
+//            String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(calendar.getTime());
+//
+//            Uri weatherWithDateUri = HallasanContract.WeatherEntry.buildWeatherUriWithDate(timeStamp);
+//
+//            return new CursorLoader(getContext(),
+//                    weatherWithDateUri,
+//                    WEATHER_COLUMNS,
+//                    null,
+//                    null,
+//                    sortOrder
+//            );
 
             return new CursorLoader(getContext(),
-                    weatherWithDateUri,
+                    HallasanContract.WeatherEntry.CONTENT_URI,
                     WEATHER_COLUMNS,
                     null,
                     null,
