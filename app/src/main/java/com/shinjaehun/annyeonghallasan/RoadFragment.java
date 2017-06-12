@@ -135,7 +135,7 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
 
         if (id == ROAD_LOADER) {
 
-            String sortOrder = HallasanContract.RoadEntry.COLUMN_TIMESTAMP + " DESC limit 13";
+            String sortOrder = HallasanContract.RoadEntry._ID + " DESC limit 13";
 
 //            String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(MainActivity.mCalendar.getTime());
 

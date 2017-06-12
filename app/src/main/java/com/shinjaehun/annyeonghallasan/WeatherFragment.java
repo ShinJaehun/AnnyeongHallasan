@@ -109,7 +109,7 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
 
         if (id == WEATHER_LOADER) {
 
-            String sortOrder = HallasanContract.WeatherEntry.COLUMN_TIMESTAMP + " DESC limit 6";
+            String sortOrder = HallasanContract.WeatherEntry._ID + " DESC limit 6";
 
 //            timePrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 //            mTimeStamp = timePrefs.getString(MainActivity.TIME_STAMP, null);

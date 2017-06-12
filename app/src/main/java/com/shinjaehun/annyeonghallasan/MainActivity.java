@@ -156,15 +156,15 @@ public class MainActivity extends AppCompatActivity {
 
         HallasanSyncAdapter.syncImmediately(this, isDebugging);
 
-        RoadFragment rf = (RoadFragment)getSupportFragmentManager().findFragmentById(R.id.roadFragment);
-        if (rf != null) {
-            rf.timeStampChanged();
-        }
-
-        WeatherFragment wf = (WeatherFragment)getSupportFragmentManager().findFragmentById(R.id.weatherFragment);
-        if (wf != null) {
-            wf.timeStampChanged();
-        }
+//        RoadFragment rf = (RoadFragment)getSupportFragmentManager().findFragmentById(R.id.roadFragment);
+//        if (rf != null) {
+//            rf.timeStampChanged();
+//        }
+//
+//        WeatherFragment wf = (WeatherFragment)getSupportFragmentManager().findFragmentById(R.id.weatherFragment);
+//        if (wf != null) {
+//            wf.timeStampChanged();
+//        }
 
 //        if (!oldTimeStamp.equals(rightNow) || oldTimeStamp == null) {
 //            Log.v(LOG_TAG, "Menu에서 Sync 합니다!!!!!! : 현재 타임스탬프는 " + rightNow + " 예전 타임스탬프는 " + oldTimeStamp);
