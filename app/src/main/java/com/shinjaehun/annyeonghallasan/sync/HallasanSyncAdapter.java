@@ -47,7 +47,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 //    private static Context mContext;
     private static Calendar mCalendar;
     private static long mTimeStamp;
-    private static Boolean mDebugging;
+//    private static Boolean mDebugging;
 
     // Interval at which to sync with the weather, in milliseconds.
     // 60 seconds (1 minute)  180 = 3 hours
@@ -140,14 +140,14 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
             Log.v(LOG_TAG, "HallasanSyncAdapter에서 " + mTimeStamp + "에 Weather DB로 집어 넣은 다음 크기 " + size);
 
-//            Calendar oldCal = Calendar.getInstance();
+            Calendar oldCal = Calendar.getInstance();
 //            oldCal.add(Calendar.DATE, -1);
-//
-//            String oldTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(oldCal.getTime());
-//            Log.v(LOG_TAG, "어제 날짜는 " + oldTimeStamp);
 
-//            getContext().getContentResolver().delete(HallasanContract.WeatherEntry.CONTENT_URI, HallasanContract.WeatherEntry.COLUMN_TIMESTAMP + " < ?",
-//                    new String[] { mTimeStamp });
+            long oldTimeStamp = Long.parseLong(new SimpleDateFormat("yyyyMMddHH").format(oldCal.getTime()) + "00");
+            Log.v(LOG_TAG, "삭제할 자료의 타임스탬프는 " + oldTimeStamp);
+
+            getContext().getContentResolver().delete(HallasanContract.WeatherEntry.CONTENT_URI, HallasanContract.WeatherEntry.COLUMN_TIMESTAMP + " <= ?",
+                    new String[] { Long.toString(oldTimeStamp) });
         }
     }
 
@@ -425,7 +425,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private void roadProcess() {
 
-//        mDebugging = false;
+        boolean isDebugging = false;
 
         //이전에 insert된 값이 없다면 일단 fetch
         Vector<ContentValues> cVVector = new Vector<ContentValues>(13);
@@ -434,7 +434,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             Document doc = null;
             String url = "http://www.jjpolice.go.kr/jjpolice/police25/traffic.htm?act=rss";
 
-            if (mDebugging) {
+            if (isDebugging) {
 //                    //XML 파일로 테스트하기
                 InputStream inputStream = getContext().getResources().openRawResource(R.raw.sample_data1);
                 try {
@@ -552,13 +552,12 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    public static void syncImmediately(Context context, Boolean isDebugging) {
+    public static void syncImmediately(Context context) {
         Log.v(LOG_TAG, "SyncIMMEDIATELY!!!!!");
 //        mContext = context;
 //        mCalendar = Calendar.getInstance();
 //        mTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime());
 //        Log.v(LOG_TAG, "HallasanSyncAdapter에서 Sync합니다! 타임스탬프는 : " + mTimeStamp);
-        mDebugging = isDebugging;
 
         Bundle bundle = new Bundle();
 //        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
@@ -610,7 +609,8 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
         /*
          * Finally, let's do a sync to get things started
          */
-        syncImmediately(context, false);
+
+        syncImmediately(context);
     }
 
     public static void initializeSyncAdapter(Context context) {

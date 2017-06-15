@@ -131,49 +131,49 @@ public class MainActivity extends AppCompatActivity {
 ////
 ////    }
 //
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-//        return super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)     {
-
-        Boolean isDebugging = false;
-        switch (item.getItemId()) {
-            case R.id.action_debug:
-
-                isDebugging = true;
-                break;
-            case R.id.action_fetch:
-                isDebugging = false;
-                break;
-        }
-
-        HallasanSyncAdapter.syncImmediately(this, isDebugging);
-
-//        RoadFragment rf = (RoadFragment)getSupportFragmentManager().findFragmentById(R.id.roadFragment);
-//        if (rf != null) {
-//            rf.timeStampChanged();
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+////        return super.onCreateOptionsMenu(menu);
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        return true;
+//    }
+//
+//
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item)     {
+//
+//        Boolean isDebugging = false;
+//        switch (item.getItemId()) {
+//            case R.id.action_debug:
+//
+//                isDebugging = true;
+//                break;
+//            case R.id.action_fetch:
+//                isDebugging = false;
+//                break;
 //        }
 //
-//        WeatherFragment wf = (WeatherFragment)getSupportFragmentManager().findFragmentById(R.id.weatherFragment);
-//        if (wf != null) {
-//            wf.timeStampChanged();
-//        }
-
-//        if (!oldTimeStamp.equals(rightNow) || oldTimeStamp == null) {
-//            Log.v(LOG_TAG, "Menu에서 Sync 합니다!!!!!! : 현재 타임스탬프는 " + rightNow + " 예전 타임스탬프는 " + oldTimeStamp);
+//        HallasanSyncAdapter.syncImmediately(this, isDebugging);
 //
+////        RoadFragment rf = (RoadFragment)getSupportFragmentManager().findFragmentById(R.id.roadFragment);
+////        if (rf != null) {
+////            rf.timeStampChanged();
+////        }
+////
+////        WeatherFragment wf = (WeatherFragment)getSupportFragmentManager().findFragmentById(R.id.weatherFragment);
+////        if (wf != null) {
+////            wf.timeStampChanged();
+////        }
 //
-//
-//        } else {
-//            Log.v(LOG_TAG, "Menu에서 Sync는 이루어지지 않았습니다 : 현재 타임스탬프는 " + rightNow + " 예전 타임스탬프는 " + oldTimeStamp);
-//        }
-        return super.onOptionsItemSelected(item);
-    }
+////        if (!oldTimeStamp.equals(rightNow) || oldTimeStamp == null) {
+////            Log.v(LOG_TAG, "Menu에서 Sync 합니다!!!!!! : 현재 타임스탬프는 " + rightNow + " 예전 타임스탬프는 " + oldTimeStamp);
+////
+////
+////
+////        } else {
+////            Log.v(LOG_TAG, "Menu에서 Sync는 이루어지지 않았습니다 : 현재 타임스탬프는 " + rightNow + " 예전 타임스탬프는 " + oldTimeStamp);
+////        }
+//        return super.onOptionsItemSelected(item);
+//    }
 }
