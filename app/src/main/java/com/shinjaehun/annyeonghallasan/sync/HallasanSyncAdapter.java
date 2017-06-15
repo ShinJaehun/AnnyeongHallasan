@@ -44,9 +44,9 @@ import java.util.Vector;
 public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final String LOG_TAG = HallasanSyncAdapter.class.getSimpleName();
 
-    private static Context mContext;
+//    private static Context mContext;
     private static Calendar mCalendar;
-    private static String mTimeStamp;
+    private static long mTimeStamp;
     private static Boolean mDebugging;
 
     // Interval at which to sync with the weather, in milliseconds.
@@ -68,7 +68,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
         Log.v(LOG_TAG, "HallasanSyncAdatpter에서 onPerformSync Called!");
 
         mCalendar = Calendar.getInstance();
-        mTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime());
+        mTimeStamp = Long.parseLong(new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime()));
 
         roadProcess();
         weatherProcess();
@@ -96,8 +96,8 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             }
         }
 
-        String baseDate = new SimpleDateFormat("yyyyMMdd").format(mCalendar.getTime());
-        String baseTime = new SimpleDateFormat("HH").format(mCalendar.getTime()) + "00";
+        long baseDate = Long.parseLong(new SimpleDateFormat("yyyyMMdd").format(mCalendar.getTime()));
+        long baseTime = Long.parseLong(new SimpleDateFormat("HH").format(mCalendar.getTime()) + "00");
         Log.v(LOG_TAG, "The base weather data's time: " + baseDate + " " + baseTime);
 
 //        ArrayList<WeatherReport> weatherReports = new ArrayList<>();
@@ -151,7 +151,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    private ContentValues fetchWeatherJson(String location, String baseDate, String baseTime, int x, int y) {
+    private ContentValues fetchWeatherJson(String location, long baseDate, long baseTime, int x, int y) {
 
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -167,10 +167,10 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             final String SERVICE_KEY_VALUE = "KUPi0SOw8UGGH1YP9Q%2BGZXxcEc8j3SvIm6TqJaFiO6nk97yfGYsA9sboywRDgS2TIRl6iookaF%2FnJU8ma50yMA%3D%3D";
 
             final String BASE_DATE_PARAM = "base_date";
-            final String BASE_DATE_VALUE = baseDate;
+            final String BASE_DATE_VALUE = String.valueOf(baseDate);
 
             final String BASE_TIME_PARAM = "base_time";
-            final String BASE_TIME_VALUE = baseTime;
+            final String BASE_TIME_VALUE = String.valueOf(baseTime);
 
             final String NX_PARAM = "nx";
             final String NX_VALUE = String.valueOf(x);
@@ -371,7 +371,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 //        return;
 //    }
 
-    private ContentValues getWeatherDataFromJson(String location, String baseDate, String baseTime, int x, int y, String weatherJsonStr)
+    private ContentValues getWeatherDataFromJson(String location, long baseDate, long baseTime, int x, int y, String weatherJsonStr)
             throws JSONException {
 
         try {
@@ -479,7 +479,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
                 roadValues.put(HallasanContract.RoadEntry.COLUMN_NAME, name);
                 roadValues.put(HallasanContract.RoadEntry.COLUMN_TIMESTAMP, mTimeStamp);
-                roadValues.put(HallasanContract.RoadEntry.COLUMN_BASE_DATE, base_date);
+                roadValues.put(HallasanContract.RoadEntry.COLUMN_BASE_DATE, Long.parseLong(base_date));
 
                 String description = roadDescriptionData.get(i).text().replaceAll("&nbsp;", "").replaceAll("&amp;nbsp;", "").toString().trim();
                 //description에 nbsp랑 amp 붙는거 너무 짜증나!

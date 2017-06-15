@@ -145,7 +145,7 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
 
         while (cursor.moveToNext()) {
 
-            String timeStamp = cursor.getString(WeatherFragment.COL_WEATHER_TIMESTAMP);
+            long timeStamp = cursor.getLong(WeatherFragment.COL_WEATHER_TIMESTAMP);
 
             long id = cursor.getLong(WeatherFragment.COL_WEATHER_ID);
             String location = cursor.getString(WeatherFragment.COL_WEATHER_LOCATION);

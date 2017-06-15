@@ -186,7 +186,7 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
 //        Log.v(LOG_TAG, "메인 타임스탬프 : " + mainTimeStamp);
 
         while (cursor.moveToNext()) {
-            String timeStamp = cursor.getString(RoadFragment.COL_ROAD_TIMESTAMP);
+            long timeStamp = cursor.getLong(RoadFragment.COL_ROAD_TIMESTAMP);
 //            Log.v(LOG_TAG, "커서 타임스탬프 : " + timeStamp);
 
             long roadId = cursor.getLong(RoadFragment.COL_ROAD_ID);

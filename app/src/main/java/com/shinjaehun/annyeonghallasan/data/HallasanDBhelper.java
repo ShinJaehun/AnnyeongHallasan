@@ -25,8 +25,8 @@ public class HallasanDBhelper extends SQLiteOpenHelper {
         final String SQL_CREATE_ROAD_TABLE = "CREATE TABLE " + RoadEntry.TABLE_NAME + " (" +
                 RoadEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 RoadEntry.COLUMN_NAME + " TEXT NOT NULL, " +
-                RoadEntry.COLUMN_TIMESTAMP + " TEXT NOT NULL, " +
-                RoadEntry.COLUMN_BASE_DATE + " TEXT NOT NULL, " +
+                RoadEntry.COLUMN_TIMESTAMP + " INTEGER NOT NULL, " +
+                RoadEntry.COLUMN_BASE_DATE + " INTEGER NOT NULL, " +
                 RoadEntry.COLUMN_RESTRICTION + " INTEGER NOT NULL, " +
                 RoadEntry.COLUMN_SECTION + " TEXT NOT NULL, " +
                 RoadEntry.COLUMN_SNOWFALL + " REAL NOT NULL, " +
@@ -37,9 +37,9 @@ public class HallasanDBhelper extends SQLiteOpenHelper {
         final String SQL_CREATE_WEATHER_TABLE = "CREATE TABLE " + WeatherEntry.TABLE_NAME + " (" +
                 WeatherEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 WeatherEntry.COLUMN_LOCATION + " TEXT NOT NULL, " +
-                WeatherEntry.COLUMN_TIMESTAMP + " TEXT NOT NULL, " +
-                WeatherEntry.COLUMN_BASE_DATE + " TEXT NOT NULL, " +
-                WeatherEntry.COLUMN_BASE_TIME + " TEXT NOT NULL, " +
+                WeatherEntry.COLUMN_TIMESTAMP + " INTEGER NOT NULL, " +
+                WeatherEntry.COLUMN_BASE_DATE + " INTEGER NOT NULL, " +
+                WeatherEntry.COLUMN_BASE_TIME + " INTEGER NOT NULL, " +
                 WeatherEntry.COLUMN_NX + " INTEGER NOT NULL, " +
                 WeatherEntry.COLUMN_NY + " INTEGER NOT NULL, " +
                 WeatherEntry.COLUMN_T1H + " REAL NOT NULL, " +
