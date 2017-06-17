@@ -52,7 +52,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
     // Interval at which to sync with the weather, in milliseconds.
     // 60 seconds (1 minute)  180 = 3 hours
 //    public static final int SYNC_INTERVAL = 60 * 3;
-    public static final int SYNC_INTERVAL = 60;
+    public static final int SYNC_INTERVAL = 60 * 60;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
 //
 //    private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
@@ -141,9 +141,9 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             Log.v(LOG_TAG, "HallasanSyncAdapter에서 " + mTimeStamp + "에 Weather DB로 집어 넣은 다음 크기 " + size);
 
             Calendar oldCal = Calendar.getInstance();
-//            oldCal.add(Calendar.DATE, -1);
+            oldCal.add(Calendar.DATE, -1);
 
-            long oldTimeStamp = Long.parseLong(new SimpleDateFormat("yyyyMMddHH").format(oldCal.getTime()) + "00");
+            long oldTimeStamp = Long.parseLong(new SimpleDateFormat("yyyyMMdd").format(oldCal.getTime()) + "0000");
             Log.v(LOG_TAG, "삭제할 자료의 타임스탬프는 " + oldTimeStamp);
 
             getContext().getContentResolver().delete(HallasanContract.WeatherEntry.CONTENT_URI, HallasanContract.WeatherEntry.COLUMN_TIMESTAMP + " <= ?",
@@ -549,6 +549,15 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             cVVector.toArray(cvArray);
             int size = getContext().getContentResolver().bulkInsert(HallasanContract.RoadEntry.CONTENT_URI, cvArray);
             Log.v(LOG_TAG, "HallasanSyncAdapter에서 " + mTimeStamp + "에 Road DB로 집어 넣은 다음 크기 " + size);
+
+            Calendar oldCal = Calendar.getInstance();
+            oldCal.add(Calendar.DATE, -1);
+
+            long oldTimeStamp = Long.parseLong(new SimpleDateFormat("yyyyMMdd").format(oldCal.getTime()) + "0000");
+            Log.v(LOG_TAG, "삭제할 자료의 타임스탬프는 " + oldTimeStamp);
+
+            getContext().getContentResolver().delete(HallasanContract.RoadEntry.CONTENT_URI, HallasanContract.RoadEntry.COLUMN_TIMESTAMP + " <= ?",
+                    new String[] { Long.toString(oldTimeStamp) });
         }
     }
 
@@ -560,8 +569,8 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 //        Log.v(LOG_TAG, "HallasanSyncAdapter에서 Sync합니다! 타임스탬프는 : " + mTimeStamp);
 
         Bundle bundle = new Bundle();
-//        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-//        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         ContentResolver.requestSync(getSyncAccount(context), context.getString(R.string.content_authority), bundle);
     }
 
