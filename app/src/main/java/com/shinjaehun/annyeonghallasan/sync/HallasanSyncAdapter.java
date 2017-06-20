@@ -2,19 +2,29 @@ package com.shinjaehun.annyeonghallasan.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.SyncRequest;
 import android.content.SyncResult;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.text.format.Time;
 import android.util.Log;
+import android.util.StringBuilderPrinter;
 
+import com.shinjaehun.annyeonghallasan.MainActivity;
 import com.shinjaehun.annyeonghallasan.R;
 import com.shinjaehun.annyeonghallasan.RoadFragment;
 import com.shinjaehun.annyeonghallasan.data.HallasanContract;
@@ -35,6 +45,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 /**
@@ -55,9 +66,20 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final int SYNC_INTERVAL = 60 * 60;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
 //
-//    private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
-//    private static final int WEATHER_NOTIFICATION_ID = 3004;
+    private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
+    private static final int ROAD_NOTIFICATION_ID = 3004;
 
+    private static final String[] NOTIFY_ROAD_PROJECTION = new String[] {
+            HallasanContract.RoadEntry._ID,
+            HallasanContract.RoadEntry.COLUMN_TIMESTAMP,
+            HallasanContract.RoadEntry.COLUMN_BASE_DATE,
+            HallasanContract.RoadEntry.COLUMN_NAME
+    };
+
+    private static final int INDEX_ROAD_ID = 0;
+    private static final int INDEX_ROAD_TIME_STAMP = 1;
+    private static final int INDEX_ROAD_BASE_DATE = 2;
+    private static final int INDEX_NAME = 3;
 
     public HallasanSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -367,7 +389,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 //                    getContext().getContentResolver().insert(HallasanContract.RoadEntry.CONTENT_URI, roadValues);
 //                }
 //            }
-//        } catch (RuntimeException e) {
+//        } catch (RuntimeException e) {`
 //            Log.e(LOG_TAG, e.getMessage(), e);
 //            e.printStackTrace();
 //        }
@@ -553,6 +575,29 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             int size = getContext().getContentResolver().bulkInsert(HallasanContract.RoadEntry.CONTENT_URI, cvArray);
             Log.v(LOG_TAG, "HallasanSyncAdapter에서 " + mTimeStamp + "에 Road DB로 집어 넣은 다음 크기 " + size);
 
+            String title = null;
+            StringBuilder messageSB = new StringBuilder();
+            boolean isRestricetd = false;
+            for (ContentValues roadValues : cvArray) {
+                if (roadValues.getAsInteger(HallasanContract.RoadEntry.COLUMN_RESTRICTION) == HallasanContract.RoadEntry.RESTRICTION_ENABLED) {
+                    if (isRestricetd == false) {
+                        String baseDate = String.valueOf(roadValues.getAsLong(HallasanContract.RoadEntry.COLUMN_BASE_DATE));
+                        title = "통제 : "
+                                + baseDate.substring(4, 6) + "월"
+                                + baseDate.substring(6, 8) + "일"
+                                + baseDate.substring(8, 10) + "시"
+                                + baseDate.substring(10) + "분"
+                                + " 발표";
+                        isRestricetd = true;
+                    }
+                    messageSB.append(roadValues.getAsString(HallasanContract.RoadEntry.COLUMN_NAME) + " ");
+                }
+            }
+
+            if (messageSB.length() != 0) {
+                notifyRoadStatus(title, messageSB.toString());
+            }
+
             if (size > 0) {
                 //DB에 밀어 넣는데 실패했다면 이전 자료를 삭제해서는 안 된다.
                 Calendar oldCal = Calendar.getInstance();
@@ -564,6 +609,70 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
                 getContext().getContentResolver().delete(HallasanContract.RoadEntry.CONTENT_URI, HallasanContract.RoadEntry.COLUMN_TIMESTAMP + " <= ?",
                         new String[]{Long.toString(oldTimeStamp)});
             }
+        }
+    }
+
+    private void notifyRoadStatus(String title, String message) {
+        Context context = getContext();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String lastNotificationKey = context.getString(R.string.pref_last_notification);
+        long lastSync = prefs.getLong(lastNotificationKey, 0);
+
+//        String sortOrder = HallasanContract.RoadEntry._ID + " DESC limit 6";
+
+
+        if (System.currentTimeMillis() - lastSync >= DAY_IN_MILLIS) {
+//            Uri roadUri = HallasanContract.RoadEntry.buildRoadUriWithDate(String.valueOf(mTimeStamp));
+//            Cursor cursor = context.getContentResolver().query(HallasanContract.RoadEntry.CONTENT_URI, NOTIFY_ROAD_PROJECTION, null, null, sortOrder);
+//
+//            int roadId = 0;
+//            long timeStamp = 0;
+//            long baseDate = 0;
+//            String name = null;
+//            StringBuilder sb = new StringBuilder();
+//
+//            while (cursor.moveToNext()) {
+//                roadId = cursor.getInt(INDEX_ROAD_ID);
+//                timeStamp = cursor.getLong(INDEX_ROAD_TIME_STAMP);
+//                baseDate = cursor.getLong(INDEX_ROAD_BASE_DATE);
+//                name = cursor.getString(INDEX_NAME);
+//
+//                sb.append(name + " ");
+//            }
+//
+//
+//
+//            StringBuilder sb2 = new StringBuilder();
+//            sb2.append(String.valueOf(baseDate));
+////            sb2.append("통제 : ");
+////                    sb2.append(String.valueOf(baseDate).substring(0, 3) + "년 ");
+////            sb2.append(String.valueOf(baseDate).substring(4, 5) + "월 ");
+////                    sb2.append(String.valueOf(baseDate).substring(6, 7) + "일 ");
+////                            sb2.append(String.valueOf(baseDate).substring(7, 8) + "시 ");
+////                                    sb2.append(String.valueOf(baseDate).substring(8, 9) + "분에 발표");
+//            String title = sb2.toString();
+//            String message = sb.toString();
+
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(getContext())
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setContentTitle(title)
+                            .setContentText(message);
+
+            Intent resultIntent = new Intent(context, MainActivity.class);
+
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+            mBuilder.setContentIntent(resultPendingIntent);
+
+            NotificationManager mNotificationManager = (NotificationManager)getContext()
+                    .getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.notify(ROAD_NOTIFICATION_ID, mBuilder.build());
+
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putLong(lastNotificationKey, System.currentTimeMillis());
+            editor.commit();
         }
     }
 
