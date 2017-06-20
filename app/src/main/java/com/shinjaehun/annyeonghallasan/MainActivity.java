@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
 
         HallasanSyncAdapter.initializeSyncAdapter(this);
 
-
 //        HallasanSyncAdapter.initalizeSyncAdapter(this);
 
 //        Button fetchBT = (Button)findViewById(R.id.fetch);
