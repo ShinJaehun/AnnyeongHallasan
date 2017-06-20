@@ -140,14 +140,17 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
             Log.v(LOG_TAG, "HallasanSyncAdapter에서 " + mTimeStamp + "에 Weather DB로 집어 넣은 다음 크기 " + size);
 
-            Calendar oldCal = Calendar.getInstance();
-            oldCal.add(Calendar.DATE, -1);
+            if (size > 0) {
+                //DB에 밀어 넣는데 실패했다면 이전 자료를 삭제해서는 안 된다.
+                Calendar oldCal = Calendar.getInstance();
+                oldCal.add(Calendar.DATE, -1);
 
-            long oldTimeStamp = Long.parseLong(new SimpleDateFormat("yyyyMMdd").format(oldCal.getTime()) + "0000");
-            Log.v(LOG_TAG, "삭제할 자료의 타임스탬프는 " + oldTimeStamp);
+                long oldTimeStamp = Long.parseLong(new SimpleDateFormat("yyyyMMdd").format(oldCal.getTime()) + "0000");
+                Log.v(LOG_TAG, "삭제할 자료의 타임스탬프는 " + oldTimeStamp);
 
-            getContext().getContentResolver().delete(HallasanContract.WeatherEntry.CONTENT_URI, HallasanContract.WeatherEntry.COLUMN_TIMESTAMP + " <= ?",
-                    new String[] { Long.toString(oldTimeStamp) });
+                getContext().getContentResolver().delete(HallasanContract.WeatherEntry.CONTENT_URI, HallasanContract.WeatherEntry.COLUMN_TIMESTAMP + " <= ?",
+                        new String[]{Long.toString(oldTimeStamp)});
+            }
         }
     }
 
@@ -550,14 +553,17 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             int size = getContext().getContentResolver().bulkInsert(HallasanContract.RoadEntry.CONTENT_URI, cvArray);
             Log.v(LOG_TAG, "HallasanSyncAdapter에서 " + mTimeStamp + "에 Road DB로 집어 넣은 다음 크기 " + size);
 
-            Calendar oldCal = Calendar.getInstance();
-            oldCal.add(Calendar.DATE, -1);
+            if (size > 0) {
+                //DB에 밀어 넣는데 실패했다면 이전 자료를 삭제해서는 안 된다.
+                Calendar oldCal = Calendar.getInstance();
+                oldCal.add(Calendar.DATE, -1);
 
-            long oldTimeStamp = Long.parseLong(new SimpleDateFormat("yyyyMMdd").format(oldCal.getTime()) + "0000");
-            Log.v(LOG_TAG, "삭제할 자료의 타임스탬프는 " + oldTimeStamp);
+                long oldTimeStamp = Long.parseLong(new SimpleDateFormat("yyyyMMdd").format(oldCal.getTime()) + "0000");
+                Log.v(LOG_TAG, "삭제할 자료의 타임스탬프는 " + oldTimeStamp);
 
-            getContext().getContentResolver().delete(HallasanContract.RoadEntry.CONTENT_URI, HallasanContract.RoadEntry.COLUMN_TIMESTAMP + " <= ?",
-                    new String[] { Long.toString(oldTimeStamp) });
+                getContext().getContentResolver().delete(HallasanContract.RoadEntry.CONTENT_URI, HallasanContract.RoadEntry.COLUMN_TIMESTAMP + " <= ?",
+                        new String[]{Long.toString(oldTimeStamp)});
+            }
         }
     }
 
