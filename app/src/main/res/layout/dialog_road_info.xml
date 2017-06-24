@@ -42,10 +42,11 @@
                 android:paddingRight="16dp">
 
                 <TextView
+                    android:id="@+id/text_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/dialog_info_title"
+                    android:text="@string/road_dialog_title"
                     android:textColor="@android:color/white"
                     android:textSize="22dp"
                     android:textStyle="bold" />
@@ -68,7 +69,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
+            android:layout_marginLeft="25dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
             android:orientation="horizontal">
@@ -77,44 +78,36 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/dialog_info_update_date"
+                android:text="@string/announced"
                 android:textColor="@android:color/white"
-                android:textSize="12dp" />
+                android:textSize="18dp" />
 
             <TextView
+                android:id="@+id/text_base_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text=":"
-                android:layout_marginLeft="2dp"
+                android:text="@string/road_dialog_base_date_example"
+                android:layout_marginLeft="5dp"
                 android:textColor="@android:color/white"
-                android:textSize="12dp" />
-
-            <TextView
-                android:id="@+id/text_update_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@string/dialog_info_update_date_example"
-                android:layout_marginLeft="2dp"
-                android:textColor="@android:color/white"
-                android:textSize="12dp" />
+                android:textSize="18dp" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center">
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="3dp">
 
             <TextView
-                android:id="@+id/text_normal_traffic"
+                android:id="@+id/text_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/dialog_info_normal_traffic"
                 android:textColor="@android:color/white"
-                android:textSize="8dp" />
+                android:textSize="14dp" />
 
             <!--
         <FrameLayout
@@ -161,8 +154,9 @@
         android:layout_width="100dp"
         android:layout_height="40dp"
         android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
         android:gravity="center"
-        android:text="@string/dialog_info_confirm"
+        android:text="@string/road_dialog_confirm"
         android:textSize="15dp" />
 
 </LinearLayout>

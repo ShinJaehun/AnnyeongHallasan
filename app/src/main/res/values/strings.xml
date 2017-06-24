@@ -1,11 +1,9 @@
 <resources>
     <string name ="app_name">안녕 한라산</string>
-    <string name ="dialog_info_title">교통통제상황</string>
-    <string name ="dialog_info_update_date">업데이트 시각</string>
-    <string name ="dialog_info_update_date_example">2017년 1월 24일 15시 30분</string>
-
-    <string name ="dialog_info_normal_traffic">정상운행</string>
-    <string name ="dialog_info_confirm">확인</string>
+    <string name ="road_dialog_title">교통통제</string>
+    <string name="announced">발표 : </string>
+    <string name ="road_dialog_base_date_example">1월24일 15시30분</string>
+    <string name ="road_dialog_confirm">확인</string>
 
     <string name = "info_hallasan">한라산</string>
     <string name = "info_eorimok">어리목</string>

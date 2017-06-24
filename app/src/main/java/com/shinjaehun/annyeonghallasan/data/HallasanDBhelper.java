@@ -26,7 +26,7 @@ public class HallasanDBhelper extends SQLiteOpenHelper {
                 RoadEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 RoadEntry.COLUMN_NAME + " TEXT NOT NULL, " +
                 RoadEntry.COLUMN_TIMESTAMP + " INTEGER NOT NULL, " +
-                RoadEntry.COLUMN_BASE_DATE + " INTEGER NOT NULL, " +
+                RoadEntry.COLUMN_BASE_DATE + " STRING NOT NULL, " +
                 RoadEntry.COLUMN_RESTRICTION + " INTEGER NOT NULL, " +
                 RoadEntry.COLUMN_SECTION + " TEXT NOT NULL, " +
                 RoadEntry.COLUMN_SNOWFALL + " REAL NOT NULL, " +
@@ -38,8 +38,8 @@ public class HallasanDBhelper extends SQLiteOpenHelper {
                 WeatherEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 WeatherEntry.COLUMN_LOCATION + " TEXT NOT NULL, " +
                 WeatherEntry.COLUMN_TIMESTAMP + " INTEGER NOT NULL, " +
-                WeatherEntry.COLUMN_BASE_DATE + " INTEGER NOT NULL, " +
-                WeatherEntry.COLUMN_BASE_TIME + " INTEGER NOT NULL, " +
+                WeatherEntry.COLUMN_BASE_DATE + " STRING NOT NULL, " +
+                WeatherEntry.COLUMN_BASE_TIME + " STRING NOT NULL, " +
                 WeatherEntry.COLUMN_NX + " INTEGER NOT NULL, " +
                 WeatherEntry.COLUMN_NY + " INTEGER NOT NULL, " +
                 WeatherEntry.COLUMN_T1H + " REAL NOT NULL, " +

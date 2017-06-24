@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -106,6 +107,16 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
         road_iljuIv = (ImageView) v.findViewById(R.id.road_ilju);
         normalTV = (TextView) v.findViewById(R.id.normal);
 
+        FrameLayout roadMapL = (FrameLayout)v.findViewById(R.id.layout_road_status);
+        roadMapL.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                GetRoadFromDBTask getRoadFromDBTask = new GetRoadFromDBTask(getContext());
+                getRoadFromDBTask.execute();
+            }
+        });
+
         return v;
     }
 
@@ -190,14 +201,14 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
 //            Log.v(LOG_TAG, "커서 타임스탬프 : " + timeStamp);
 
             long roadId = cursor.getLong(RoadFragment.COL_ROAD_ID);
-            String location = cursor.getString(RoadFragment.COL_ROAD_NAME);
+            String roadName = cursor.getString(RoadFragment.COL_ROAD_NAME);
 
             int restrict = cursor.getInt(RoadFragment.COL_ROAD_RESTRICTION);
 
-            Log.v(LOG_TAG, "ID : " + roadId + " 장소 : " + location + " 타임스탬프 : " + timeStamp + " 제한여부 : " + restrict);
+            Log.v(LOG_TAG, "ID : " + roadId + " 장소 : " + roadName + " 타임스탬프 : " + timeStamp + " 제한여부 : " + restrict);
 
             if (restrict == HallasanContract.RoadEntry.RESTRICTION_ENABLED) {
-                switch (location) {
+                switch (roadName) {
                     case "1100도로":
                         roadImgs.add(road_1100Iv);
                         break;

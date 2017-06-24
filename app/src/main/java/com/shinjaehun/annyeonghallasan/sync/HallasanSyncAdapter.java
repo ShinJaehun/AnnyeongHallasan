@@ -118,8 +118,8 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             }
         }
 
-        long baseDate = Long.parseLong(new SimpleDateFormat("yyyyMMdd").format(mCalendar.getTime()));
-        long baseTime = Long.parseLong(new SimpleDateFormat("HH").format(mCalendar.getTime()) + "00");
+        String baseDate = new SimpleDateFormat("yyyyMMdd").format(mCalendar.getTime());
+        String baseTime = new SimpleDateFormat("HH").format(mCalendar.getTime()) + "00";
         Log.v(LOG_TAG, "The base weather data's time: " + baseDate + " " + baseTime);
 
 //        ArrayList<WeatherReport> weatherReports = new ArrayList<>();
@@ -176,7 +176,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    private ContentValues fetchWeatherJson(String location, long baseDate, long baseTime, int x, int y) {
+    private ContentValues fetchWeatherJson(String location, String baseDate, String baseTime, int x, int y) {
 
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -221,7 +221,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
             URL url = new URL(URLDecoder.decode(builtUri.toString(), "UTF-8"));
 
-//            Log.v(LOG_TAG, "Built URI " + url.toString());
+            Log.v(LOG_TAG, "Built URI " + url.toString());
 
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -396,7 +396,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 //        return;
 //    }
 
-    private ContentValues getWeatherDataFromJson(String location, long baseDate, long baseTime, int x, int y, String weatherJsonStr)
+    private ContentValues getWeatherDataFromJson(String location, String baseDate, String baseTime, int x, int y, String weatherJsonStr)
             throws JSONException {
 
         try {
@@ -504,7 +504,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
                 roadValues.put(HallasanContract.RoadEntry.COLUMN_NAME, name);
                 roadValues.put(HallasanContract.RoadEntry.COLUMN_TIMESTAMP, mTimeStamp);
-                roadValues.put(HallasanContract.RoadEntry.COLUMN_BASE_DATE, Long.parseLong(base_date));
+                roadValues.put(HallasanContract.RoadEntry.COLUMN_BASE_DATE, base_date);
 
                 String description = roadDescriptionData.get(i).text().replaceAll("&nbsp;", "").replaceAll("&amp;nbsp;", "").toString().trim();
                 //description에 nbsp랑 amp 붙는거 너무 짜증나!
@@ -577,18 +577,18 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
             String title = null;
             StringBuilder messageSB = new StringBuilder();
-            boolean isRestricetd = false;
+            boolean isRestricted = false;
             for (ContentValues roadValues : cvArray) {
                 if (roadValues.getAsInteger(HallasanContract.RoadEntry.COLUMN_RESTRICTION) == HallasanContract.RoadEntry.RESTRICTION_ENABLED) {
-                    if (isRestricetd == false) {
-                        String baseDate = String.valueOf(roadValues.getAsLong(HallasanContract.RoadEntry.COLUMN_BASE_DATE));
+                    if (isRestricted == false) {
+                        String baseDate = roadValues.getAsString(HallasanContract.RoadEntry.COLUMN_BASE_DATE);
                         title = "통제 : "
                                 + baseDate.substring(4, 6) + "월"
                                 + baseDate.substring(6, 8) + "일"
                                 + baseDate.substring(8, 10) + "시"
                                 + baseDate.substring(10) + "분"
                                 + " 발표";
-                        isRestricetd = true;
+                        isRestricted = true;
                     }
                     messageSB.append(roadValues.getAsString(HallasanContract.RoadEntry.COLUMN_NAME) + " ");
                 }
