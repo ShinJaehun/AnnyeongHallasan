@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.shinjaehun.annyeonghallasan.data.HallasanContract;
@@ -69,6 +70,8 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
     private final String LOG_TAG = WeatherFragment.class.getSimpleName();
     private WeatherAdapter mWeatherAdapter;
 
+    WeatherDialog weatherDialog;
+
     public WeatherFragment() {
     }
 
@@ -84,8 +87,61 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
         GridView gridView = (GridView) v.findViewById(R.id.gridview_weather);
         gridView.setAdapter(mWeatherAdapter);
 
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Cursor cursor = (Cursor)adapterView.getItemAtPosition(position);
+//                if (cursor != null) {
+//                    ((Callback)getActivity()).onItemSelected();
+//                }
+//                여기서 cursor 값을 받아서 Dialog로 바로 집어 넣을 수 있을까?
+                if (cursor != null) {
+                    String location = cursor.getString(WeatherFragment.COL_WEATHER_LOCATION);
+                    String baseDate = cursor.getString(WeatherFragment.COL_WEATHER_BASE_DATE);
+                    String baseTime = cursor.getString(WeatherFragment.COL_WEATHER_BASE_TIME);
+                    float sky = cursor.getFloat(WeatherFragment.COL_WEATHER_SKY);
+                    float pty = cursor.getFloat(WeatherFragment.COL_WEATHER_PTY);
+                    float t1h = cursor.getFloat(WeatherFragment.COL_WEATHER_T1H);
+                    float reh = cursor.getFloat(WeatherFragment.COL_WEATHER_REH);
+                    float rn1 = cursor.getFloat(WeatherFragment.COL_WEATHER_RN1);
+                    float vec = (cursor.getFloat(WeatherFragment.COL_WEATHER_VEC));
+                    float wsd = (cursor.getFloat(WeatherFragment.COL_WEATHER_WSD));
+
+                    weatherDialog = new WeatherDialog(getContext(), clickListener,
+                            location, baseDate, baseTime, sky, pty, t1h, reh, rn1, vec, wsd);
+                    weatherDialog.setCanceledOnTouchOutside(false);
+                    weatherDialog.show();
+                }
+
+                //여기서 cursor.close해야 하는 것 아닌가?
+                cursor.close();
+            }
+        });
+
         return v;
 
+    }
+
+//    public interface Callback {
+//        public void onItemSelected(Uri uri);
+//    }
+
+    private View.OnClickListener clickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View view) {
+            weatherDialog.dismiss();
+            weatherDialog = null;
+        }
+    };
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (weatherDialog != null) {
+            weatherDialog.dismiss();
+            weatherDialog = null;
+        }
     }
 
     @Override

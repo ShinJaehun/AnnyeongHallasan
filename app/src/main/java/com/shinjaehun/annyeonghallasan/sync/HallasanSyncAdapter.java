@@ -575,6 +575,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             int size = getContext().getContentResolver().bulkInsert(HallasanContract.RoadEntry.CONTENT_URI, cvArray);
             Log.v(LOG_TAG, "HallasanSyncAdapter에서 " + mTimeStamp + "에 Road DB로 집어 넣은 다음 크기 " + size);
 
+            //notify
             String title = null;
             StringBuilder messageSB = new StringBuilder();
             boolean isRestricted = false;

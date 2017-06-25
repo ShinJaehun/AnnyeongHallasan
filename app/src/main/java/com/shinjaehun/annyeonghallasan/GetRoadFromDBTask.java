@@ -76,7 +76,7 @@ public class GetRoadFromDBTask extends AsyncTask<Void, Void, Void> {
             title = "정상운행";
         }
 
-
+        cursor.close();
         return null;
     }
 

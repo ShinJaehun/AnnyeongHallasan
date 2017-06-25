@@ -1,9 +1,14 @@
 <resources>
     <string name ="app_name">안녕 한라산</string>
+
     <string name ="road_dialog_title">교통통제</string>
-    <string name="announced">발표 : </string>
+    <string name ="announced">발표 : </string>
     <string name ="road_dialog_base_date_example">1월24일 15시30분</string>
     <string name ="road_dialog_confirm">확인</string>
+
+    <string name ="weather_dialog_title">한라산</string>
+    <string name ="weather_dialog_base_date_example">1월24일 15시30분</string>
+
 
     <string name = "info_hallasan">한라산</string>
     <string name = "info_eorimok">어리목</string>
