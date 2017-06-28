@@ -62,8 +62,8 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
     // Interval at which to sync with the weather, in milliseconds.
     // 60 seconds (1 minute)  180 = 3 hours
-//    public static final int SYNC_INTERVAL = 60 * 3;
     public static final int SYNC_INTERVAL = 60 * 60;
+//    public static final int SYNC_INTERVAL = 60 * 60;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
 //
     private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
@@ -118,9 +118,9 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             }
         }
 
-        String baseDate = new SimpleDateFormat("yyyyMMdd").format(mCalendar.getTime());
-        String baseTime = new SimpleDateFormat("HH").format(mCalendar.getTime()) + "00";
-        Log.v(LOG_TAG, "The base weather data's time: " + baseDate + " " + baseTime);
+        String date = new SimpleDateFormat("yyyyMMdd").format(mCalendar.getTime());
+        String time = new SimpleDateFormat("HH").format(mCalendar.getTime()) + "00";
+        Log.v(LOG_TAG, "The base weather data's time: " + date + " " + time);
 
 //        ArrayList<WeatherReport> weatherReports = new ArrayList<>();
 //        weatherReports.add(new WeatherReport("한라산", fetchWeatherJson(baseDate, baseTime, 53, 35))); // 33.364235 126.545517
@@ -147,12 +147,12 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 //        fetchWeatherJson("돈내코", baseDate, baseTime, 53, 34);
         Vector<ContentValues> cVVector = new Vector<>();
 
-        cVVector.add(fetchWeatherJson("한라산", baseDate, baseTime, 53, 35));
-        cVVector.add(fetchWeatherJson("어리목", baseDate, baseTime, 52, 35));
-        cVVector.add(fetchWeatherJson("영실", baseDate, baseTime, 52, 34));
-        cVVector.add(fetchWeatherJson("성판악", baseDate, baseTime, 54, 35));
-        cVVector.add(fetchWeatherJson("관음사", baseDate, baseTime, 53, 36));
-        cVVector.add(fetchWeatherJson("돈내코", baseDate, baseTime, 53, 34));
+        cVVector.add(fetchWeatherJson("한라산", date, time, 53, 35));
+        cVVector.add(fetchWeatherJson("어리목", date, time, 52, 35));
+        cVVector.add(fetchWeatherJson("영실", date, time, 52, 34));
+        cVVector.add(fetchWeatherJson("성판악", date, time, 54, 35));
+        cVVector.add(fetchWeatherJson("관음사", date, time, 53, 36));
+        cVVector.add(fetchWeatherJson("돈내코", date, time, 53, 34));
 
         if (cVVector.size() > 0) {
             //Fetch한 값을 DB에 insert!
@@ -176,7 +176,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    private ContentValues fetchWeatherJson(String location, String baseDate, String baseTime, int x, int y) {
+    private ContentValues fetchWeatherJson(String location, String date, String time, int x, int y) {
 
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -192,10 +192,10 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             final String SERVICE_KEY_VALUE = "KUPi0SOw8UGGH1YP9Q%2BGZXxcEc8j3SvIm6TqJaFiO6nk97yfGYsA9sboywRDgS2TIRl6iookaF%2FnJU8ma50yMA%3D%3D";
 
             final String BASE_DATE_PARAM = "base_date";
-            final String BASE_DATE_VALUE = String.valueOf(baseDate);
+            final String BASE_DATE_VALUE = date;
 
             final String BASE_TIME_PARAM = "base_time";
-            final String BASE_TIME_VALUE = String.valueOf(baseTime);
+            final String BASE_TIME_VALUE = time;
 
             final String NX_PARAM = "nx";
             final String NX_VALUE = String.valueOf(x);
@@ -253,7 +253,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             String weatherJsonStr = buffer.toString();
 
 //            Log.v(LOG_TAG, "Forecast Json String: " + weatherJsonStr);
-            return getWeatherDataFromJson(location, baseDate, baseTime, x, y, weatherJsonStr);
+            return getWeatherDataFromJson(location, date, time, x, y, weatherJsonStr);
 
 
         } catch (IOException e) {
@@ -396,7 +396,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 //        return;
 //    }
 
-    private ContentValues getWeatherDataFromJson(String location, String baseDate, String baseTime, int x, int y, String weatherJsonStr)
+    private ContentValues getWeatherDataFromJson(String location, String date, String time, int x, int y, String weatherJsonStr)
             throws JSONException {
 
         try {
@@ -411,8 +411,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
             weatherValues.put(HallasanContract.WeatherEntry.COLUMN_LOCATION, location);
             weatherValues.put(HallasanContract.WeatherEntry.COLUMN_TIMESTAMP, mTimeStamp);
-            weatherValues.put(HallasanContract.WeatherEntry.COLUMN_BASE_DATE, baseDate);
-            weatherValues.put(HallasanContract.WeatherEntry.COLUMN_BASE_TIME, baseTime);
+            weatherValues.put(HallasanContract.WeatherEntry.COLUMN_BASE_DATE, date + time);
             weatherValues.put(HallasanContract.WeatherEntry.COLUMN_NX, x);
             weatherValues.put(HallasanContract.WeatherEntry.COLUMN_NY, y);
 
@@ -584,11 +583,14 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
                     if (isRestricted == false) {
                         String baseDate = roadValues.getAsString(HallasanContract.RoadEntry.COLUMN_BASE_DATE);
                         title = "통제 : "
-                                + baseDate.substring(4, 6) + "월"
-                                + baseDate.substring(6, 8) + "일"
-                                + baseDate.substring(8, 10) + "시"
-                                + baseDate.substring(10) + "분"
-                                + " 발표";
+                                + baseDate + " 발표";
+
+//                        title = "통제 : "
+//                                + baseDate.substring(4, 6) + "월"
+//                                + baseDate.substring(6, 8) + "일"
+//                                + baseDate.substring(8, 10) + "시"
+//                                + baseDate.substring(10) + "분"
+//                                + " 발표";
                         isRestricted = true;
                     }
                     messageSB.append(roadValues.getAsString(HallasanContract.RoadEntry.COLUMN_NAME) + " ");

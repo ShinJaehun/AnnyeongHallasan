@@ -32,10 +32,10 @@ public class WeatherAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
 
-        ImageView weatherImageIV = (ImageView) view.findViewById(R.id.img_weather);
-        TextView weatherLocationTV = (TextView) view.findViewById(R.id.text_location);
-        TextView weatherTemperatureTV = (TextView) view.findViewById(R.id.text_weather_temperature);
-        TextView weatherInfoTV = (TextView) view.findViewById(R.id.text_weather_info);
+        ImageView weatherImageIV = (ImageView) view.findViewById(R.id.img_weather_adapter);
+        TextView weatherLocationTV = (TextView) view.findViewById(R.id.text_location_weather_adapter);
+        TextView weatherTemperatureTV = (TextView) view.findViewById(R.id.text_temperature_weather_adapter);
+        TextView weatherInfoTV = (TextView) view.findViewById(R.id.text_info_weather_adapter);
 //
 //        if (cursor != null) {
 //            Log.v(LOG_TAG, "ID : " + cursor.getLong(WeatherFragment.COL_WEATHER_ID) + " 장소 : " + cursor.getString(WeatherFragment.COL_WEATHER_LOCATION) + " TimeStamp " + cursor.getString(WeatherFragment.COL_WEATHER_TIMESTAMP)
@@ -46,7 +46,9 @@ public class WeatherAdapter extends CursorAdapter {
             String location = cursor.getString(WeatherFragment.COL_WEATHER_LOCATION);
             weatherLocationTV.setText(location);
 
-            int sky = Math.round(cursor.getFloat(WeatherFragment.COL_WEATHER_SKY));
+//            int sky = Math.round(cursor.getFloat(WeatherFragment.COL_WEATHER_SKY));
+
+            int sky = cursor.getInt(WeatherFragment.COL_WEATHER_SKY);
 
             if (sky > 0) {
                 switch (sky) {
@@ -69,7 +71,9 @@ public class WeatherAdapter extends CursorAdapter {
                 }
             }
 
-            int pty = Math.round(cursor.getFloat(WeatherFragment.COL_WEATHER_PTY));
+//            int pty = Math.round(cursor.getFloat(WeatherFragment.COL_WEATHER_PTY));
+            int pty = cursor.getInt(WeatherFragment.COL_WEATHER_PTY);
+
             if (pty > 0) {
                 switch (pty) {
                     case 1:

@@ -34,7 +34,6 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
             HallasanContract.WeatherEntry.COLUMN_LOCATION,
             HallasanContract.WeatherEntry.COLUMN_TIMESTAMP,
             HallasanContract.WeatherEntry.COLUMN_BASE_DATE,
-            HallasanContract.WeatherEntry.COLUMN_BASE_TIME,
             HallasanContract.WeatherEntry.COLUMN_NX,
             HallasanContract.WeatherEntry.COLUMN_NY,
             HallasanContract.WeatherEntry.COLUMN_T1H,
@@ -53,19 +52,18 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
     static final int COL_WEATHER_LOCATION = 1;
     static final int COL_WEATHER_TIMESTAMP = 2;
     static final int COL_WEATHER_BASE_DATE = 3;
-    static final int COL_WEATHER_BASE_TIME = 4;
-    static final int COL_WEATHER_NX = 5;
-    static final int COL_WEATHER_NY = 6;
-    static final int COL_WEATHER_T1H = 7;
-    static final int COL_WEATHER_RN1 = 8;
-    static final int COL_WEATHER_SKY = 9;
-    static final int COL_WEATHER_UUU = 10;
-    static final int COL_WEATHER_VVV = 11;
-    static final int COL_WEATHER_REH = 12;
-    static final int COL_WEATHER_PTY = 13;
-    static final int COL_WEATHER_LGT = 14;
-    static final int COL_WEATHER_VEC = 15;
-    static final int COL_WEATHER_WSD = 16;
+    static final int COL_WEATHER_NX = 4;
+    static final int COL_WEATHER_NY = 5;
+    static final int COL_WEATHER_T1H = 6;
+    static final int COL_WEATHER_RN1 = 7;
+    static final int COL_WEATHER_SKY = 8;
+    static final int COL_WEATHER_UUU = 9;
+    static final int COL_WEATHER_VVV = 10;
+    static final int COL_WEATHER_REH = 11;
+    static final int COL_WEATHER_PTY = 12;
+    static final int COL_WEATHER_LGT = 13;
+    static final int COL_WEATHER_VEC = 14;
+    static final int COL_WEATHER_WSD = 15;
     private static final int WEATHER_LOADER = 0;
     private final String LOG_TAG = WeatherFragment.class.getSimpleName();
     private WeatherAdapter mWeatherAdapter;
@@ -98,9 +96,10 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
                 if (cursor != null) {
                     String location = cursor.getString(WeatherFragment.COL_WEATHER_LOCATION);
                     String baseDate = cursor.getString(WeatherFragment.COL_WEATHER_BASE_DATE);
-                    String baseTime = cursor.getString(WeatherFragment.COL_WEATHER_BASE_TIME);
-                    float sky = cursor.getFloat(WeatherFragment.COL_WEATHER_SKY);
-                    float pty = cursor.getFloat(WeatherFragment.COL_WEATHER_PTY);
+//                    float sky = cursor.getFloat(WeatherFragment.COL_WEATHER_SKY);
+//                    float pty = cursor.getFloat(WeatherFragment.COL_WEATHER_PTY);
+                    int sky = cursor.getInt(WeatherFragment.COL_WEATHER_SKY);
+                    int pty = cursor.getInt(WeatherFragment.COL_WEATHER_PTY);
                     float t1h = cursor.getFloat(WeatherFragment.COL_WEATHER_T1H);
                     float reh = cursor.getFloat(WeatherFragment.COL_WEATHER_REH);
                     float rn1 = cursor.getFloat(WeatherFragment.COL_WEATHER_RN1);
@@ -108,13 +107,14 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
                     float wsd = (cursor.getFloat(WeatherFragment.COL_WEATHER_WSD));
 
                     weatherDialog = new WeatherDialog(getContext(), clickListener,
-                            location, baseDate, baseTime, sky, pty, t1h, reh, rn1, vec, wsd);
+                            location, baseDate, sky, pty, t1h, reh, rn1, vec, wsd);
                     weatherDialog.setCanceledOnTouchOutside(false);
                     weatherDialog.show();
                 }
 
                 //여기서 cursor.close해야 하는 것 아닌가?
-                cursor.close();
+                //아냐 여기서 닫으면 이미 닫아버린 DB를 다시 열려고 한다고 오류가 발생한다.
+//                cursor.close();
             }
         });
 

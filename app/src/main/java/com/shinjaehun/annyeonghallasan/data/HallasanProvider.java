@@ -66,28 +66,28 @@ public class HallasanProvider extends ContentProvider {
                         null,
                         sortOrder);
                 break;
-            case WEATHER_WITH_DATE:
-                String weatherTimeStamp = HallasanContract.WeatherEntry.getTimeStampFromUri(uri);
-                returnCursor = db.query(
-                        HallasanContract.WeatherEntry.TABLE_NAME,
-                        projection,
-                        HallasanContract.WeatherEntry.COLUMN_TIMESTAMP + " = ? ",
-                        new String[]{weatherTimeStamp},
-                        null,
-                        null,
-                        sortOrder);
-                break;
-            case ROAD_WITH_DATE:
-                String roadTimeStamp = HallasanContract.RoadEntry.getTimeStampFromUri(uri);
-                returnCursor = db.query(
-                        HallasanContract.RoadEntry.TABLE_NAME,
-                        projection,
-                        HallasanContract.RoadEntry.COLUMN_TIMESTAMP + " = ? ",
-                        new String[]{roadTimeStamp},
-                        null,
-                        null,
-                        sortOrder);
-                break;
+//            case WEATHER_WITH_DATE:
+//                String weatherTimeStamp = HallasanContract.WeatherEntry.getTimeStampFromUri(uri);
+//                returnCursor = db.query(
+//                        HallasanContract.WeatherEntry.TABLE_NAME,
+//                        projection,
+//                        HallasanContract.WeatherEntry.COLUMN_TIMESTAMP + " = ? ",
+//                        new String[]{weatherTimeStamp},
+//                        null,
+//                        null,
+//                        sortOrder);
+//                break;
+//            case ROAD_WITH_DATE:
+//                String roadTimeStamp = HallasanContract.RoadEntry.getTimeStampFromUri(uri);
+//                returnCursor = db.query(
+//                        HallasanContract.RoadEntry.TABLE_NAME,
+//                        projection,
+//                        HallasanContract.RoadEntry.COLUMN_TIMESTAMP + " = ? ",
+//                        new String[]{roadTimeStamp},
+//                        null,
+//                        null,
+//                        sortOrder);
+//                break;
 
             default:
                 throw new UnsupportedOperationException("Unknown uri : " + uri);

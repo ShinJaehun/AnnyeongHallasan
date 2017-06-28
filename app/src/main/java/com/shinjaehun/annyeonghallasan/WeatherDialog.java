@@ -22,7 +22,6 @@ public class WeatherDialog extends Dialog {
 
     private String location;
     private String baseDate;
-    private String baseTime;
     private float sky;
     private float pty;
     private float t1h;
@@ -54,8 +53,8 @@ public class WeatherDialog extends Dialog {
             "N"};
 
     public WeatherDialog(Context context, View.OnClickListener clickListener,
-                         String location, String baseDate, String baseTime,
-                         float sky, float pty, float t1h, float reh, float rn1, float vec, float wsd) {
+                         String location, String baseDate,
+                         int sky, int pty, float t1h, float reh, float rn1, float vec, float wsd) {
         super(context);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -64,7 +63,6 @@ public class WeatherDialog extends Dialog {
 
         this.location = location;
         this.baseDate = baseDate;
-        this.baseTime = baseTime;
         this.sky = sky;
         this.pty = pty;
         this.t1h = t1h;
@@ -87,13 +85,13 @@ public class WeatherDialog extends Dialog {
 
         setContentView(R.layout.dialog_weather_info);
 
-        locationTV = (TextView)findViewById(R.id.text_location);
+        locationTV = (TextView)findViewById(R.id.text_location_weather_adapter);
         locationTV.setText(location);
 
         int s = Math.round(sky);
 
-        weatherIV = (ImageView)findViewById(R.id.img_weather);
-        infoTV = (TextView)findViewById(R.id.text_weather_info);
+        weatherIV = (ImageView)findViewById(R.id.img_weather_adapter);
+        infoTV = (TextView)findViewById(R.id.text_info_weather_adapter);
 
         if (s > 0) {
             switch (s) {
@@ -135,7 +133,7 @@ public class WeatherDialog extends Dialog {
             }
         }
 
-        temperatureTV = (TextView)findViewById(R.id.text_weather_temperature);
+        temperatureTV = (TextView)findViewById(R.id.text_temperature_weather_adapter);
         temperatureTV.setText(String.valueOf(t1h));
 
         humidityTV = (TextView)findViewById(R.id.text_weather_humidity);
@@ -168,12 +166,13 @@ public class WeatherDialog extends Dialog {
         windSpeedTV.setText(windSpeed);
 
         baseDateTV = (TextView)findViewById(R.id.text_base_date);
-        baseDateTV.setText(baseDate.substring(0, 4) + "년"
-            + baseDate.substring(4, 6) + "월"
-            + baseDate.substring(6) + "일 "
-            + baseTime.substring(0, 2) + "시"
-            + baseTime.substring(2) + "분");
-
+        baseDateTV.setText(baseDate);
+//        baseDateTV.setText(baseDate.substring(0, 4) + "년"
+//            + baseDate.substring(4, 6) + "월"
+//            + baseDate.substring(6) + "일 "
+//            + baseTime.substring(0, 2) + "시"
+//            + baseTime.substring(2) + "분");
+//      이렇게 해 놓으면 00시, 01시 이럴 때 문제가 발생한다. 근데 왜 06월은 정상적으로 출력되지?
         confirmBTN = (Button)findViewById(R.id.button_confirm);
 
         confirmBTN.setOnClickListener(listener);

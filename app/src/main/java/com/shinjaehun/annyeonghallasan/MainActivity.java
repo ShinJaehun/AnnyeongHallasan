@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
 //            Log.v(LOG_TAG, "Sync는 이루어지지 않습니다 : 현재 타임스탬프는 " + mTimeStamp + " 예전 타임스탬프는 " + oldTimeStamp);
 //        }
 
+        HallasanSyncAdapter.initializeSyncAdapter(this);
+
         RoadFragment roadFragment = new RoadFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -59,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.weatherFragment, weatherFragment);
         fragmentTransaction.commit();
 
-        HallasanSyncAdapter.initializeSyncAdapter(this);
 
 
 //        HallasanSyncAdapter.initalizeSyncAdapter(this);

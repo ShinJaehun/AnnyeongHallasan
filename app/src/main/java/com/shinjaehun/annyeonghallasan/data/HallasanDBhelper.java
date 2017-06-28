@@ -39,7 +39,6 @@ public class HallasanDBhelper extends SQLiteOpenHelper {
                 WeatherEntry.COLUMN_LOCATION + " TEXT NOT NULL, " +
                 WeatherEntry.COLUMN_TIMESTAMP + " INTEGER NOT NULL, " +
                 WeatherEntry.COLUMN_BASE_DATE + " STRING NOT NULL, " +
-                WeatherEntry.COLUMN_BASE_TIME + " STRING NOT NULL, " +
                 WeatherEntry.COLUMN_NX + " INTEGER NOT NULL, " +
                 WeatherEntry.COLUMN_NY + " INTEGER NOT NULL, " +
                 WeatherEntry.COLUMN_T1H + " REAL NOT NULL, " +

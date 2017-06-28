@@ -95,7 +95,6 @@ public class HallasanContract {
         public final static String COLUMN_TIMESTAMP = "time_stamp";
 
         public final static String COLUMN_BASE_DATE = "base_date";
-        public final static String COLUMN_BASE_TIME = "base_time";
         public final static String COLUMN_NX = "nx";
         public final static String COLUMN_NY = "ny";
         public final static String COLUMN_T1H = "t1h";
