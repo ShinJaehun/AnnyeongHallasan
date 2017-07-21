@@ -62,11 +62,11 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
     // Interval at which to sync with the weather, in milliseconds.
     // 60 seconds (1 minute)  180 = 3 hours
+//    public static final long SYNC_INTERVAL = 60L * 60L;
     public static final int SYNC_INTERVAL = 60 * 60;
-//    public static final int SYNC_INTERVAL = 60 * 60;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
 //
-    private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
+    private static final long DAY_IN_MILLIS = 1000L * 60L * 60L * 24L;
     private static final int ROAD_NOTIFICATION_ID = 3004;
 
     private static final String[] NOTIFY_ROAD_PROJECTION = new String[] {
@@ -168,7 +168,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
                 oldCal.add(Calendar.DATE, -1);
 
                 long oldTimeStamp = Long.parseLong(new SimpleDateFormat("yyyyMMdd").format(oldCal.getTime()) + "0000");
-                Log.v(LOG_TAG, "삭제할 자료의 타임스탬프는 " + oldTimeStamp);
+//                Log.v(LOG_TAG, "삭제할 자료의 타임스탬프는 " + oldTimeStamp);
 
                 getContext().getContentResolver().delete(HallasanContract.WeatherEntry.CONTENT_URI, HallasanContract.WeatherEntry.COLUMN_TIMESTAMP + " <= ?",
                         new String[]{Long.toString(oldTimeStamp)});
@@ -221,7 +221,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
             URL url = new URL(URLDecoder.decode(builtUri.toString(), "UTF-8"));
 
-            Log.v(LOG_TAG, "Built URI " + url.toString());
+//            Log.v(LOG_TAG, "Built URI " + url.toString());
 
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -582,15 +582,15 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
                 if (roadValues.getAsInteger(HallasanContract.RoadEntry.COLUMN_RESTRICTION) == HallasanContract.RoadEntry.RESTRICTION_ENABLED) {
                     if (isRestricted == false) {
                         String baseDate = roadValues.getAsString(HallasanContract.RoadEntry.COLUMN_BASE_DATE);
-                        title = "통제 : "
-                                + baseDate + " 발표";
-
 //                        title = "통제 : "
-//                                + baseDate.substring(4, 6) + "월"
-//                                + baseDate.substring(6, 8) + "일"
-//                                + baseDate.substring(8, 10) + "시"
-//                                + baseDate.substring(10) + "분"
-//                                + " 발표";
+//                                + baseDate + " 발표";
+
+                        title = "통제 : "
+                                + baseDate.substring(4, 6) + "월"
+                                + baseDate.substring(6, 8) + "일"
+                                + baseDate.substring(8, 10) + "시"
+                                + baseDate.substring(10) + "분"
+                                + " 발표";
                         isRestricted = true;
                     }
                     messageSB.append(roadValues.getAsString(HallasanContract.RoadEntry.COLUMN_NAME) + " ");
@@ -607,7 +607,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
                 oldCal.add(Calendar.DATE, -1);
 
                 long oldTimeStamp = Long.parseLong(new SimpleDateFormat("yyyyMMdd").format(oldCal.getTime()) + "0000");
-                Log.v(LOG_TAG, "삭제할 자료의 타임스탬프는 " + oldTimeStamp);
+//                Log.v(LOG_TAG, "삭제할 자료의 타임스탬프는 " + oldTimeStamp);
 
                 getContext().getContentResolver().delete(HallasanContract.RoadEntry.CONTENT_URI, HallasanContract.RoadEntry.COLUMN_TIMESTAMP + " <= ?",
                         new String[]{Long.toString(oldTimeStamp)});
@@ -714,6 +714,12 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
                     syncPeriodic(syncInterval, flexTime).
                     setSyncAdapter(account, authority).
                     setExtras(new Bundle()).build();
+//            SyncRequest.Builder builder = new SyncRequest.Builder();
+//            Bundle extras = new Bundle();
+//            builder.setExtras(extras);
+//            SyncRequest request = builder.
+//                    syncPeriodic(syncInterval, flexTime).
+//                    setSyncAdapter(account, authority).build();
             ContentResolver.requestSync(request);
         } else {
             ContentResolver.addPeriodicSync(account,

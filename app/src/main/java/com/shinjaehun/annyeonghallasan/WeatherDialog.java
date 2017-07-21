@@ -22,6 +22,7 @@ public class WeatherDialog extends Dialog {
 
     private String location;
     private String baseDate;
+    private long timeStamp;
     private float sky;
     private float pty;
     private float t1h;
@@ -53,7 +54,7 @@ public class WeatherDialog extends Dialog {
             "N"};
 
     public WeatherDialog(Context context, View.OnClickListener clickListener,
-                         String location, String baseDate,
+                         String location, String baseDate, long timeStamp,
                          int sky, int pty, float t1h, float reh, float rn1, float vec, float wsd) {
         super(context);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -63,6 +64,7 @@ public class WeatherDialog extends Dialog {
 
         this.location = location;
         this.baseDate = baseDate;
+        this.timeStamp = timeStamp;
         this.sky = sky;
         this.pty = pty;
         this.t1h = t1h;
@@ -96,19 +98,19 @@ public class WeatherDialog extends Dialog {
         if (s > 0) {
             switch (s) {
                 case 1:
-                    weatherIV.setImageResource(R.drawable.weather_sunny);
+                    weatherIV.setImageResource(R.drawable.weather_white_big_sunny);
                     infoTV.setText("맑음");
                     break;
                 case 2:
-                    weatherIV.setImageResource(R.drawable.weather_cloud_sun);
+                    weatherIV.setImageResource(R.drawable.weather_white_big_cloud_sun);
                     infoTV.setText("구름 조금");
                     break;
                 case 3:
-                    weatherIV.setImageResource(R.drawable.weather_cloud);
+                    weatherIV.setImageResource(R.drawable.weather_white_big_cloud);
                     infoTV.setText("구름 많음");
                     break;
                 case 4:
-                    weatherIV.setImageResource(R.drawable.weather_clouds);
+                    weatherIV.setImageResource(R.drawable.weather_white_big_clouds);
                     infoTV.setText("흐림");
                     break;
             }
@@ -119,15 +121,15 @@ public class WeatherDialog extends Dialog {
         if (p > 0) {
             switch (p) {
                 case 1:
-                    weatherIV.setImageResource(R.drawable.weather_cloud_rain);
+                    weatherIV.setImageResource(R.drawable.weather_white_big_cloud_rain);
                     infoTV.setText("비");
                     break;
                 case 2:
-                    weatherIV.setImageResource(R.drawable.weather_cloud_snow_rain);
+                    weatherIV.setImageResource(R.drawable.weather_white_big_cloud_snow_rain);
                     infoTV.setText("비/눈");
                     break;
                 case 3:
-                    weatherIV.setImageResource(R.drawable.weather_cloud_snow2);
+                    weatherIV.setImageResource(R.drawable.weather_white_big_cloud_snow2);
                     infoTV.setText("눈");
                     break;
             }
@@ -166,12 +168,12 @@ public class WeatherDialog extends Dialog {
         windSpeedTV.setText(windSpeed);
 
         baseDateTV = (TextView)findViewById(R.id.text_base_date);
-        baseDateTV.setText(baseDate);
-//        baseDateTV.setText(baseDate.substring(0, 4) + "년"
-//            + baseDate.substring(4, 6) + "월"
-//            + baseDate.substring(6) + "일 "
-//            + baseTime.substring(0, 2) + "시"
-//            + baseTime.substring(2) + "분");
+//        baseDateTV.setText(baseDate);
+        baseDateTV.setText(baseDate.substring(0, 4) + "년"
+                 + baseDate.substring(4, 6) + "월"
+                 + baseDate.substring(6, 8) + "일 "
+                 + baseDate.substring(8, 10) + "시"
+                 + baseDate.substring(10) + "분\n" + "타임스탬프" + String.valueOf(timeStamp));
 //      이렇게 해 놓으면 00시, 01시 이럴 때 문제가 발생한다. 근데 왜 06월은 정상적으로 출력되지?
         confirmBTN = (Button)findViewById(R.id.button_confirm);
 

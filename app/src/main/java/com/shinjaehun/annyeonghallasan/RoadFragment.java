@@ -124,8 +124,9 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     public void onResume() {
         super.onResume();
         animation = new AlphaAnimation((float) 0.5, 0);
-        getLoaderManager().restartLoader(ROAD_LOADER, null, this);
+//        getLoaderManager().restartLoader(ROAD_LOADER, null, this);
 // 백그라운드에서 다시 활성화시켰을 때 Loader 재시작 이거 안 하면 Loader는 재시작 하더라도 그대로...
+        HallasanSyncAdapter.syncImmediately(getActivity());
     }
 
     @Override

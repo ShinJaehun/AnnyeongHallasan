@@ -42,13 +42,13 @@ public class GetRoadFromDBTask extends AsyncTask<Void, Void, Void> {
 
         while (cursor.moveToNext()) {
             String d = cursor.getString(RoadFragment.COL_ROAD_BASE_DATE);
-//            baseDate = d.substring(0, 4) + "년"
-//                    + d.substring(4, 6) + "월"
-//                            + d.substring(6, 8) + "일 "
-//                            + d.substring(8, 10) + "시"
-//                            + d.substring(10) + "분";
+            baseDate = d.substring(0, 4) + "년"
+                    + d.substring(4, 6) + "월"
+                    + d.substring(6, 8) + "일 "
+                    + d.substring(8, 10) + "시"
+                    + d.substring(10) + "분";
 //           이것도 문제를 일으킬 수 있다.
-            baseDate = d;
+//            baseDate = d;
             if (cursor.getInt(RoadFragment.COL_ROAD_RESTRICTION) == HallasanContract.RoadEntry.RESTRICTION_ENABLED) {
                 if (isRestricted == false) {
                     title = "교통통제";

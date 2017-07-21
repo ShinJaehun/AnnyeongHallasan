@@ -96,6 +96,7 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
                 if (cursor != null) {
                     String location = cursor.getString(WeatherFragment.COL_WEATHER_LOCATION);
                     String baseDate = cursor.getString(WeatherFragment.COL_WEATHER_BASE_DATE);
+                    long timeStamp = cursor.getLong(WeatherFragment.COL_WEATHER_TIMESTAMP);
 //                    float sky = cursor.getFloat(WeatherFragment.COL_WEATHER_SKY);
 //                    float pty = cursor.getFloat(WeatherFragment.COL_WEATHER_PTY);
                     int sky = cursor.getInt(WeatherFragment.COL_WEATHER_SKY);
@@ -107,7 +108,7 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
                     float wsd = (cursor.getFloat(WeatherFragment.COL_WEATHER_WSD));
 
                     weatherDialog = new WeatherDialog(getContext(), clickListener,
-                            location, baseDate, sky, pty, t1h, reh, rn1, vec, wsd);
+                            location, baseDate, timeStamp, sky, pty, t1h, reh, rn1, vec, wsd);
                     weatherDialog.setCanceledOnTouchOutside(false);
                     weatherDialog.show();
                 }
@@ -147,7 +148,8 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().restartLoader(WEATHER_LOADER, null, this);
+//        getLoaderManager().restartLoader(WEATHER_LOADER, null, this); //원래 이거면 충분하지만
+        HallasanSyncAdapter.syncImmediately(getActivity());
     }
 
     @Override
