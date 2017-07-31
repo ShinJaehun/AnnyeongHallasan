@@ -4,40 +4,54 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
+    <TextView
+        android:id="@+id/normal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="정상운행"
+        android:textAlignment="center"
+        android:textSize="40dp"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/map_jejudo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/jejudo" />
+        android:src="@drawable/jejudo"
+        android:paddingTop="20dp"/>
 
     <ImageView
         android:id="@+id/road_1100"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/road_1100"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:paddingTop="20dp"/>
 
     <ImageView
         android:id="@+id/road_516"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/road_516"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:paddingTop="20dp"/>
 
     <ImageView
         android:id="@+id/road_aejo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/road_aejo"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:paddingTop="20dp"/>
 
     <ImageView
         android:id="@+id/road_beonyeong"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/road_beonyeong"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:paddingTop="20dp"/>
 
     <ImageView
         android:id="@+id/road_bija"
@@ -109,14 +123,6 @@
         android:src="@drawable/road_seoseong"
         android:visibility="gone" />
 
-    <TextView
-        android:id="@+id/normal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="정상운행"
-        android:textAlignment="center"
-        android:textSize="40dp"
-        android:visibility="gone" />
+
 
 </FrameLayout>

@@ -7,10 +7,9 @@
         android:id="@+id/gridview_weather"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:horizontalSpacing="10dp"
+        android:horizontalSpacing="16dp"
         android:numColumns="2"
-        android:verticalSpacing="10dp"
-        android:paddingTop="15dp" />
+        android:verticalSpacing="16dp" />
 
 <!--
     <LinearLayout
