@@ -124,9 +124,12 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     public void onResume() {
         super.onResume();
         animation = new AlphaAnimation((float) 0.5, 0);
-//        getLoaderManager().restartLoader(ROAD_LOADER, null, this);
+        getLoaderManager().restartLoader(ROAD_LOADER, null, this);
 // 백그라운드에서 다시 활성화시켰을 때 Loader 재시작 이거 안 하면 Loader는 재시작 하더라도 그대로...
-        HallasanSyncAdapter.syncImmediately(getActivity());
+
+        //몇몇 삼성 Device에서 발생하는 SyncAdapter 관련 오류로 Loader를 재시작하지 않고 OnResume에서 DB Push를 실시한다.
+        //릴리즈 전에 restartLoader 주석처리하고 syncImmediately를 해제할 것
+//        HallasanSyncAdapter.syncImmediately(getActivity());
     }
 
     @Override
@@ -135,10 +138,10 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
         super.onActivityCreated(savedInstanceState);
     }
 
-    void timeStampChanged() {
-        // timestamp가 변경되면 이걸 실행시켜서 Loader의 Uri를 변경해야 함!
-        getLoaderManager().restartLoader(ROAD_LOADER, null, this);
-    }
+//    void timeStampChanged() {
+//        // timestamp가 변경되면 이걸 실행시켜서 Loader의 Uri를 변경해야 함!
+//        getLoaderManager().restartLoader(ROAD_LOADER, null, this);
+//    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

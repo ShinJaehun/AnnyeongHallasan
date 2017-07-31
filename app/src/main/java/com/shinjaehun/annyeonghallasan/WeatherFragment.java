@@ -148,8 +148,10 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onResume() {
         super.onResume();
-//        getLoaderManager().restartLoader(WEATHER_LOADER, null, this); //원래 이거면 충분하지만
-        HallasanSyncAdapter.syncImmediately(getActivity());
+        getLoaderManager().restartLoader(WEATHER_LOADER, null, this); //원래 이거면 충분하지만
+        //몇몇 삼성 Device에서 발생하는 SyncAdapter 관련 오류로 Loader를 재시작하지 않고 OnResume에서 DB Push를 실시한다.
+        //릴리즈 전에 restartLoader 주석처리하고 syncImmediately를 해제할 것
+//        HallasanSyncAdapter.syncImmediately(getActivity());
     }
 
     @Override
@@ -158,9 +160,9 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
         super.onActivityCreated(savedInstanceState);
     }
 
-    void timeStampChanged() {
-        getLoaderManager().restartLoader(WEATHER_LOADER, null, this);
-    }
+//    void timeStampChanged() {
+//        getLoaderManager().restartLoader(WEATHER_LOADER, null, this);
+//    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
