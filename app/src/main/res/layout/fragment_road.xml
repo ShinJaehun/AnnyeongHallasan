@@ -4,6 +4,13 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
+    <ImageView
+        android:id="@+id/map_jejudo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/jejudo"
+        android:paddingTop="20dp"/>
+
     <TextView
         android:id="@+id/normal"
         android:layout_width="wrap_content"
@@ -13,13 +20,6 @@
         android:textAlignment="center"
         android:textSize="40dp"
         android:visibility="gone" />
-
-    <ImageView
-        android:id="@+id/map_jejudo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/jejudo"
-        android:paddingTop="20dp"/>
 
     <ImageView
         android:id="@+id/road_1100"
