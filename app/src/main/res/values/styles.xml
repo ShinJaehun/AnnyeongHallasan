@@ -11,9 +11,11 @@
 
     </style>
 
+<!--
     <style name="ActionBar.Title" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="displayOptions">useLogo|showHome|showTitle</item>
         <item name="logo">@mipmap/ic_launcher</item>
     </style>
+-->
 
 </resources>
