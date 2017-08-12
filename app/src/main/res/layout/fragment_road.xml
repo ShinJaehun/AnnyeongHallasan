@@ -12,6 +12,16 @@
         android:paddingTop="20dp"/>
 
     <TextView
+        android:id="@+id/unavailable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="4월부터 10월까지는 도로교통정보가 제공되지 않습니다."
+        android:textAlignment="center"
+        android:textSize="14dp"
+        android:visibility="gone" />
+
+    <TextView
         android:id="@+id/normal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

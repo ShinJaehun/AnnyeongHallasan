@@ -231,7 +231,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
             URL url = new URL(URLDecoder.decode(builtUri.toString(), "UTF-8"));
 
-//            Log.v(LOG_TAG, "Built URI " + url.toString());
+            Log.v(LOG_TAG, "Built URI " + url.toString());
 
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
