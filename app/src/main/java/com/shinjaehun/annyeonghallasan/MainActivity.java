@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
 
 
-
 //        HallasanSyncAdapter.initalizeSyncAdapter(this);
 
 //        Button fetchBT = (Button)findViewById(R.id.fetch);

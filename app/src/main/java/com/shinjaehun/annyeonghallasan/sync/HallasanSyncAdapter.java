@@ -92,7 +92,17 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
         mCalendar = Calendar.getInstance();
         mTimeStamp = Long.parseLong(new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime()));
 
-        roadProcess();
+        int mm = Integer.parseInt(new SimpleDateFormat("MM").format(mCalendar.getTime()));
+        Log.v(LOG_TAG, mm + "월임당");
+
+        if (mm < 04 || mm > 10) {
+            Log.v(LOG_TAG, "1, 2, 3월, 11월, 12월은 roadProcess 돌립니다");
+            roadProcess();
+        } else {
+            Log.v(LOG_TAG, "4월부터 10월까지는 roadProcess 안 돌려요...");
+        }
+//        roadProcess();
+
         weatherProcess();
 
     }

@@ -123,6 +123,4 @@
         android:src="@drawable/road_seoseong"
         android:visibility="gone" />
 
-
-
 </FrameLayout>
