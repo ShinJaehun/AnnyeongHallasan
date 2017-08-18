@@ -146,6 +146,8 @@ public class WeatherDialog extends Dialog {
         windSpeedTV = (TextView)findViewById(R.id.text_weather_wind_speed);
 
         int wv = (int)((vec + 22.5 * 0.5) / 22.5);
+        // (풍향값 + 22.5 * 0.5) / 22.5) = 16방위 변환값(소수점 이하 버림) 기상청 api 매뉴얼
+
         String windDirection = " ";
         if (wv >= 0 && wv < direction.length) {
             windDirection = direction[wv];
