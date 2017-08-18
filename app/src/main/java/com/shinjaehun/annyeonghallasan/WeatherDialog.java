@@ -36,9 +36,7 @@ public class WeatherDialog extends Dialog {
     private TextView infoTV;
     private TextView temperatureTV;
     private TextView humidityTV;
-    private LinearLayout rainfallL;
     private TextView railfallTV;
-    private LinearLayout windSpeedL;
     private TextView windDirectionTV;
     private TextView windSpeedTV;
     private TextView baseDateTV;
@@ -47,11 +45,11 @@ public class WeatherDialog extends Dialog {
     private View.OnClickListener listener;
 
     private static String[] direction = new String[]{
-            "N", "NNE", "NE", "ENE",
-            "E", "ESE", "SE", "SSE",
-            "S", "SSW", "SW", "WSW",
-            "W", "WNW", "NW", "NNW",
-            "N"};
+            "북", "북북동", "북동", "동북동",
+            "동", "동남동", "남동", "남남동",
+            "남", "남남서", "남서", "서남서",
+            "서", "서북서", "북서", "북북서",
+            "북"};
 
     public WeatherDialog(Context context, View.OnClickListener clickListener,
                          String location, String baseDate, long timeStamp,
@@ -141,11 +139,9 @@ public class WeatherDialog extends Dialog {
         humidityTV = (TextView)findViewById(R.id.text_weather_humidity);
         humidityTV.setText(String.valueOf(reh));
 
-        rainfallL = (LinearLayout)findViewById(R.id.layout_weather_rainfall);
         railfallTV = (TextView)findViewById(R.id.text_weather_rainfall);
         railfallTV.setText(String.valueOf(rn1));
 
-        windSpeedL = (LinearLayout)findViewById(R.id.layout_weather_wind_speed);
         windDirectionTV = (TextView)findViewById(R.id.text_weather_wind_direction);
         windSpeedTV = (TextView)findViewById(R.id.text_weather_wind_speed);
 
@@ -159,11 +155,11 @@ public class WeatherDialog extends Dialog {
         int ws = Math.round(wsd);
         String windSpeed = " ";
         if (ws > 4 && ws < 9) {
-            windSpeed = "약간 강";
+            windSpeed = "약간 강한 바람";
         } else if (ws >= 9  && ws < 14) {
-            windSpeed = "강";
+            windSpeed = "강한 바람";
         } else if (ws >= 14) {
-            windSpeed = "매우 강";
+            windSpeed = "매우 강한 바람";
         }
         windSpeedTV.setText(windSpeed);
 
