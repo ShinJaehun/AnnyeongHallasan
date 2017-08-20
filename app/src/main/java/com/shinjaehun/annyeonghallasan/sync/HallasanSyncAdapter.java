@@ -92,6 +92,8 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
         Log.v(LOG_TAG, "HallasanSyncAdatpter에서 onPerformSync Called!");
 
         isDebugging = false;
+        //멍청하게도 debugging 스위치를 HallasanSyncAdapter와 RoadFragment 양쪽에 뒀다.
+        //반드시 양쪽 함께 활성화시킬 것
 
         mCalendar = Calendar.getInstance();
         mTimeStamp = Long.parseLong(new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime()));
@@ -465,7 +467,6 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private void roadProcess() {
-
 
         //이전에 insert된 값이 없다면 일단 fetch
         Vector<ContentValues> cVVector = new Vector<ContentValues>(13);

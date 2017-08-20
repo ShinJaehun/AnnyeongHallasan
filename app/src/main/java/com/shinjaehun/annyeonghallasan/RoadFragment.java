@@ -1,5 +1,6 @@
 package com.shinjaehun.annyeonghallasan;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -95,6 +96,8 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
 //        setHasOptionsMenu(true);
 
         isDebugging = false;
+//멍청하게도 debugging 스위치를 HallasanSyncAdapter와 RoadFragment 양쪽에 뒀다.
+        //반드시 양쪽 함께 활성화시킬 것
 
         View v = inflater.inflate(R.layout.fragment_road, container, false);
 
@@ -149,24 +152,45 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     public void onResume() {
         super.onResume();
 
-        if (isDebugging) {
-            animation = new AlphaAnimation((float) 0.5, 0);
-            getLoaderManager().restartLoader(ROAD_LOADER, null, this);
+        SharedPreferences pref = getContext().getSharedPreferences("sync_road_pref", Activity.MODE_PRIVATE);
+        long lastSyncTime = pref.getLong("last_road_sync_time", 0);
 
-            HallasanSyncAdapter.syncImmediately(getActivity());
+        Calendar calendar = Calendar.getInstance();
+
+        if (isDebugging) {
+//            long now = calendar.getTime().getTime();
+//            long min = (now - lastSyncTime) / 60000;
+//            if (lastSyncTime == 0 || min >= 30) {
+//                SharedPreferences.Editor editor = pref.edit();
+//                editor.putLong("last_road_sync_time", now);
+//                editor.commit();
+                animation = new AlphaAnimation((float) 0.5, 0);
+                HallasanSyncAdapter.syncImmediately(getActivity());
+//            }
         } else {
-            Calendar calendar = Calendar.getInstance();
             mm = Integer.parseInt(new SimpleDateFormat("MM").format(calendar.getTime()));
 
             if (mm < 04 || mm > 10) {
 
-                animation = new AlphaAnimation((float) 0.5, 0);
-                getLoaderManager().restartLoader(ROAD_LOADER, null, this);
-// 백그라운드에서 다시 활성화시켰을 때 Loader 재시작 이거 안 하면 Loader는 재시작 하더라도 그대로...
+                long now = calendar.getTime().getTime();
 
-                //몇몇 삼성 Device에서 발생하는 SyncAdapter 관련 오류로 Loader를 재시작하지 않고 OnResume에서 DB Push를 실시한다.
-                //릴리즈 전에 restartLoader 주석처리하고 syncImmediately를 해제할 것
-                HallasanSyncAdapter.syncImmediately(getActivity());
+                long min = (now - lastSyncTime) / 60000;
+
+                if (lastSyncTime == 0 || min >= 30) {
+                    SharedPreferences.Editor editor = pref.edit();
+
+                    editor.putLong("last_road_sync_time", now);
+                    editor.commit();
+                    animation = new AlphaAnimation((float) 0.5, 0);
+//                    getLoaderManager().restartLoader(ROAD_LOADER, null, this);
+// 백그라운드에서 다시 활성화시켰을 때 Loader 재시작 이거 안 하면 Loader는 재시작 하더라도 그대로...
+                    //syncImmediately()를 WeatherFragment와 RoadFragment 양쪽에서 실행하기 때문에 DB Insert()가 필요 이상으로 반복되는 문제가 있다.
+                    //그러나 삼성 Device 문제 때문에 어쩔 수 없는 면이 있다.
+
+                    //몇몇 삼성 Device에서 발생하는 SyncAdapter 관련 오류로 Loader를 재시작하지 않고 OnResume에서 DB Push를 실시한다.
+                    //릴리즈 전에 restartLoader 주석처리하고 syncImmediately를 해제할 것
+                    HallasanSyncAdapter.syncImmediately(getActivity());
+                }
             }
         }
     }
@@ -230,7 +254,6 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 
         if (isDebugging) {
-            unavailableTV.setVisibility(View.GONE);
             clearAnimation();
 
             roadImgs = new ArrayList<>();
@@ -312,7 +335,6 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
 
         } else {
             if (mm < 04 || mm > 10) {
-                unavailableTV.setVisibility(View.GONE);
                 clearAnimation();
 
                 roadImgs = new ArrayList<>();
@@ -469,6 +491,9 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
 
         road_iljuIv.setVisibility(View.INVISIBLE);
         road_iljuIv.clearAnimation();
+
+        unavailableTV.setVisibility(View.GONE);
+
     }
 
     private void startBlink(View i) {

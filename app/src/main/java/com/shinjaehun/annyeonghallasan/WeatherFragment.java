@@ -150,12 +150,12 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().restartLoader(WEATHER_LOADER, null, this); //원래 이거면 충분하지만
+//        getLoaderManager().restartLoader(WEATHER_LOADER, null, this); //원래 이거면 충분하지만
         //몇몇 삼성 Device에서 발생하는 SyncAdapter 관련 오류로 Loader를 재시작하지 않고 OnResume에서 DB Push를 실시한다.
         //릴리즈 전에 restartLoader 주석처리하고 syncImmediately를 해제할 것
 
-        SharedPreferences pref = getContext().getSharedPreferences("syncpref", Activity.MODE_PRIVATE);
-        long lastSyncTime = pref.getLong("last_sync_time", 0);
+        SharedPreferences pref = getContext().getSharedPreferences("sync_weather_pref", Activity.MODE_PRIVATE);
+        long lastSyncTime = pref.getLong("last_weather_sync_time", 0);
 
 //        Log.v(LOG_TAG, "LastSyncTime : "+ lastSyncTime);
 
@@ -171,7 +171,7 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
         if (lastSyncTime == 0 || min >= 30) {
             SharedPreferences.Editor editor = pref.edit();
 
-            editor.putLong("last_sync_time", now);
+            editor.putLong("last_weather_sync_time", now);
             editor.commit();
 
             HallasanSyncAdapter.syncImmediately(getActivity());
