@@ -81,6 +81,8 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final int INDEX_ROAD_BASE_DATE = 2;
     private static final int INDEX_NAME = 3;
 
+    boolean isDebugging;
+
     public HallasanSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
     }
@@ -89,19 +91,24 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
     public void onPerformSync(Account account, Bundle bundle, String s, ContentProviderClient contentProviderClient, SyncResult syncResult) {
         Log.v(LOG_TAG, "HallasanSyncAdatpter에서 onPerformSync Called!");
 
+        isDebugging = false;
+
         mCalendar = Calendar.getInstance();
         mTimeStamp = Long.parseLong(new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime()));
 
-        int mm = Integer.parseInt(new SimpleDateFormat("MM").format(mCalendar.getTime()));
-        Log.v(LOG_TAG, mm + "월임당");
-
-        if (mm < 04 || mm > 10) {
-            Log.v(LOG_TAG, "1, 2, 3월, 11월, 12월은 roadProcess 돌립니다");
+        if (isDebugging) {
             roadProcess();
         } else {
-            Log.v(LOG_TAG, "4월부터 10월까지는 roadProcess 안 돌려요...");
+            int mm = Integer.parseInt(new SimpleDateFormat("MM").format(mCalendar.getTime()));
+            Log.v(LOG_TAG, mm + "월임당");
+
+            if (mm < 04 || mm > 10) {
+                Log.v(LOG_TAG, "1, 2, 3월, 11월, 12월은 roadProcess 돌립니다");
+                roadProcess();
+            } else {
+                Log.v(LOG_TAG, "4월부터 10월까지는 roadProcess 안 돌려요...");
+            }
         }
-//        roadProcess();
 
         weatherProcess();
 
@@ -459,7 +466,6 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private void roadProcess() {
 
-        boolean isDebugging = false;
 
         //이전에 insert된 값이 없다면 일단 fetch
         Vector<ContentValues> cVVector = new Vector<ContentValues>(13);
@@ -508,7 +514,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
                 } else {
                     name = n;
-                    // 도로번호가 없는 도로명은 그대로 쓰기
+                      // 도로번호가 없는 도로명은 그대로 쓰기
                 }
 
                 roadValues.put(HallasanContract.RoadEntry.COLUMN_NAME, name);
@@ -668,7 +674,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(getContext())
-                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setSmallIcon(R.mipmap.ic_error_black_24dp)
                             .setContentTitle(title)
                             .setContentText(message);
 
