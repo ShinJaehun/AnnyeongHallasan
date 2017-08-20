@@ -1,5 +1,6 @@
 package com.shinjaehun.annyeonghallasan;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -14,6 +15,7 @@ import com.shinjaehun.annyeonghallasan.sync.HallasanSyncAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,14 +53,21 @@ public class MainActivity extends AppCompatActivity {
 //            Log.v(LOG_TAG, "Sync는 이루어지지 않습니다 : 현재 타임스탬프는 " + mTimeStamp + " 예전 타임스탬프는 " + oldTimeStamp);
 //        }
 
-        HallasanSyncAdapter.initializeSyncAdapter(this);
+        Boolean isDebugging = false;
 
-        RoadFragment roadFragment = new RoadFragment();
+        Calendar calendar = Calendar.getInstance();
+        int month = Integer.parseInt(new SimpleDateFormat("MM").format(calendar.getTime()));
+
+        HallasanSyncAdapter.initializeSyncAdapter(this, isDebugging, month);
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        RoadFragment roadFragment = RoadFragment.newInstance(isDebugging, month);
         fragmentTransaction.replace(R.id.roadFragment, roadFragment);
         WeatherFragment weatherFragment = new WeatherFragment();
         fragmentTransaction.replace(R.id.weatherFragment, weatherFragment);
+
         fragmentTransaction.commit();
 
 
@@ -96,7 +105,36 @@ public class MainActivity extends AppCompatActivity {
 //        });
 
     }
-//
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        SharedPreferences pref = getSharedPreferences("sync_pref", Activity.MODE_PRIVATE);
+        long lastSyncTime = pref.getLong("last_sync_time", 0);
+
+        Log.v(LOG_TAG, "Last Sync Time : " + new SimpleDateFormat("yyyyMMddHHmm").format(new Date(lastSyncTime)));
+
+        Calendar calendar = Calendar.getInstance();
+
+        long now = calendar.getTime().getTime();
+
+        Log.v(LOG_TAG, "now : " + new SimpleDateFormat("yyyyMMddHHmm").format(new Date(now)));
+
+        long min = (now - lastSyncTime) / 60000;
+
+        Log.v(LOG_TAG, "MIN : "+ min);
+
+        if (lastSyncTime == 0 || min >= 30) {
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putLong("last_sync_time", now);
+            editor.commit();
+
+            HallasanSyncAdapter.syncImmediately(this);
+        }
+    }
+
+    //
 //    @Override
 //    protected void onStart() {
 //        super.onStart();

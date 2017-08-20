@@ -70,9 +70,7 @@ public class GetRoadFromDBTask extends AsyncTask<Void, Void, Void> {
                         messageSb.append("\n");
                         break;
                 }
-
             }
-
         }
 
         if (isRestricted == false) {

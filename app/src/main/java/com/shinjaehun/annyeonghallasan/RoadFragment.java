@@ -1,12 +1,7 @@
 package com.shinjaehun.annyeonghallasan;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -14,9 +9,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -25,14 +17,10 @@ import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.shinjaehun.annyeonghallasan.data.HallasanContract;
-import com.shinjaehun.annyeonghallasan.sync.HallasanSyncAdapter;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 /**
  * Created by shinjaehun on 2017-05-22.
@@ -83,11 +71,14 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     TextView unavailableTV;
     private Animation animation;
 
-    boolean isDebugging;
+    static boolean isDebugging;
 
-    int mm;
+    static int month;
 
-    public RoadFragment() {
+    public static final RoadFragment newInstance(boolean d, int m) {
+        isDebugging = d;
+        month = m;
+        return new RoadFragment();
     }
 
     @Nullable
@@ -95,7 +86,6 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 //        setHasOptionsMenu(true);
 
-        isDebugging = false;
 //멍청하게도 debugging 스위치를 HallasanSyncAdapter와 RoadFragment 양쪽에 뒀다.
         //반드시 양쪽 함께 활성화시킬 것
 
@@ -129,10 +119,8 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
                 }
             });
         } else {
-            Calendar calendar = Calendar.getInstance();
-            mm = Integer.parseInt(new SimpleDateFormat("MM").format(calendar.getTime()));
 
-            if (mm < 04 || mm > 10) {
+            if (month < 04 || month > 10) {
                 FrameLayout roadMapL = (FrameLayout) v.findViewById(R.id.layout_road_status);
                 roadMapL.setOnClickListener(new View.OnClickListener() {
 
@@ -151,48 +139,50 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onResume() {
         super.onResume();
+        animation = new AlphaAnimation((float) 0.5, 0);
 
-        SharedPreferences pref = getContext().getSharedPreferences("sync_road_pref", Activity.MODE_PRIVATE);
-        long lastSyncTime = pref.getLong("last_road_sync_time", 0);
 
-        Calendar calendar = Calendar.getInstance();
-
-        if (isDebugging) {
-//            long now = calendar.getTime().getTime();
-//            long min = (now - lastSyncTime) / 60000;
-//            if (lastSyncTime == 0 || min >= 30) {
-//                SharedPreferences.Editor editor = pref.edit();
-//                editor.putLong("last_road_sync_time", now);
-//                editor.commit();
-                animation = new AlphaAnimation((float) 0.5, 0);
-                HallasanSyncAdapter.syncImmediately(getActivity());
+//        SharedPreferences pref = getContext().getSharedPreferences("sync_road_pref", Activity.MODE_PRIVATE);
+//        long lastSyncTime = pref.getLong("last_road_sync_time", 0);
+//
+//        Calendar calendar = Calendar.getInstance();
+//
+//        if (isDebugging) {
+////            long now = calendar.getTime().getTime();
+////            long min = (now - lastSyncTime) / 60000;
+////            if (lastSyncTime == 0 || min >= 30) {
+////                SharedPreferences.Editor editor = pref.edit();
+////                editor.putLong("last_road_sync_time", now);
+////                editor.commit();
+//                animation = new AlphaAnimation((float) 0.5, 0);
+//                HallasanSyncAdapter.syncImmediately(getActivity());
+////            }
+//        } else {
+//            month = Integer.parseInt(new SimpleDateFormat("MM").format(calendar.getTime()));
+//
+//            if (month < 04 || month > 10) {
+//
+//                long now = calendar.getTime().getTime();
+//
+//                long min = (now - lastSyncTime) / 60000;
+//
+//                if (lastSyncTime == 0 || min >= 30) {
+//                    SharedPreferences.Editor editor = pref.edit();
+//
+//                    editor.putLong("last_road_sync_time", now);
+//                    editor.commit();
+//                    animation = new AlphaAnimation((float) 0.5, 0);
+////                    getLoaderManager().restartLoader(ROAD_LOADER, null, this);
+//// 백그라운드에서 다시 활성화시켰을 때 Loader 재시작 이거 안 하면 Loader는 재시작 하더라도 그대로...
+//                    //syncImmediately()를 WeatherFragment와 RoadFragment 양쪽에서 실행하기 때문에 DB Insert()가 필요 이상으로 반복되는 문제가 있다.
+//                    //그러나 삼성 Device 문제 때문에 어쩔 수 없는 면이 있다.
+//
+//                    //몇몇 삼성 Device에서 발생하는 SyncAdapter 관련 오류로 Loader를 재시작하지 않고 OnResume에서 DB Push를 실시한다.
+//                    //릴리즈 전에 restartLoader 주석처리하고 syncImmediately를 해제할 것
+//                    HallasanSyncAdapter.syncImmediately(getActivity());
+//                }
 //            }
-        } else {
-            mm = Integer.parseInt(new SimpleDateFormat("MM").format(calendar.getTime()));
-
-            if (mm < 04 || mm > 10) {
-
-                long now = calendar.getTime().getTime();
-
-                long min = (now - lastSyncTime) / 60000;
-
-                if (lastSyncTime == 0 || min >= 30) {
-                    SharedPreferences.Editor editor = pref.edit();
-
-                    editor.putLong("last_road_sync_time", now);
-                    editor.commit();
-                    animation = new AlphaAnimation((float) 0.5, 0);
-//                    getLoaderManager().restartLoader(ROAD_LOADER, null, this);
-// 백그라운드에서 다시 활성화시켰을 때 Loader 재시작 이거 안 하면 Loader는 재시작 하더라도 그대로...
-                    //syncImmediately()를 WeatherFragment와 RoadFragment 양쪽에서 실행하기 때문에 DB Insert()가 필요 이상으로 반복되는 문제가 있다.
-                    //그러나 삼성 Device 문제 때문에 어쩔 수 없는 면이 있다.
-
-                    //몇몇 삼성 Device에서 발생하는 SyncAdapter 관련 오류로 Loader를 재시작하지 않고 OnResume에서 DB Push를 실시한다.
-                    //릴리즈 전에 restartLoader 주석처리하고 syncImmediately를 해제할 것
-                    HallasanSyncAdapter.syncImmediately(getActivity());
-                }
-            }
-        }
+//        }
     }
 
     @Override
@@ -254,156 +244,89 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 
         if (isDebugging) {
-            clearAnimation();
-
-            roadImgs = new ArrayList<>();
-            Log.v(LOG_TAG, "onLoadFinished에서 Road Cursor 크기 " + cursor.getCount());
-
-            while (cursor.moveToNext()) {
-                long timeStamp = cursor.getLong(RoadFragment.COL_ROAD_TIMESTAMP);
-
-                long roadId = cursor.getLong(RoadFragment.COL_ROAD_ID);
-                String roadName = cursor.getString(RoadFragment.COL_ROAD_NAME);
-
-                int restrict = cursor.getInt(RoadFragment.COL_ROAD_RESTRICTION);
-
-                Log.v(LOG_TAG, "ID : " + roadId + " 장소 : " + roadName + " 타임스탬프 : " + timeStamp + " 제한여부 : " + restrict);
-
-                if (restrict == HallasanContract.RoadEntry.RESTRICTION_ENABLED) {
-                    switch (roadName) {
-                        case "1100도로":
-                            roadImgs.add(road_1100Iv);
-                            break;
-                        case "5.16도로":
-                            roadImgs.add(road_516Iv);
-                            break;
-                        case "번영로":
-                            roadImgs.add(road_beonyeongIv);
-                            break;
-                        case "평화로":
-                            roadImgs.add(road_pyeonghwaIv);
-                            break;
-                        case "한창로":
-                            roadImgs.add(road_hanchangIv);
-                            break;
-                        case "남조로":
-                            roadImgs.add(road_namjoIv);
-                            break;
-                        case "비자림로":
-                            roadImgs.add(road_bijaIv);
-                            break;
-                        case "서성로":
-                            roadImgs.add(road_seoseongIv);
-                            break;
-                        case "제1산록도로":
-                            roadImgs.add(road_sallok1Iv);
-                            break;
-                        case "제2산록도로":
-                            roadImgs.add(road_sallok2Iv);
-                            break;
-                        case "명림로":
-                            roadImgs.add(road_myeongnimIv);
-                            break;
-                        case "첨단로":
-                            roadImgs.add(road_cheomdanIv);
-                            break;
-                        case "기타도로":
-                            if (cursor.getString(RoadFragment.COL_ROAD_SECTION).contains("애조로")) {
-                                roadImgs.add(road_aejoIv);
-                            }
-                            if (cursor.getString(RoadFragment.COL_ROAD_SECTION).contains("일주도로")) {
-                                roadImgs.add(road_iljuIv);
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-
-            if (cursor.getCount() != 0) {
-                if (roadImgs.size() == 0) {
-                    normalTV.setVisibility(View.VISIBLE);
-                    startBlink(normalTV);
-                } else {
-                    for (ImageView i : roadImgs) {
-                        i.setVisibility(View.VISIBLE);
-                        startBlink(i);
-                    }
-                }
-            }
-
+           drawAnimation(cursor);
         } else {
-            if (mm < 04 || mm > 10) {
+            if (month < 04 || month > 10) {
+                drawAnimation(cursor);
+            } else {
                 clearAnimation();
+                unavailableTV.setVisibility(View.VISIBLE);
 
-                roadImgs = new ArrayList<>();
-                Log.v(LOG_TAG, "onLoadFinished에서 Road Cursor 크기 " + cursor.getCount());
+            }
+        }
+
+    }
+
+    private void drawAnimation(Cursor cursor) {
+        clearAnimation();
+
+        roadImgs = new ArrayList<>();
+        Log.v(LOG_TAG, "onLoadFinished에서 Road Cursor 크기 " + cursor.getCount());
 
 //        String mainTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(MainActivity.mCalendar.getTime());
 //        Log.v(LOG_TAG, "메인 타임스탬프 : " + mainTimeStamp);
 
-                while (cursor.moveToNext()) {
-                    long timeStamp = cursor.getLong(RoadFragment.COL_ROAD_TIMESTAMP);
+        while (cursor.moveToNext()) {
+            long timeStamp = cursor.getLong(RoadFragment.COL_ROAD_TIMESTAMP);
 //            Log.v(LOG_TAG, "커서 타임스탬프 : " + timeStamp);
 
-                    long roadId = cursor.getLong(RoadFragment.COL_ROAD_ID);
-                    String roadName = cursor.getString(RoadFragment.COL_ROAD_NAME);
+            long roadId = cursor.getLong(RoadFragment.COL_ROAD_ID);
+            String roadName = cursor.getString(RoadFragment.COL_ROAD_NAME);
 
-                    int restrict = cursor.getInt(RoadFragment.COL_ROAD_RESTRICTION);
+            int restrict = cursor.getInt(RoadFragment.COL_ROAD_RESTRICTION);
 
-                    Log.v(LOG_TAG, "ID : " + roadId + " 장소 : " + roadName + " 타임스탬프 : " + timeStamp + " 제한여부 : " + restrict);
+            Log.v(LOG_TAG, "ID : " + roadId + " 장소 : " + roadName + " 타임스탬프 : " + timeStamp + " 제한여부 : " + restrict);
 
-                    if (restrict == HallasanContract.RoadEntry.RESTRICTION_ENABLED) {
-                        switch (roadName) {
-                            case "1100도로":
-                                roadImgs.add(road_1100Iv);
-                                break;
-                            case "5.16도로":
-                                roadImgs.add(road_516Iv);
-                                break;
-                            case "번영로":
-                                roadImgs.add(road_beonyeongIv);
-                                break;
-                            case "평화로":
-                                roadImgs.add(road_pyeonghwaIv);
-                                break;
-                            case "한창로":
-                                roadImgs.add(road_hanchangIv);
-                                break;
-                            case "남조로":
-                                roadImgs.add(road_namjoIv);
-                                break;
-                            case "비자림로":
-                                roadImgs.add(road_bijaIv);
-                                break;
-                            case "서성로":
-                                roadImgs.add(road_seoseongIv);
-                                break;
-                            case "제1산록도로":
-                                roadImgs.add(road_sallok1Iv);
-                                break;
-                            case "제2산록도로":
-                                roadImgs.add(road_sallok2Iv);
-                                break;
-                            case "명림로":
-                                roadImgs.add(road_myeongnimIv);
-                                break;
-                            case "첨단로":
-                                roadImgs.add(road_cheomdanIv);
-                                break;
-                            case "기타도로":
-                                if (cursor.getString(RoadFragment.COL_ROAD_SECTION).contains("애조로")) {
-                                    roadImgs.add(road_aejoIv);
-                                }
-                                if (cursor.getString(RoadFragment.COL_ROAD_SECTION).contains("일주도로")) {
-                                    roadImgs.add(road_iljuIv);
-                                }
-                                break;
-                            default:
-                                break;
+            if (restrict == HallasanContract.RoadEntry.RESTRICTION_ENABLED) {
+                switch (roadName) {
+                    case "1100도로":
+                        roadImgs.add(road_1100Iv);
+                        break;
+                    case "5.16도로":
+                        roadImgs.add(road_516Iv);
+                        break;
+                    case "번영로":
+                        roadImgs.add(road_beonyeongIv);
+                        break;
+                    case "평화로":
+                        roadImgs.add(road_pyeonghwaIv);
+                        break;
+                    case "한창로":
+                        roadImgs.add(road_hanchangIv);
+                        break;
+                    case "남조로":
+                        roadImgs.add(road_namjoIv);
+                        break;
+                    case "비자림로":
+                        roadImgs.add(road_bijaIv);
+                        break;
+                    case "서성로":
+                        roadImgs.add(road_seoseongIv);
+                        break;
+                    case "제1산록도로":
+                        roadImgs.add(road_sallok1Iv);
+                        break;
+                    case "제2산록도로":
+                        roadImgs.add(road_sallok2Iv);
+                        break;
+                    case "명림로":
+                        roadImgs.add(road_myeongnimIv);
+                        break;
+                    case "첨단로":
+                        roadImgs.add(road_cheomdanIv);
+                        break;
+                    case "기타도로":
+                        if (cursor.getString(RoadFragment.COL_ROAD_SECTION).contains("애조로")) {
+                            roadImgs.add(road_aejoIv);
                         }
-                    }
+                        if (cursor.getString(RoadFragment.COL_ROAD_SECTION).contains("일주도로")) {
+                            roadImgs.add(road_iljuIv);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
 
 
 //        FrameLayout roadStatusL = (FrameLayout)((MainActivity)mContext).findViewById(R.id.layout_road_status);
@@ -417,32 +340,25 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
 //            }
 //        });
 
-                }
-
-                //처음 Fragment를 만들었을 때는 받아온 게 없으니 roadImgs는 0이다. 그니까 normalTV가 번쩍이기 시작한다.
-                //근데 Sync를 해서 roadImgs가 생기면 roadImgs는 0이 아니게 된다. 그럼 roadImgs도 번쩍인다.
-                //그니까 normalTV와 roadImgs가 모두 번쩍이는 결과가 생긴다.
-                //이걸 해결해야 해... 여기 사용된 MainActivity.sync를 쓰는 건 효과가 없는 것 같다.
-
-//        if (roadImgs.size() == 0 && MainActivity.sync != 0) {
-                if (cursor.getCount() != 0) {
-                    if (roadImgs.size() == 0) {
-                        normalTV.setVisibility(View.VISIBLE);
-                        startBlink(normalTV);
-                    } else {
-                        for (ImageView i : roadImgs) {
-                            i.setVisibility(View.VISIBLE);
-                            startBlink(i);
-                        }
-                    }
-                }
-            } else {
-                clearAnimation();
-                unavailableTV.setVisibility(View.VISIBLE);
-
-            }
         }
 
+        //처음 Fragment를 만들었을 때는 받아온 게 없으니 roadImgs는 0이다. 그니까 normalTV가 번쩍이기 시작한다.
+        //근데 Sync를 해서 roadImgs가 생기면 roadImgs는 0이 아니게 된다. 그럼 roadImgs도 번쩍인다.
+        //그니까 normalTV와 roadImgs가 모두 번쩍이는 결과가 생긴다.
+        //이걸 해결해야 해... 여기 사용된 MainActivity.sync를 쓰는 건 효과가 없는 것 같다.
+
+//        if (roadImgs.size() == 0 && MainActivity.sync != 0) {
+        if (cursor.getCount() != 0) {
+            if (roadImgs.size() == 0) {
+                normalTV.setVisibility(View.VISIBLE);
+                startBlink(normalTV);
+            } else {
+                for (ImageView i : roadImgs) {
+                    i.setVisibility(View.VISIBLE);
+                    startBlink(i);
+                }
+            }
+        }
     }
 
     private void clearAnimation() {

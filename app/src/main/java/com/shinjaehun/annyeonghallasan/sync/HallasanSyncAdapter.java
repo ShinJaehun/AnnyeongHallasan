@@ -13,20 +13,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SyncRequest;
 import android.content.SyncResult;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.text.format.Time;
 import android.util.Log;
-import android.util.StringBuilderPrinter;
 
 import com.shinjaehun.annyeonghallasan.MainActivity;
 import com.shinjaehun.annyeonghallasan.R;
-import com.shinjaehun.annyeonghallasan.RoadFragment;
 import com.shinjaehun.annyeonghallasan.data.HallasanContract;
 
 import org.json.JSONArray;
@@ -45,7 +41,6 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 /**
@@ -81,7 +76,8 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final int INDEX_ROAD_BASE_DATE = 2;
     private static final int INDEX_NAME = 3;
 
-    boolean isDebugging;
+    static boolean isDebugging;
+    static int month;
 
     public HallasanSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -91,20 +87,15 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
     public void onPerformSync(Account account, Bundle bundle, String s, ContentProviderClient contentProviderClient, SyncResult syncResult) {
         Log.v(LOG_TAG, "HallasanSyncAdatpter에서 onPerformSync Called!");
 
-        isDebugging = false;
-        //멍청하게도 debugging 스위치를 HallasanSyncAdapter와 RoadFragment 양쪽에 뒀다.
-        //반드시 양쪽 함께 활성화시킬 것
-
         mCalendar = Calendar.getInstance();
         mTimeStamp = Long.parseLong(new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime()));
 
         if (isDebugging) {
             roadProcess();
         } else {
-            int mm = Integer.parseInt(new SimpleDateFormat("MM").format(mCalendar.getTime()));
-            Log.v(LOG_TAG, mm + "월임당");
+            Log.v(LOG_TAG, month + "월임당");
 
-            if (mm < 04 || mm > 10) {
+            if (month < 04 || month > 10) {
                 Log.v(LOG_TAG, "1, 2, 3월, 11월, 12월은 roadProcess 돌립니다");
                 roadProcess();
             } else {
@@ -763,7 +754,9 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
         syncImmediately(context);
     }
 
-    public static void initializeSyncAdapter(Context context) {
+    public static void initializeSyncAdapter(Context context, boolean d, int m) {
         getSyncAccount(context);
+        isDebugging = d;
+        month = m;
     }
 }
