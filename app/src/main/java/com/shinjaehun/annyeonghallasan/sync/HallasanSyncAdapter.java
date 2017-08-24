@@ -472,14 +472,14 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
                 try {
                     doc = Jsoup.parse(inputStream, "UTF-8", url);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(LOG_TAG, "Error ", e);
                 }
             } else {
 //                    실제 URL로 테스트하기
                 try {
                     doc = Jsoup.connect(url).get();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(LOG_TAG, "Error ", e);
                 }
             }
 
@@ -570,57 +570,59 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 //                        mContext.getContentResolver().insert(HallasanContract.RoadEntry.CONTENT_URI, roadValues);
             }
 
+            if (cVVector.size() > 0) {
+                //fetch에 성공했으면 DB에 쓰기
+                ContentValues[] cvArray = new ContentValues[cVVector.size()];
+                cVVector.toArray(cvArray);
+                int size = getContext().getContentResolver().bulkInsert(HallasanContract.RoadEntry.CONTENT_URI, cvArray);
+                Log.v(LOG_TAG, "HallasanSyncAdapter에서 " + mTimeStamp + "에 Road DB로 집어 넣은 다음 크기 " + size);
+
+                //notify
+                String title = null;
+                StringBuilder messageSB = new StringBuilder();
+                boolean isRestricted = false;
+                for (ContentValues rv : cvArray) {
+                    if (rv.getAsInteger(HallasanContract.RoadEntry.COLUMN_RESTRICTION) == HallasanContract.RoadEntry.RESTRICTION_ENABLED) {
+                        if (isRestricted == false) {
+                            String baseDate = rv.getAsString(HallasanContract.RoadEntry.COLUMN_BASE_DATE);
+//                        title = "통제 : "
+//                                + baseDate + " 발표";
+
+                            title = "통제 : "
+                                    + baseDate.substring(4, 6) + "월"
+                                    + baseDate.substring(6, 8) + "일"
+                                    + baseDate.substring(8, 10) + "시"
+                                    + baseDate.substring(10) + "분"
+                                    + " 발표";
+                            isRestricted = true;
+                        }
+                        messageSB.append(rv.getAsString(HallasanContract.RoadEntry.COLUMN_NAME) + " ");
+                    }
+                }
+
+                if (messageSB.length() != 0) {
+                    notifyRoadStatus(title, messageSB.toString());
+                }
+
+                if (size > 0) {
+                    //DB에 밀어 넣는데 실패했다면 이전 자료를 삭제해서는 안 된다.
+                    Calendar oldCal = Calendar.getInstance();
+                    oldCal.add(Calendar.DATE, -1);
+
+                    long oldTimeStamp = Long.parseLong(new SimpleDateFormat("yyyyMMdd").format(oldCal.getTime()) + "0000");
+//                Log.v(LOG_TAG, "삭제할 자료의 타임스탬프는 " + oldTimeStamp);
+
+                    getContext().getContentResolver().delete(HallasanContract.RoadEntry.CONTENT_URI, HallasanContract.RoadEntry.COLUMN_TIMESTAMP + " <= ?",
+                            new String[]{Long.toString(oldTimeStamp)});
+                }
+            }
+
         } catch (RuntimeException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
         }
 
-        if (cVVector.size() > 0) {
-            //fetch에 성공했으면 DB에 쓰기
-            ContentValues[] cvArray = new ContentValues[cVVector.size()];
-            cVVector.toArray(cvArray);
-            int size = getContext().getContentResolver().bulkInsert(HallasanContract.RoadEntry.CONTENT_URI, cvArray);
-            Log.v(LOG_TAG, "HallasanSyncAdapter에서 " + mTimeStamp + "에 Road DB로 집어 넣은 다음 크기 " + size);
 
-            //notify
-            String title = null;
-            StringBuilder messageSB = new StringBuilder();
-            boolean isRestricted = false;
-            for (ContentValues roadValues : cvArray) {
-                if (roadValues.getAsInteger(HallasanContract.RoadEntry.COLUMN_RESTRICTION) == HallasanContract.RoadEntry.RESTRICTION_ENABLED) {
-                    if (isRestricted == false) {
-                        String baseDate = roadValues.getAsString(HallasanContract.RoadEntry.COLUMN_BASE_DATE);
-//                        title = "통제 : "
-//                                + baseDate + " 발표";
-
-                        title = "통제 : "
-                                + baseDate.substring(4, 6) + "월"
-                                + baseDate.substring(6, 8) + "일"
-                                + baseDate.substring(8, 10) + "시"
-                                + baseDate.substring(10) + "분"
-                                + " 발표";
-                        isRestricted = true;
-                    }
-                    messageSB.append(roadValues.getAsString(HallasanContract.RoadEntry.COLUMN_NAME) + " ");
-                }
-            }
-
-            if (messageSB.length() != 0) {
-                notifyRoadStatus(title, messageSB.toString());
-            }
-
-            if (size > 0) {
-                //DB에 밀어 넣는데 실패했다면 이전 자료를 삭제해서는 안 된다.
-                Calendar oldCal = Calendar.getInstance();
-                oldCal.add(Calendar.DATE, -1);
-
-                long oldTimeStamp = Long.parseLong(new SimpleDateFormat("yyyyMMdd").format(oldCal.getTime()) + "0000");
-//                Log.v(LOG_TAG, "삭제할 자료의 타임스탬프는 " + oldTimeStamp);
-
-                getContext().getContentResolver().delete(HallasanContract.RoadEntry.CONTENT_URI, HallasanContract.RoadEntry.COLUMN_TIMESTAMP + " <= ?",
-                        new String[]{Long.toString(oldTimeStamp)});
-            }
-        }
     }
 
     private void notifyRoadStatus(String title, String message) {

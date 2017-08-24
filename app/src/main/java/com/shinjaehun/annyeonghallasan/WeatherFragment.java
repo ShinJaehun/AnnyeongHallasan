@@ -85,6 +85,9 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
         View v = inflater.inflate(R.layout.fragment_weather, container, false);
 
         GridView gridView = (GridView) v.findViewById(R.id.gridview_weather);
+//        View emptyView = v.findViewById(R.id.gridview_weather_emtpy);
+//        gridView.setEmptyView(emptyView);
+
         gridView.setAdapter(mWeatherAdapter);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
