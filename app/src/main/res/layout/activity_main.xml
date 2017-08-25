@@ -13,24 +13,24 @@
     android:paddingTop="@dimen/activity_vertical_margin" >
 
     <TextView
-        android:id="@+id/text_error_network_connection"
+        android:id="@+id/text_network_error"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="네트워크 연결 문제로 정보를 받아올 수 없습니다.\n네트워크 연결 후 다시 시도하세요."
+        android:text="@string/msg_server_not_connected"
         android:textAlignment="center"
         android:textSize="14dp"
         android:visibility="gone"/>
 
     <LinearLayout
-        android:id="@+id/roadFragment"
+        android:id="@+id/fragment_road"
         tools:layout="@layout/fragment_road"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" />
 
     <LinearLayout
-        android:id="@+id/weatherFragment"
+        android:id="@+id/fragment_weather"
         tools:layout="@layout/fragment_weather"
         android:orientation="vertical"
         android:layout_width="match_parent"

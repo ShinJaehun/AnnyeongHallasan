@@ -2,6 +2,7 @@ package com.shinjaehun.annyeonghallasan.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.AbstractThreadedSyncAdapter;
@@ -627,8 +628,8 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private void notifyRoadStatus(String title, String message) {
         Context context = getContext();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String lastNotificationKey = context.getString(R.string.pref_last_notification);
+        SharedPreferences prefs = context.getSharedPreferences(context.getString(R.string.pref_last_notification), Activity.MODE_PRIVATE);
+        String lastNotificationKey = context.getString(R.string.pref_last_notification_key);
         long lastSync = prefs.getLong(lastNotificationKey, 0);
 
 //        String sortOrder = HallasanContract.RoadEntry._ID + " DESC limit 6";

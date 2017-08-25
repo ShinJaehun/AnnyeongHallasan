@@ -105,8 +105,8 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
         road_cheomdanIv = (ImageView) v.findViewById(R.id.road_cheomdan);
         road_aejoIv = (ImageView) v.findViewById(R.id.road_aejo);
         road_iljuIv = (ImageView) v.findViewById(R.id.road_ilju);
-        normalTV = (TextView) v.findViewById(R.id.normal);
-        unavailableTV = (TextView) v.findViewById(R.id.unavailable);
+        normalTV = (TextView) v.findViewById(R.id.text_normal);
+        unavailableTV = (TextView) v.findViewById(R.id.text_unavailable);
 
         if (isDebugging) {
             FrameLayout roadMapL = (FrameLayout) v.findViewById(R.id.layout_road_status);

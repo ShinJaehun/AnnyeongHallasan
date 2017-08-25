@@ -20,6 +20,12 @@
     <string name="sync_account_type">annyeonghallasan.shinjaehun.com</string>
     <string name="content_authority">com.shinjaehun.annyeonghallasan</string>
 
-    <string name="pref_last_notification">last_notification</string>
+    <string name="pref_last_notification">pref_last_notification</string>
+    <string name="pref_last_notification_key">last_notification</string>
 
+    <string name="pref_last_sync_time">pref_last_sync_time</string>
+    <string name="pref_last_sync_time_key">last_sync_time</string>
+
+    <string name="msg_server_not_connected">네트워크 문제로 정보를 받아올 수 없습니다.\n네트워크 연결 후 다시 시도하세요.</string>
+    <string name="msg_road_info_unavailable">4월부터 10월까지는 도로교통정보가 제공되지 않습니다.</string>
 </resources>
