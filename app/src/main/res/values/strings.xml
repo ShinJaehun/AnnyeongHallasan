@@ -20,6 +20,24 @@
     <string name="sync_account_type">annyeonghallasan.shinjaehun.com</string>
     <string name="content_authority">com.shinjaehun.annyeonghallasan</string>
 
-    <string name="pref_last_notification">last_notification</string>
+    <string name="pref_last_notification">pref_last_notification</string>
+    <string name="pref_last_notification_key">last_notification</string>
+
+    <string name="pref_last_sync_time">pref_last_sync_time</string>
+    <string name="pref_last_sync_time_key">last_sync_time</string>
+
+    <string name="pref_server_status">pref_server_status</string>
+    <string name="pref_server_status_key">server_status</string>
+
+    <string name="msg_weather_server_down">네트워크 문제로 정보를 받아올 수 없습니다.\n날씨 정보 서버와 통신이 불가능합니다.</string>
+    <string name="msg_weather_server_error">네트워크 문제로 정보를 받아올 수 없습니다.\n날씨 정보 서버의 데이터를 읽을 수 없습니다.\n업데이트를 기다려주세요.</string>
+
+    <string name="msg_road_server_down">네트워크 문제로 정보를 받아올 수 없습니다.\n도로 정보 서버와 통신이 불가능합니다.</string>
+    <string name="msg_road_server_error">네트워크 문제로 정보를 받아올 수 없습니다.\n도로 정보 서버의 데이터를 읽을 수 없습니다.\n업데이트를 기다려주세요.</string>
+
+    <string name="msg_server_not_connected">네트워크 문제로 정보를 받아올 수 없습니다.\n네트워크 연결 후 다시 시도하세요.</string>
+    <string name="msg_server_error">네트워크 문제로 정보를 받아올 수 없습니다.</string>
+
+
 
 </resources>

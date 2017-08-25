@@ -24,7 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
 //    public static final String TIME_STAMP = "time_stamp";
 //    public static String mTimeStamp;
@@ -70,15 +70,21 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        if(!isNetworkAvailable(this)) {
-            TextView errorNetworkConnectionTV = (TextView)findViewById(R.id.text_error_network_connection);
-            errorNetworkConnectionTV.setVisibility(View.VISIBLE);
-        } else {
-            RoadFragment roadFragment = RoadFragment.newInstance(isDebugging, month);
-            fragmentTransaction.replace(R.id.roadFragment, roadFragment);
-            WeatherFragment weatherFragment = new WeatherFragment();
-            fragmentTransaction.replace(R.id.weatherFragment, weatherFragment);
-        }
+        RoadFragment roadFragment = RoadFragment.newInstance(isDebugging, month);
+        fragmentTransaction.replace(R.id.roadFragment, roadFragment);
+        WeatherFragment weatherFragment = new WeatherFragment();
+        fragmentTransaction.replace(R.id.weatherFragment, weatherFragment);
+
+//        if(!isNetworkAvailable(this)) {
+//            //Network connection 관련한 오류 점검인데 updateErrorView를 onSharedPreferenceChanged에 다는 형식으로 수정할 수 있겠다는 생각이 든다.
+//            TextView errorNetworkConnectionTV = (TextView)findViewById(R.id.text_network_error);
+//            errorNetworkConnectionTV.setVisibility(View.VISIBLE);
+//        } else {
+//            RoadFragment roadFragment = RoadFragment.newInstance(isDebugging, month);
+//            fragmentTransaction.replace(R.id.roadFragment, roadFragment);
+//            WeatherFragment weatherFragment = new WeatherFragment();
+//            fragmentTransaction.replace(R.id.weatherFragment, weatherFragment);
+//        }
         fragmentTransaction.commit();
 
 
@@ -119,30 +125,41 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.registerOnSharedPreferenceChangeListener(this);
         super.onResume();
 
-        SharedPreferences pref = getSharedPreferences("sync_pref", Activity.MODE_PRIVATE);
-        long lastSyncTime = pref.getLong("last_sync_time", 0);
 
-        Log.v(LOG_TAG, "Last Sync Time : " + new SimpleDateFormat("yyyyMMddHHmm").format(new Date(lastSyncTime)));
+//        SharedPreferences prefsSyncTime = getSharedPreferences(getString(R.string.pref_last_sync_time), Activity.MODE_PRIVATE);
+//        String lastSyncTimeKey = getString(R.string.pref_last_sync_time_key);
+//        long lastSyncTime = prefsSyncTime.getLong(lastSyncTimeKey, 0);
+//
+//        Log.v(LOG_TAG, "Last Sync Time : " + new SimpleDateFormat("yyyyMMddHHmm").format(new Date(lastSyncTime)));
+//
+//        Calendar calendar = Calendar.getInstance();
+//
+//        long now = calendar.getTime().getTime();
+//
+//        Log.v(LOG_TAG, "now : " + new SimpleDateFormat("yyyyMMddHHmm").format(new Date(now)));
+//
+//        long min = (now - lastSyncTime) / 60000;
+//
+//        Log.v(LOG_TAG, "MIN : "+ min);
+//
+//        if (lastSyncTime == 0 || min >= 30) {
+//            SharedPreferences.Editor editor = prefsSyncTime.edit();
+//            editor.putLong(lastSyncTimeKey, now);
+//            editor.commit();
+//
+//            HallasanSyncAdapter.syncImmediately(this);
+//        }
+    }
 
-        Calendar calendar = Calendar.getInstance();
-
-        long now = calendar.getTime().getTime();
-
-        Log.v(LOG_TAG, "now : " + new SimpleDateFormat("yyyyMMddHHmm").format(new Date(now)));
-
-        long min = (now - lastSyncTime) / 60000;
-
-        Log.v(LOG_TAG, "MIN : "+ min);
-
-        if (lastSyncTime == 0 || min >= 30) {
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putLong("last_sync_time", now);
-            editor.commit();
-
-            HallasanSyncAdapter.syncImmediately(this);
-        }
+    @Override
+    protected void onPause() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.unregisterOnSharedPreferenceChangeListener(this);
+        super.onPause();
     }
 
     static public boolean isNetworkAvailable(Context c) {
@@ -151,7 +168,43 @@ public class MainActivity extends AppCompatActivity {
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
-    //
+    private void updateErrorMessage() {
+        TextView errorNetworkTV = (TextView)findViewById(R.id.text_network_error);
+        errorNetworkTV.setVisibility(View.VISIBLE);
+
+        int message = R.string.msg_server_error;
+
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.pref_server_status), Activity.MODE_PRIVATE);
+        @HallasanSyncAdapter.ServerStatus int serverStatus = prefs.getInt(getString(R.string.pref_server_status_key), HallasanSyncAdapter.SERVER_STATUS_UNKNOWN);
+        switch (serverStatus) {
+            case HallasanSyncAdapter.WEATHER_STATUS_SERVER_DOWN:
+                message = R.string.msg_weather_server_down;
+                break;
+            case HallasanSyncAdapter.WEATHER_STATUS_SERVER_INVALID:
+                message = R.string.msg_weather_server_error;
+                break;
+            case HallasanSyncAdapter.ROAD_STATUS_SERVER_DOWN:
+                message = R.string.msg_road_server_down;
+                break;
+            case HallasanSyncAdapter.ROAD_STATUS_SERVER_INVALID:
+                message = R.string.msg_road_server_error;
+                break;
+            default:
+                if (!isNetworkAvailable(this)) {
+                    message = R.string.msg_server_not_connected;
+                }
+        }
+        errorNetworkTV.setText(message);
+
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        if (s.equals(getString(R.string.pref_server_status_key))) {
+            updateErrorMessage();
+        }
+    }
+
 //    @Override
 //    protected void onStart() {
 //        super.onStart();

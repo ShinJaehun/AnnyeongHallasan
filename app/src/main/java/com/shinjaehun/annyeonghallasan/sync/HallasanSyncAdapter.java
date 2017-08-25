@@ -2,6 +2,7 @@ package com.shinjaehun.annyeonghallasan.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.AbstractThreadedSyncAdapter;
@@ -17,6 +18,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.IntDef;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
@@ -36,6 +38,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -75,6 +79,19 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final int INDEX_ROAD_TIME_STAMP = 1;
     private static final int INDEX_ROAD_BASE_DATE = 2;
     private static final int INDEX_NAME = 3;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({ROAD_STATUS_OK, ROAD_STATUS_SERVER_DOWN, ROAD_STATUS_SERVER_INVALID,
+        WEATHER_STATUS_OK, WEATHER_STATUS_SERVER_DOWN, WEATHER_STATUS_SERVER_INVALID, SERVER_STATUS_UNKNOWN})
+    public @interface ServerStatus {}
+
+    public static final int ROAD_STATUS_OK = 0;
+    public static final int ROAD_STATUS_SERVER_DOWN = 1;
+    public static final int ROAD_STATUS_SERVER_INVALID = 2;
+    public static final int WEATHER_STATUS_OK = 3;
+    public static final int WEATHER_STATUS_SERVER_DOWN = 4;
+    public static final int WEATHER_STATUS_SERVER_INVALID = 5;
+    public static final int SERVER_STATUS_UNKNOWN = 6;
 
     static boolean isDebugging;
     static int month;
@@ -257,6 +274,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
             if (buffer.length() == 0) {
                 // Stream was empty.  No point in parsing.
+                setServerStatus(getContext(), WEATHER_STATUS_SERVER_DOWN);
                 return null;
             }
 
@@ -270,10 +288,12 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             Log.e(LOG_TAG, "Error ", e);
             // If the code didn't successfully get the weather data, there's no point in attempting
             // to parse it.
+            setServerStatus(getContext(), WEATHER_STATUS_SERVER_DOWN);
             return null;
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
+            setServerStatus(getContext(), WEATHER_STATUS_SERVER_INVALID);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -447,11 +467,13 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 //                    Log.d("DatabaseSync", "Key:"+key+", values:"+(String)(value == null?null:value.toString()));
 //                }
 
+            setServerStatus(getContext(), WEATHER_STATUS_OK);
             return weatherValues;
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
+            setServerStatus(getContext(), WEATHER_STATUS_SERVER_INVALID);
         }
         return null;
 
@@ -480,6 +502,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
                     doc = Jsoup.connect(url).get();
                 } catch (IOException e) {
                     Log.e(LOG_TAG, "Error ", e);
+                    setServerStatus(getContext(), ROAD_STATUS_SERVER_DOWN);
                 }
             }
 
@@ -617,18 +640,19 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
                 }
             }
 
+            setServerStatus(getContext(), ROAD_STATUS_OK);
+
         } catch (RuntimeException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
+            setServerStatus(getContext(), ROAD_STATUS_SERVER_INVALID);
         }
-
-
     }
 
     private void notifyRoadStatus(String title, String message) {
         Context context = getContext();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String lastNotificationKey = context.getString(R.string.pref_last_notification);
+        SharedPreferences prefs = context.getSharedPreferences(context.getString(R.string.pref_last_notification), Activity.MODE_PRIVATE);
+        String lastNotificationKey = context.getString(R.string.pref_last_notification_key);
         long lastSync = prefs.getLong(lastNotificationKey, 0);
 
 //        String sortOrder = HallasanContract.RoadEntry._ID + " DESC limit 6";
@@ -687,6 +711,13 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             editor.putLong(lastNotificationKey, System.currentTimeMillis());
             editor.commit();
         }
+    }
+
+    static private void setServerStatus(Context c, @ServerStatus int serverStatus) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(c.getString(R.string.pref_server_status_key), serverStatus);
+        editor.commit();
     }
 
     public static void syncImmediately(Context context) {
