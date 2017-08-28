@@ -28,6 +28,7 @@ import java.util.ArrayList;
 
 public class RoadFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     public static final String[] ROAD_COLUMNS = {
+            //getColumnIndex 대신 cursor의 값을 쉽게 사용하기 위한 Projection
             HallasanContract.RoadEntry.TABLE_NAME + "." + HallasanContract.RoadEntry._ID,
             HallasanContract.RoadEntry.COLUMN_NAME,
             HallasanContract.RoadEntry.COLUMN_TIMESTAMP,
@@ -38,6 +39,7 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
             HallasanContract.RoadEntry.COLUMN_FREEZING,
             HallasanContract.RoadEntry.COLUMN_CHAIN
     };
+    //Projection에서 몇몇 값만 받아오기로 했다면 아래 COL도 변경되어야 함
     public static final int COL_ROAD_ID = 0;
     public static final int COL_ROAD_NAME = 1;
     public static final int COL_ROAD_TIMESTAMP = 2;
@@ -72,7 +74,6 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     private Animation animation;
 
     static boolean isDebugging;
-
     static int month;
 
     public static final RoadFragment newInstance(boolean d, int m) {
@@ -84,10 +85,6 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-//        setHasOptionsMenu(true);
-
-//멍청하게도 debugging 스위치를 HallasanSyncAdapter와 RoadFragment 양쪽에 뒀다.
-        //반드시 양쪽 함께 활성화시킬 것
 
         View v = inflater.inflate(R.layout.fragment_road, container, false);
 
@@ -109,6 +106,8 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
         unavailableTV = (TextView) v.findViewById(R.id.text_unavailable);
 
         if (isDebugging) {
+            //Debug 모드에서는 그냥 정상적으로 Map에 대해 onClick()을 받음
+            //Debug 모드에서는 월에 관계 없이 테스트 가능해야 하므로...
             FrameLayout roadMapL = (FrameLayout) v.findViewById(R.id.layout_road_status);
             roadMapL.setOnClickListener(new View.OnClickListener() {
 
@@ -116,10 +115,12 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
                 public void onClick(View view) {
                     GetRoadFromDBTask getRoadFromDBTask = new GetRoadFromDBTask(getContext());
                     getRoadFromDBTask.execute();
+                    //RoadAdapter가 존재하지 않기 때문에 Road 상태를 DB에서 불러오려면 cursor를 사용하는 대신
+                    //asynctask() 등으로 직접 읽어와야 한다
                 }
             });
         } else {
-
+            //11월부터 3월까지는 roadPrecess()가 동작하고 Map에서 onClick()도 받음
             if (month < 04 || month > 10) {
                 FrameLayout roadMapL = (FrameLayout) v.findViewById(R.id.layout_road_status);
                 roadMapL.setOnClickListener(new View.OnClickListener() {
@@ -128,6 +129,8 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
                     public void onClick(View view) {
                         GetRoadFromDBTask getRoadFromDBTask = new GetRoadFromDBTask(getContext());
                         getRoadFromDBTask.execute();
+                        //RoadAdapter가 존재하지 않기 때문에 Road 상태를 DB에서 불러오려면 cursor를 사용하는 대신
+                        //asynctask() 등으로 직접 읽어와야 한다
                     }
                 });
             }
@@ -140,95 +143,22 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
     public void onResume() {
         super.onResume();
         animation = new AlphaAnimation((float) 0.5, 0);
-
-
-//        SharedPreferences pref = getContext().getSharedPreferences("sync_road_pref", Activity.MODE_PRIVATE);
-//        long lastSyncTime = pref.getLong("last_road_sync_time", 0);
-//
-//        Calendar calendar = Calendar.getInstance();
-//
-//        if (isDebugging) {
-////            long now = calendar.getTime().getTime();
-////            long min = (now - lastSyncTime) / 60000;
-////            if (lastSyncTime == 0 || min >= 30) {
-////                SharedPreferences.Editor editor = pref.edit();
-////                editor.putLong("last_road_sync_time", now);
-////                editor.commit();
-//                animation = new AlphaAnimation((float) 0.5, 0);
-//                HallasanSyncAdapter.syncImmediately(getActivity());
-////            }
-//        } else {
-//            month = Integer.parseInt(new SimpleDateFormat("MM").format(calendar.getTime()));
-//
-//            if (month < 04 || month > 10) {
-//
-//                long now = calendar.getTime().getTime();
-//
-//                long min = (now - lastSyncTime) / 60000;
-//
-//                if (lastSyncTime == 0 || min >= 30) {
-//                    SharedPreferences.Editor editor = pref.edit();
-//
-//                    editor.putLong("last_road_sync_time", now);
-//                    editor.commit();
-//                    animation = new AlphaAnimation((float) 0.5, 0);
-////                    getLoaderManager().restartLoader(ROAD_LOADER, null, this);
-//// 백그라운드에서 다시 활성화시켰을 때 Loader 재시작 이거 안 하면 Loader는 재시작 하더라도 그대로...
-//                    //syncImmediately()를 WeatherFragment와 RoadFragment 양쪽에서 실행하기 때문에 DB Insert()가 필요 이상으로 반복되는 문제가 있다.
-//                    //그러나 삼성 Device 문제 때문에 어쩔 수 없는 면이 있다.
-//
-//                    //몇몇 삼성 Device에서 발생하는 SyncAdapter 관련 오류로 Loader를 재시작하지 않고 OnResume에서 DB Push를 실시한다.
-//                    //릴리즈 전에 restartLoader 주석처리하고 syncImmediately를 해제할 것
-//                    HallasanSyncAdapter.syncImmediately(getActivity());
-//                }
-//            }
-//        }
+        //Fragment를 화면에 보여주면서 애니메이션 깜빡이게...
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         getLoaderManager().initLoader(ROAD_LOADER, null, this);
+        //Loader init
         super.onActivityCreated(savedInstanceState);
     }
 
-//    void timeStampChanged() {
-//        // timestamp가 변경되면 이걸 실행시켜서 Loader의 Uri를 변경해야 함!
-//        getLoaderManager().restartLoader(ROAD_LOADER, null, this);
-//    }
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.v(LOG_TAG, "RoadFragment의 onCreateLoader입니다.");
-
+//        Log.v(LOG_TAG, "RoadFragment의 onCreateLoader입니다.");
             if (id == ROAD_LOADER) {
-
+            //DB에 입력된 순서로 뒤에서 13번째까지(모든 도로에 대한 정보) cursor로 받아옴
                 String sortOrder = HallasanContract.RoadEntry._ID + " DESC limit 13";
-
-//            String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(MainActivity.mCalendar.getTime());
-
-//            timePrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-//            mTimeStamp = timePrefs.getString(MainActivity.TIME_STAMP, null);
-
-//            SharedPreferences timePrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-//            String mainTimeStamp = timePrefs.getString(MainActivity.TIME_STAMP, null);
-
-                // 결국은 timestamp에 따라 loader가 달라지니 timestamp가 변경되었을 때는
-                // loader가 그 timestamp에 해당하는 uri를 갖도록 해 줘야 한다
-                // 그니까 timeStampChanged에서 restartLoader를 해서 onCreateLoader가 재실행되도록 해야 하는거야...
-                // 이걸 무슨 Activity나 Fragment의 Lifecycle 관련지어서 졸라 해맸어ㅠㅠ
-//            Calendar calendar = Calendar.getInstance();
-//            String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(calendar.getTime());
-//
-//            Uri roadWithDateUri = HallasanContract.RoadEntry.buildRoadUriWithDate(timeStamp);
-//
-//            return new CursorLoader(getContext(),
-//                    roadWithDateUri,
-//                    RoadFragment.ROAD_COLUMNS,
-//                    null,
-//                    null,
-//                    sortOrder
-//            );
-
                 return new CursorLoader(getContext(),
                         HallasanContract.RoadEntry.CONTENT_URI,
                         RoadFragment.ROAD_COLUMNS,
@@ -242,13 +172,15 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-
         if (isDebugging) {
+            //디버깅 모드에서는 걍 애니메이션 출력함
            drawAnimation(cursor);
         } else {
+            //11월부터 3월까지는 애니메이션 출력
             if (month < 04 || month > 10) {
                 drawAnimation(cursor);
             } else {
+                //4월부터 10월까지는 애니메이션 없애고 메시지 출력
                 clearAnimation();
                 unavailableTV.setVisibility(View.VISIBLE);
 
@@ -259,25 +191,22 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
 
     private void drawAnimation(Cursor cursor) {
         clearAnimation();
+        //일단 기존 애니메이션은 지우고
 
         roadImgs = new ArrayList<>();
         Log.v(LOG_TAG, "onLoadFinished에서 Road Cursor 크기 " + cursor.getCount());
 
-//        String mainTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(MainActivity.mCalendar.getTime());
-//        Log.v(LOG_TAG, "메인 타임스탬프 : " + mainTimeStamp);
-
         while (cursor.moveToNext()) {
+            //cursor로 받아온 자료를 가지고
             long timeStamp = cursor.getLong(RoadFragment.COL_ROAD_TIMESTAMP);
-//            Log.v(LOG_TAG, "커서 타임스탬프 : " + timeStamp);
-
             long roadId = cursor.getLong(RoadFragment.COL_ROAD_ID);
             String roadName = cursor.getString(RoadFragment.COL_ROAD_NAME);
-
             int restrict = cursor.getInt(RoadFragment.COL_ROAD_RESTRICTION);
 
-            Log.v(LOG_TAG, "ID : " + roadId + " 장소 : " + roadName + " 타임스탬프 : " + timeStamp + " 제한여부 : " + restrict);
+//            Log.v(LOG_TAG, "ID : " + roadId + " 장소 : " + roadName + " 타임스탬프 : " + timeStamp + " 제한여부 : " + restrict);
 
             if (restrict == HallasanContract.RoadEntry.RESTRICTION_ENABLED) {
+                //제한된 도로라면 각 도로에 해당하는 이미지를 roadImgs에 저장
                 switch (roadName) {
                     case "1100도로":
                         roadImgs.add(road_1100Iv);
@@ -327,33 +256,18 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
                         break;
                 }
             }
-
-
-//        FrameLayout roadStatusL = (FrameLayout)((MainActivity)mContext).findViewById(R.id.layout_road_status);
-//        roadStatusL.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                dialogInfo = new DialogInfo(mContext, clickListener, roads);
-//                dialogInfo.setCanceledOnTouchOutside(false);
-//                //dialogResult 외부 화면은 터치해도 반응하지 않음
-//                dialogInfo.show();
-//            }
-//        });
-
         }
 
-        //처음 Fragment를 만들었을 때는 받아온 게 없으니 roadImgs는 0이다. 그니까 normalTV가 번쩍이기 시작한다.
-        //근데 Sync를 해서 roadImgs가 생기면 roadImgs는 0이 아니게 된다. 그럼 roadImgs도 번쩍인다.
-        //그니까 normalTV와 roadImgs가 모두 번쩍이는 결과가 생긴다.
-        //이걸 해결해야 해... 여기 사용된 MainActivity.sync를 쓰는 건 효과가 없는 것 같다.
-
-//        if (roadImgs.size() == 0 && MainActivity.sync != 0) {
         if (cursor.getCount() != 0) {
+            //DB가 갱신되어 새로운 cursor 값이 발생하면
             if (roadImgs.size() == 0) {
+                //제한하는 도로가 없다면 정상운행 메시지 애니메이션 처리
                 normalTV.setVisibility(View.VISIBLE);
                 startBlink(normalTV);
             } else {
+                //제한하는 도로가 있다면
                 for (ImageView i : roadImgs) {
+                    //해당 도로 이미지 모두 애니메이션 처리
                     i.setVisibility(View.VISIBLE);
                     startBlink(i);
                 }
@@ -409,10 +323,10 @@ public class RoadFragment extends Fragment implements LoaderManager.LoaderCallba
         road_iljuIv.clearAnimation();
 
         unavailableTV.setVisibility(View.GONE);
-
     }
 
     private void startBlink(View i) {
+        //반짝이는 애니메이션
         animation.setDuration(500);
         animation.setInterpolator(new LinearInterpolator());
         animation.setRepeatCount(Animation.INFINITE);

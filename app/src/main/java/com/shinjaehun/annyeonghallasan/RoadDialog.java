@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 public class RoadDialog extends Dialog {
 
-    private Context mContext;
     private String mTitle;
     private String mBaseDate;
     private String mMessage;
@@ -31,7 +30,6 @@ public class RoadDialog extends Dialog {
         super(context);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        mContext = context;
         listener = clickListener;
         mTitle = title;
         mBaseDate = baseDate;

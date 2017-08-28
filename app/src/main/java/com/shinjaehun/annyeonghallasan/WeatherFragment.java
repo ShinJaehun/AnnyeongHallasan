@@ -30,6 +30,8 @@ import java.util.Date;
  */
 
 public class WeatherFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    private final String LOG_TAG = WeatherFragment.class.getSimpleName();
+
     public static final String[] WEATHER_COLUMNS = {
             //getColumnIndex 대신 cursor의 값을 쉽게 사용하기 위한 Projection
             HallasanContract.WeatherEntry.TABLE_NAME + "." + HallasanContract.WeatherEntry._ID,
@@ -66,14 +68,11 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
     static final int COL_WEATHER_LGT = 13;
     static final int COL_WEATHER_VEC = 14;
     static final int COL_WEATHER_WSD = 15;
+
     private static final int WEATHER_LOADER = 0;
-    private final String LOG_TAG = WeatherFragment.class.getSimpleName();
     private WeatherAdapter mWeatherAdapter;
 
     WeatherDialog weatherDialog;
-
-    public WeatherFragment() {
-    }
 
     @Nullable
     @Override
@@ -85,19 +84,14 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
         View v = inflater.inflate(R.layout.fragment_weather, container, false);
 
         GridView gridView = (GridView) v.findViewById(R.id.gridview_weather);
-//        View emptyView = v.findViewById(R.id.gridview_weather_emtpy);
-//        gridView.setEmptyView(emptyView);
 
         gridView.setAdapter(mWeatherAdapter);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                //gridView 각 아이템에 대한 click event 처리
                 Cursor cursor = (Cursor)adapterView.getItemAtPosition(position);
-//                if (cursor != null) {
-//                    ((Callback)getActivity()).onItemSelected();
-//                }
-//                여기서 cursor 값을 받아서 Dialog로 바로 집어 넣을 수 있을까?
                 if (cursor != null) {
                     String location = cursor.getString(WeatherFragment.COL_WEATHER_LOCATION);
                     String baseDate = cursor.getString(WeatherFragment.COL_WEATHER_BASE_DATE);
@@ -116,6 +110,7 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
                             location, baseDate, timeStamp, sky, pty, t1h, reh, rn1, vec, wsd);
                     weatherDialog.setCanceledOnTouchOutside(false);
                     weatherDialog.show();
+                    //Dialog 보여주기
                 }
 
                 //여기서 cursor.close해야 하는 것 아닌가?
@@ -128,14 +123,11 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
 
     }
 
-//    public interface Callback {
-//        public void onItemSelected(Uri uri);
-//    }
-
     private View.OnClickListener clickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View view) {
+            //언제부터 clickListener를 이렇게 표현하기 시작했을까?
             weatherDialog.dismiss();
             weatherDialog = null;
         }
@@ -144,6 +136,7 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onStop() {
         super.onStop();
+        //Leak을 막기 위해 onStop()에서 Dialog dismiss()
         if (weatherDialog != null) {
             weatherDialog.dismiss();
             weatherDialog = null;
@@ -151,45 +144,11 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-//        getLoaderManager().restartLoader(WEATHER_LOADER, null, this); //원래 이거면 충분하지만
-        //몇몇 삼성 Device에서 발생하는 SyncAdapter 관련 오류로 Loader를 재시작하지 않고 OnResume에서 DB Push를 실시한다.
-        //릴리즈 전에 restartLoader 주석처리하고 syncImmediately를 해제할 것
-
-//        SharedPreferences pref = getContext().getSharedPreferences("sync_weather_pref", Activity.MODE_PRIVATE);
-//        long lastSyncTime = pref.getLong("last_weather_sync_time", 0);
-
-//        Log.v(LOG_TAG, "LastSyncTime : "+ lastSyncTime);
-
-//        Calendar cal = Calendar.getInstance();
-//        long now = cal.getTime().getTime();
-
-//        Log.v(LOG_TAG, "Now : "+ now);
-
-//        long min = (now - lastSyncTime) / 60000;
-
-//        Log.v(LOG_TAG, "MIN : "+ min);
-
-//        if (lastSyncTime == 0 || min >= 30) {
-//            SharedPreferences.Editor editor = pref.edit();
-//
-//            editor.putLong("last_weather_sync_time", now);
-//            editor.commit();
-//
-//            HallasanSyncAdapter.syncImmediately(getActivity());
-//        }
-    }
-
-    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         getLoaderManager().initLoader(WEATHER_LOADER, null, this);
+        //Loader init
         super.onActivityCreated(savedInstanceState);
     }
-
-//    void timeStampChanged() {
-//        getLoaderManager().restartLoader(WEATHER_LOADER, null, this);
-//    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -197,22 +156,7 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
         if (id == WEATHER_LOADER) {
 
             String sortOrder = HallasanContract.WeatherEntry._ID + " DESC limit 6";
-
-//            timePrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-//            mTimeStamp = timePrefs.getString(MainActivity.TIME_STAMP, null);
-
-//            Calendar calendar = Calendar.getInstance();
-//            String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(calendar.getTime());
-//
-//            Uri weatherWithDateUri = HallasanContract.WeatherEntry.buildWeatherUriWithDate(timeStamp);
-//
-//            return new CursorLoader(getContext(),
-//                    weatherWithDateUri,
-//                    WEATHER_COLUMNS,
-//                    null,
-//                    null,
-//                    sortOrder
-//            );
+            //DB에 입력된 순서로 뒤에서 6번째까지(각 위치에 해당하는 정보) cursor로 받아옴
 
             return new CursorLoader(getContext(),
                     HallasanContract.WeatherEntry.CONTENT_URI,
@@ -228,18 +172,15 @@ public class WeatherFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        Log.v(LOG_TAG, "onLoadFinished에서 Weather Cursor 크기 " + cursor.getCount());
-
-        while (cursor.moveToNext()) {
-
-            long timeStamp = cursor.getLong(WeatherFragment.COL_WEATHER_TIMESTAMP);
-
-            long id = cursor.getLong(WeatherFragment.COL_WEATHER_ID);
-            String location = cursor.getString(WeatherFragment.COL_WEATHER_LOCATION);
-
-            Log.v(LOG_TAG, "ID : " + id + " 장소 : " + location + " 타임스탬프 : " + timeStamp);
-        }
-
+//        Log.v(LOG_TAG, "onLoadFinished에서 Weather Cursor 크기 " + cursor.getCount());
+//        while (cursor.moveToNext()) {
+//
+//            long timeStamp = cursor.getLong(WeatherFragment.COL_WEATHER_TIMESTAMP);
+//            long id = cursor.getLong(WeatherFragment.COL_WEATHER_ID);
+//            String location = cursor.getString(WeatherFragment.COL_WEATHER_LOCATION);
+//
+//            Log.v(LOG_TAG, "ID : " + id + " 장소 : " + location + " 타임스탬프 : " + timeStamp);
+//        }
         mWeatherAdapter.swapCursor(cursor);
     }
 

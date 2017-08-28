@@ -58,12 +58,16 @@ public class HallasanContract {
         }
 
         public static Uri buildRoadUriWithDate(String timeStamp) {
+            //만들어 놓기는 했는데 Loader에서 걍 최근에 입력한 몇 개의 데이터만 받아오기로 통일해서 쓸모가 없어졌다
+
             return CONTENT_URI.buildUpon().
                     appendPath("search").
                     appendQueryParameter(COLUMN_TIMESTAMP, timeStamp).build();
         }
 
         public static String getTimeStampFromUri(Uri uri) {
+            //만들어 놓기는 했는데 Loader에서 걍 최근에 입력한 몇 개의 데이터만 받아오기로 통일해서 쓸모가 없어졌다
+
             String timeStamp = uri.getQueryParameter(COLUMN_TIMESTAMP);
             if (timeStamp != null && timeStamp.length() > 0) {
                 return timeStamp;
@@ -83,11 +87,6 @@ public class HallasanContract {
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_WEATHER;
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_WEATHER;
-
-        public enum Category {
-            T1H, RN1, SKY, UUU, VVV,
-            REH, PTY, LGT, VEC, WSD
-        }
 
         public final static String TABLE_NAME = "weathers";
         public final static String _ID = BaseColumns._ID;
@@ -114,12 +113,16 @@ public class HallasanContract {
         }
 
         public static Uri buildWeatherUriWithDate(String timeStamp) {
+            //만들어 놓기는 했는데 Loader에서 걍 최근에 입력한 몇 개의 데이터만 받아오기로 통일해서 쓸모가 없어졌다
+
             return CONTENT_URI.buildUpon().
                     appendPath("search").
                     appendQueryParameter(COLUMN_TIMESTAMP, timeStamp).build();
         }
 
         public static String getTimeStampFromUri(Uri uri) {
+            //만들어 놓기는 했는데 Loader에서 걍 최근에 입력한 몇 개의 데이터만 받아오기로 통일해서 쓸모가 없어졌다
+
             String timeStamp = uri.getQueryParameter(COLUMN_TIMESTAMP);
             if (timeStamp != null && timeStamp.length() > 0) {
                 return timeStamp;

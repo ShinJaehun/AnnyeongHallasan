@@ -66,6 +66,8 @@ public class HallasanProvider extends ContentProvider {
                         null,
                         sortOrder);
                 break;
+            //만들어 놓기는 했는데 Loader에서 걍 최근에 입력한 몇 개의 데이터만 받아오기로 통일해서 쓸모가 없어졌다
+
 //            case WEATHER_WITH_DATE:
 //                String weatherTimeStamp = HallasanContract.WeatherEntry.getTimeStampFromUri(uri);
 //                returnCursor = db.query(

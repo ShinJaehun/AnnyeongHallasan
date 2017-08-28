@@ -51,17 +51,14 @@ import java.util.Vector;
 public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final String LOG_TAG = HallasanSyncAdapter.class.getSimpleName();
 
-//    private static Context mContext;
     private static Calendar mCalendar;
     private static long mTimeStamp;
-//    private static Boolean mDebugging;
 
     // Interval at which to sync with the weather, in milliseconds.
-    // 60 seconds (1 minute)  180 = 3 hours
-//    public static final long SYNC_INTERVAL = 60L * 60L;
+    // 60 seconds (1 minute) * 60 minutes = 1 hour
     public static final int SYNC_INTERVAL = 60 * 60;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
-//
+
     private static final long DAY_IN_MILLIS = 1000L * 60L * 60L * 24L;
     private static final int ROAD_NOTIFICATION_ID = 3004;
 
@@ -86,32 +83,31 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
     @Override
     public void onPerformSync(Account account, Bundle bundle, String s, ContentProviderClient contentProviderClient, SyncResult syncResult) {
-        Log.v(LOG_TAG, "HallasanSyncAdatpter에서 onPerformSync Called!");
+//        Log.v(LOG_TAG, "HallasanSyncAdatpter에서 onPerformSync Called!");
 
         mCalendar = Calendar.getInstance();
         mTimeStamp = Long.parseLong(new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime()));
 
         if (isDebugging) {
+            //Debug 모드에서는 그대로 roadProcess() 실행
             roadProcess();
         } else {
-            Log.v(LOG_TAG, month + "월임당");
+//            Log.v(LOG_TAG, month + "월임당");
 
             if (month < 04 || month > 10) {
-                Log.v(LOG_TAG, "1, 2, 3월, 11월, 12월은 roadProcess 돌립니다");
+                //11월부터 3월까지만 roadProcess() 실행
+//                Log.v(LOG_TAG, "1, 2, 3월, 11월, 12월은 roadProcess 돌립니다");
                 roadProcess();
-            } else {
-                Log.v(LOG_TAG, "4월부터 10월까지는 roadProcess 안 돌려요...");
             }
         }
 
+        //weatherProcess는 항상 실행
         weatherProcess();
-
     }
 
     private void weatherProcess() {
 
         String min = new SimpleDateFormat("mm").format(mCalendar.getTime());
-//        String min = "10";
         if (Integer.parseInt(min) < 30) {
             //30분 이전이면 basetime은 한 시간 전
 
@@ -120,7 +116,6 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             mCalendar.set(Calendar.HOUR_OF_DAY, mCalendar.get(Calendar.HOUR_OF_DAY) - 1);
 
             if (Integer.parseInt(new SimpleDateFormat("HH").format(mCalendar.getTime())) < 0) {
-//            if (Integer.parseInt("00") <= 0) {
                 //자정 이전은 전날 값으로 계산
                 mCalendar.set(Calendar.DATE, mCalendar.get(Calendar.DATE) - 1);
                 mCalendar.set(Calendar.HOUR_OF_DAY, 23);
@@ -131,33 +126,11 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
         String date = new SimpleDateFormat("yyyyMMdd").format(mCalendar.getTime());
         String time = new SimpleDateFormat("HH").format(mCalendar.getTime()) + "00";
-        Log.v(LOG_TAG, "The base weather data's time: " + date + " " + time);
+//        Log.v(LOG_TAG, "The base weather data's time: " + date + " " + time);
 
-//        ArrayList<WeatherReport> weatherReports = new ArrayList<>();
-//        weatherReports.add(new WeatherReport("한라산", fetchWeatherJson(baseDate, baseTime, 53, 35))); // 33.364235 126.545517
-//        weatherReports.add(new WeatherReport("어리목", fetchWeatherJson(baseDate, baseTime, 52, 35))); // 33.391859 126.4933766
-//        weatherReports.add(new WeatherReport("영실", fetchWeatherJson(baseDate, baseTime, 52, 34))); // 33.339573 126.478188
-//        weatherReports.add(new WeatherReport("성판악", fetchWeatherJson(baseDate, baseTime, 54, 35))); // 33.3844174 126.6166709
-//        weatherReports.add(new WeatherReport("관음사", fetchWeatherJson(baseDate, baseTime, 53, 36))); // 33.423744 126.555786
-//        weatherReports.add(new WeatherReport("돈내코", fetchWeatherJson(baseDate, baseTime, 53, 34))); // 33.3101519,126.5681177
-//        return weatherReports;
-
-//        ArrayList<Weather> weathers = new ArrayList<>();
-//        weathers.add(fetchWeatherJson("한라산", baseDate, baseTime, 53, 35)); // 33.364235 126.545517
-//        weathers.add(fetchWeatherJson("어리목", baseDate, baseTime, 52, 36)); // 33.391859 126.4933766
-//        weathers.add(fetchWeatherJson("영실", baseDate, baseTime, 52, 34)); // 33.339573 126.478188
-//        weathers.add(fetchWeatherJson("성판악", baseDate, baseTime, 54, 35)); // 33.3844174 126.6166709
-//        weathers.add(fetchWeatherJson("관음사", baseDate, baseTime, 53, 36)); // 33.423744 126.555786
-//        weathers.add(fetchWeatherJson("돈내코", baseDate, baseTime, 53, 34)); // 33.3101519,126.5681177
-
-//        fetchWeatherJson("한라산", baseDate, baseTime, 53, 35);
-//        fetchWeatherJson("어리목", baseDate, baseTime, 52, 36);
-//        fetchWeatherJson("영실", baseDate, baseTime, 52, 34);
-//        fetchWeatherJson("성판악", baseDate, baseTime, 54, 35);
-//        fetchWeatherJson("관음사", baseDate, baseTime, 53, 36);
-//        fetchWeatherJson("돈내코", baseDate, baseTime, 53, 34);
         Vector<ContentValues> cVVector = new Vector<>();
 
+//        각 위치에 대한 날씨 값을 ContentValues로 받아옴
         cVVector.add(fetchWeatherJson("한라산", date, time, 53, 35));
         cVVector.add(fetchWeatherJson("어리목", date, time, 52, 35));
         cVVector.add(fetchWeatherJson("영실", date, time, 52, 34));
@@ -179,6 +152,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
                 oldCal.add(Calendar.DATE, -1);
 
                 long oldTimeStamp = Long.parseLong(new SimpleDateFormat("yyyyMMdd").format(oldCal.getTime()) + "0000");
+                //push 후 전날 입력된 자료가 있으면 삭제함
 //                Log.v(LOG_TAG, "삭제할 자료의 타임스탬프는 " + oldTimeStamp);
 
                 getContext().getContentResolver().delete(HallasanContract.WeatherEntry.CONTENT_URI, HallasanContract.WeatherEntry.COLUMN_TIMESTAMP + " <= ?",
@@ -193,9 +167,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
         BufferedReader reader = null;
 
         try {
-            // Construct the URL for the OpenWeatherMap query
-            // Possible parameters are avaiable at OWM's forecast API page, at
-            // http://openweathermap.org/API#forecast
+
             final String WEATHER_BASE_URL =
                     "http://newsky2.kma.go.kr/service/SecndSrtpdFrcstInfoService2/ForecastGrib?";
 
@@ -232,9 +204,9 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
             URL url = new URL(URLDecoder.decode(builtUri.toString(), "UTF-8"));
 
-            Log.v(LOG_TAG, "Built URI " + url.toString());
+//            Log.v(LOG_TAG, "Built URI " + url.toString());
+            //여기서 URI가 제대로 만들어졌는지 확인해볼 필요가 있음
 
-            // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
@@ -264,8 +236,9 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             String weatherJsonStr = buffer.toString();
 
 //            Log.v(LOG_TAG, "Forecast Json String: " + weatherJsonStr);
-            return getWeatherDataFromJson(location, date, time, x, y, weatherJsonStr);
 
+            return getWeatherDataFromJson(location, date, time, x, y, weatherJsonStr);
+            //가져온 jsonStr로 날씨 정보 parsing하기
 
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
@@ -290,122 +263,6 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
         return null;
     }
-
-//    private void roadProcess() {
-//        try {
-//            Document doc = null;
-//            String url = "http://www.jjpolice.go.kr/jjpolice/police25/traffic.htm?act=rss";
-//
-//            if (mIsDebugging) {
-//                //XML 파일로 테스트하기
-//                InputStream inputStream = getContext().getResources().openRawResource(R.raw.sample_data1);
-//                try {
-//                    doc = Jsoup.parse(inputStream, "UTF-8", url);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            } else {
-//                //실제 URL로 테스트하기
-//                try {
-//                    doc = Jsoup.connect(url).get();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            Elements dateData = doc.select("date");
-//            Elements roadTitleData = doc.select("title");
-//            Elements roadDescriptionData = doc.select("description");
-//
-//            String base_date = dateData.get(0).text().toString().trim();
-//
-//            ContentValues roadValues = new ContentValues();
-////        ArrayList<Road> roads = new ArrayList<>();
-//            //제주지방경찰청에서 제공하는 13개의 도로 DATA
-//
-//            for (int i = 1; i < 14; i++) {
-//
-//                String n = roadTitleData.get(i).text().replace("<![CDATA[", "").replace("]]>", "").toString().trim();
-//                //정말 귀찮은데 도로명에 <![CDATA[~~~]> 이거 붙는 거 없애고
-//
-//                String name;
-//                if (n.matches(".*[0-9]\\)$")) {
-//                    //"숫자)"로 끝나는 문자열이라면
-//                    name = n.substring(0, n.indexOf("("));
-//                    // 도로명 "1100도로(1139)"에서 도로 번호를 생략
-//
-//                } else {
-//                    name = n;
-//                    // 도로번호가 없는 도로명은 그대로 쓰기
-//                }
-//
-//                roadValues.put(HallasanContract.RoadEntry.COLUMN_NAME, name);
-//                roadValues.put(HallasanContract.RoadEntry.COLUMN_TIMESTAMP, mTimeStamp);
-//                roadValues.put(HallasanContract.RoadEntry.COLUMN_BASE_DATE, base_date);
-//
-//                String description = roadDescriptionData.get(i).text().replaceAll("&nbsp;", "").replaceAll("&amp;nbsp;", "").toString().trim();
-//                //description에 nbsp랑 amp 붙는거 너무 짜증나!
-//
-//                String[] v = description.split(":", -6);
-//
-////                    Log.v(LOG_TAG, location + " 크기는 " + v.length);
-////                    Log.v(LOG_TAG, location + "," + v[0].trim() );
-////                    Log.v(LOG_TAG, location + "," + v[1].trim() );
-////                    Log.v(LOG_TAG, location + "," + v[2].trim() );
-////                    Log.v(LOG_TAG, location + "," + v[3].trim() );
-////                    Log.v(LOG_TAG, location + "," + v[4].trim() );
-////                    Log.v(LOG_TAG, location + "," + v[5].trim() );
-///*
-//                    통제하는 경우 description 내용
-//                    구간 : 제주대 입구 ~ 성판악 적설 : 1 결빙 : 대형 통재상항 :    소형 통재상항 : 체인
-//
-//                    통제하지 않는 경우 descrition 내용
-//                    구간 : 정상 적설 : 결빙 : 대형 통재상항 :    소형 통재상항 :
-//*/
-//                int restrict = HallasanContract.RoadEntry.RESTRICTION_DISABLED;
-//                String section = "정상";
-//                if (!v[1].contains("정상")) {
-//                    //통제하는 경우
-//                    restrict = HallasanContract.RoadEntry.RESTRICTION_ENABLED;
-//                    section = v[1].substring(0, v[1].indexOf("적설")).trim();
-//                    //통제구간 : "제주대 입구 ~ 성판악"
-//                }
-//                roadValues.put(HallasanContract.RoadEntry.COLUMN_RESTRICTION, restrict);
-//                roadValues.put(HallasanContract.RoadEntry.COLUMN_SECTION, section);
-//
-//                Float snowfall = 0f;
-//                if (v[2].matches(".*\\d+.*")) {
-//                    snowfall = Float.parseFloat(v[2].substring(0, v[2].indexOf("결빙")).trim());
-//                    //적설
-//                }
-//                roadValues.put(HallasanContract.RoadEntry.COLUMN_SNOWFALL, snowfall);
-//
-//                Float freezing = 0f;
-//                if (v[3].matches(".*\\d+.*")) {
-//                    freezing = Float.parseFloat(v[3].substring(0, v[3].indexOf("대형")).trim());
-//                    //결빙
-//                }
-//                roadValues.put(HallasanContract.RoadEntry.COLUMN_FREEZING, freezing);
-//
-//                int chain = HallasanContract.RoadEntry.CHAIN_NONE;
-//                if (v[4].contains("체인")) {
-//                    chain = HallasanContract.RoadEntry.CHAIN_SMALL;
-//                }
-//                if (v[5].contains("체인")) {
-//                    chain = HallasanContract.RoadEntry.CHAIN_BIG;
-//                }
-//                roadValues.put(HallasanContract.RoadEntry.COLUMN_CHAIN, chain);
-//
-//                if (roadValues.size() > 0) {
-//                    getContext().getContentResolver().insert(HallasanContract.RoadEntry.CONTENT_URI, roadValues);
-//                }
-//            }
-//        } catch (RuntimeException e) {`
-//            Log.e(LOG_TAG, e.getMessage(), e);
-//            e.printStackTrace();
-//        }
-//        return;
-//    }
 
     private ContentValues getWeatherDataFromJson(String location, String date, String time, int x, int y, String weatherJsonStr)
             throws JSONException {
@@ -460,7 +317,6 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private void roadProcess() {
 
-        //이전에 insert된 값이 없다면 일단 fetch
         Vector<ContentValues> cVVector = new Vector<ContentValues>(13);
 
         try {
@@ -468,7 +324,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             String url = "http://www.jjpolice.go.kr/jjpolice/police25/traffic.htm?act=rss";
 
             if (isDebugging) {
-//                    //XML 파일로 테스트하기
+//                    Debug 모드에서는 XML 파일로 테스트하기
                 InputStream inputStream = getContext().getResources().openRawResource(R.raw.sample_data1);
                 try {
                     doc = Jsoup.parse(inputStream, "UTF-8", url);
@@ -491,7 +347,6 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
             String base_date = dateData.get(0).text().toString().trim();
 
             ContentValues roadValues;
-//        ArrayList<Road> roads = new ArrayList<>();
             //제주지방경찰청에서 제공하는 13개의 도로 DATA
 
             for (int i = 1; i < 14; i++) {
@@ -568,7 +423,6 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
                 roadValues.put(HallasanContract.RoadEntry.COLUMN_CHAIN, chain);
 
                 cVVector.add(roadValues);
-//                        mContext.getContentResolver().insert(HallasanContract.RoadEntry.CONTENT_URI, roadValues);
             }
 
             if (cVVector.size() > 0) {
@@ -578,7 +432,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
                 int size = getContext().getContentResolver().bulkInsert(HallasanContract.RoadEntry.CONTENT_URI, cvArray);
                 Log.v(LOG_TAG, "HallasanSyncAdapter에서 " + mTimeStamp + "에 Road DB로 집어 넣은 다음 크기 " + size);
 
-                //notify
+                //notify 처리
                 String title = null;
                 StringBuilder messageSB = new StringBuilder();
                 boolean isRestricted = false;
@@ -586,8 +440,6 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
                     if (rv.getAsInteger(HallasanContract.RoadEntry.COLUMN_RESTRICTION) == HallasanContract.RoadEntry.RESTRICTION_ENABLED) {
                         if (isRestricted == false) {
                             String baseDate = rv.getAsString(HallasanContract.RoadEntry.COLUMN_BASE_DATE);
-//                        title = "통제 : "
-//                                + baseDate + " 발표";
 
                             title = "통제 : "
                                     + baseDate.substring(4, 6) + "월"
@@ -602,6 +454,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
                 }
 
                 if (messageSB.length() != 0) {
+//                    notify할 메시지가 있으면 실행
                     notifyRoadStatus(title, messageSB.toString());
                 }
 
@@ -612,18 +465,16 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
                     long oldTimeStamp = Long.parseLong(new SimpleDateFormat("yyyyMMdd").format(oldCal.getTime()) + "0000");
 //                Log.v(LOG_TAG, "삭제할 자료의 타임스탬프는 " + oldTimeStamp);
-
                     getContext().getContentResolver().delete(HallasanContract.RoadEntry.CONTENT_URI, HallasanContract.RoadEntry.COLUMN_TIMESTAMP + " <= ?",
                             new String[]{Long.toString(oldTimeStamp)});
+                    //push 후 전날 입력된 자료가 있으면 삭제함
+
                 }
             }
-
         } catch (RuntimeException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
         }
-
-
     }
 
     private void notifyRoadStatus(String title, String message) {
@@ -632,40 +483,7 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
         String lastNotificationKey = context.getString(R.string.pref_last_notification_key);
         long lastSync = prefs.getLong(lastNotificationKey, 0);
 
-//        String sortOrder = HallasanContract.RoadEntry._ID + " DESC limit 6";
-
-
         if (System.currentTimeMillis() - lastSync >= DAY_IN_MILLIS) {
-//            Uri roadUri = HallasanContract.RoadEntry.buildRoadUriWithDate(String.valueOf(mTimeStamp));
-//            Cursor cursor = context.getContentResolver().query(HallasanContract.RoadEntry.CONTENT_URI, NOTIFY_ROAD_PROJECTION, null, null, sortOrder);
-//
-//            int roadId = 0;
-//            long timeStamp = 0;
-//            long baseDate = 0;
-//            String name = null;
-//            StringBuilder sb = new StringBuilder();
-//
-//            while (cursor.moveToNext()) {
-//                roadId = cursor.getInt(INDEX_ROAD_ID);
-//                timeStamp = cursor.getLong(INDEX_ROAD_TIME_STAMP);
-//                baseDate = cursor.getLong(INDEX_ROAD_BASE_DATE);
-//                name = cursor.getString(INDEX_NAME);
-//
-//                sb.append(name + " ");
-//            }
-//
-//
-//
-//            StringBuilder sb2 = new StringBuilder();
-//            sb2.append(String.valueOf(baseDate));
-////            sb2.append("통제 : ");
-////                    sb2.append(String.valueOf(baseDate).substring(0, 3) + "년 ");
-////            sb2.append(String.valueOf(baseDate).substring(4, 5) + "월 ");
-////                    sb2.append(String.valueOf(baseDate).substring(6, 7) + "일 ");
-////                            sb2.append(String.valueOf(baseDate).substring(7, 8) + "시 ");
-////                                    sb2.append(String.valueOf(baseDate).substring(8, 9) + "분에 발표");
-//            String title = sb2.toString();
-//            String message = sb.toString();
 
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(getContext())
@@ -692,11 +510,6 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
 
     public static void syncImmediately(Context context) {
         Log.v(LOG_TAG, "SyncIMMEDIATELY!!!!!");
-//        mContext = context;
-//        mCalendar = Calendar.getInstance();
-//        mTimeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(mCalendar.getTime());
-//        Log.v(LOG_TAG, "HallasanSyncAdapter에서 Sync합니다! 타임스탬프는 : " + mTimeStamp);
-
         Bundle bundle = new Bundle();
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
@@ -725,12 +538,6 @@ public class HallasanSyncAdapter extends AbstractThreadedSyncAdapter {
                     syncPeriodic(syncInterval, flexTime).
                     setSyncAdapter(account, authority).
                     setExtras(new Bundle()).build();
-//            SyncRequest.Builder builder = new SyncRequest.Builder();
-//            Bundle extras = new Bundle();
-//            builder.setExtras(extras);
-//            SyncRequest request = builder.
-//                    syncPeriodic(syncInterval, flexTime).
-//                    setSyncAdapter(account, authority).build();
             ContentResolver.requestSync(request);
         } else {
             ContentResolver.addPeriodicSync(account,

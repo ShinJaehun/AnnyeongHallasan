@@ -18,8 +18,6 @@ import android.widget.TextView;
 public class WeatherDialog extends Dialog {
     String LOG_TAG = WeatherDialog.class.getSimpleName();
 
-    private Context mContext;
-
     private String location;
     private String baseDate;
     private long timeStamp;
@@ -57,7 +55,6 @@ public class WeatherDialog extends Dialog {
         super(context);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        mContext = context;
         listener = clickListener;
 
         this.location = location;
@@ -89,7 +86,7 @@ public class WeatherDialog extends Dialog {
         locationTV.setText(location);
 
         int s = Math.round(sky);
-
+        //하늘상태
         weatherIV = (ImageView)findViewById(R.id.img_weather_adapter);
         infoTV = (TextView)findViewById(R.id.text_info_weather_adapter);
 
@@ -115,7 +112,7 @@ public class WeatherDialog extends Dialog {
         }
 
         int p = Math.round(pty);
-
+        //강수형태
         if (p > 0) {
             switch (p) {
                 case 1:
@@ -135,17 +132,20 @@ public class WeatherDialog extends Dialog {
 
         temperatureTV = (TextView)findViewById(R.id.text_temperature_weather_adapter);
         temperatureTV.setText(String.valueOf(t1h));
+        //기온
 
         humidityTV = (TextView)findViewById(R.id.text_weather_humidity);
         humidityTV.setText(String.valueOf(reh));
+        //습도
 
         railfallTV = (TextView)findViewById(R.id.text_weather_rainfall);
         railfallTV.setText(String.valueOf(rn1));
+        //강수량
 
         windDirectionTV = (TextView)findViewById(R.id.text_weather_wind_direction);
         windSpeedTV = (TextView)findViewById(R.id.text_weather_wind_speed);
-
         int wv = (int)((vec + 22.5 * 0.5) / 22.5);
+        //풍향
         // (풍향값 + 22.5 * 0.5) / 22.5) = 16방위 변환값(소수점 이하 버림) 기상청 api 매뉴얼
 
         String windDirection = " ";
@@ -155,6 +155,7 @@ public class WeatherDialog extends Dialog {
         windDirectionTV.setText(windDirection);
 
         int ws = Math.round(wsd);
+        //풍속
         String windSpeed = " ";
         if (ws > 4 && ws < 9) {
             windSpeed = "약간 강한 바람";
@@ -171,10 +172,10 @@ public class WeatherDialog extends Dialog {
                  + baseDate.substring(4, 6) + "월"
                  + baseDate.substring(6, 8) + "일 "
                  + baseDate.substring(8, 10) + "시"
-                 + baseDate.substring(10) + "분\n" + "타임스탬프" + String.valueOf(timeStamp));
-//      이렇게 해 놓으면 00시, 01시 이럴 때 문제가 발생한다. 근데 왜 06월은 정상적으로 출력되지?
-        confirmBTN = (Button)findViewById(R.id.button_confirm);
+//                 + baseDate.substring(10) + "분\n" + "타임스탬프" + String.valueOf(timeStamp));
+                 + baseDate.substring(10) + "분");
 
+        confirmBTN = (Button)findViewById(R.id.button_confirm);
         confirmBTN.setOnClickListener(listener);
 
     }
